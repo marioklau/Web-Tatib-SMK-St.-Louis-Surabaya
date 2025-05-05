@@ -75,9 +75,6 @@
 
             
         </aside>
-
-        <!-- Main Content -->
-        @include ('layouts.dashboard')
     </div>
 
     <script>
