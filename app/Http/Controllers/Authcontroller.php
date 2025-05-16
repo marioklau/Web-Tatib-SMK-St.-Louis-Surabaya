@@ -12,6 +12,7 @@ class AuthController extends Controller
     public function login()
     {
         return view('auth.login');
+
     }
 
     public function authenticate(Request $request)
@@ -28,11 +29,12 @@ class AuthController extends Controller
         if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::login($user);
             $request->session()->regenerate(); 
-            return redirect()->intended('home'); 
+            return redirect()->route('dashboard'); 
         }
 
         return back()->with('loginError', 'Login Gagal');
     }
+
 
     public function logout(Request $request){   
         Auth::logout();
@@ -42,4 +44,14 @@ class AuthController extends Controller
         return redirect('/login')->with('success', 'Berhasil logout');
     }
 
+//     public function showPasswordHash()
+// {
+//     $password = 'admin'; // Ganti sesuai password yang ingin di-hash
+//     $hash = Hash::make($password);
+
+//     dd($hash); // akan tampilkan hasil hash di browser
+// }
+
+
 }
+

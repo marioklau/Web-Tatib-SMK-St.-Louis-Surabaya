@@ -6,11 +6,11 @@
 </head>
 <body class="bg-gray-100">
     <!-- Navbar -->
-    <nav class="bg-gray-900 text-white shadow-lg z-10">
+    <nav class="bg-white-900 text-white shadow-lg z-10">
         <div class="max-w-none mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-end h-16">
                 <div class="flex items-center">
-                    
+
                     <!-- Profile dropdown -->
                     <div class="ml-3 relative hidden md:block">
                         <div>
