@@ -27,7 +27,7 @@
                     <!-- Data Pelanggaran -->
                     <div class="space-y-1">
                         <button class="w-full flex items-center justify-between px-4 py-2.5 text-5lg font-medium rounded-lg
-                                       {{ request()->is('kategori*') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}"
+                                       {{ request()->is('kategori*', 'jenis*') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}"
                                 aria-expanded="true" aria-controls="analytics-dropdown">
                             <div class="flex items-center">
                                 <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -49,8 +49,9 @@
                                       {{ request()->routeIs('kategori.index') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
                                 Kategori Pelanggaran
                             </a>
-                            <a href="#"
-                               class="group flex items-center px-4 py-2 text-sm rounded-md text-gray-300 hover:bg-blue-700 hover:text-white">
+                            <a href="{{ route("jenis.index") }}"
+                               class="group flex items-center px-4 py-2 text-sm rounded-md 
+                                    {{ request()->routeIs('jenis.index') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
                                 Jenis Pelanggaran
                             </a>
                             <a href="#"
@@ -90,7 +91,18 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Pelanggaran
+                        Input Pelanggaran
+                    </a>
+
+                    <!-- Laporan -->
+                    <a href="#"
+                       class="flex items-center px-4 py-2.5 text-5lg font-medium rounded-lg
+                              {{ request()->is('pelanggaran*') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
+                        <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Laporan
                     </a>
                 </div>
             </nav>
