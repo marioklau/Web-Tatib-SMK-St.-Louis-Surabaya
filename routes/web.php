@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\JenisController;
+use App\Http\Controllers\SanksiController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -24,5 +25,6 @@ Route::get('/dashboard', function () {
 })->middleware('auth')->name('dashboard');
 Route::resource('kategori', KategoriController::class)-> middleware('auth');
 Route::resource('jenis', JenisController::class)-> middleware('auth') ->parameters(['jenis' => 'jenis']);;
+Route::resource('sanksi', SanksiController::class)-> middleware('auth');
 // Route::get('/show-hash', [AuthController::class, 'showPasswordHash']);
 
