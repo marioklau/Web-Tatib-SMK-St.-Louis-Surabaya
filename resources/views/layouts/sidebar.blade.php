@@ -51,10 +51,10 @@
                             </a>
                             <a href="{{ route("jenis.index") }}"
                                class="group flex items-center px-4 py-2 text-sm rounded-md 
-                                    {{ request()->routeIs('jenis.index') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
+                               {{ request()->routeIs('jenis.index') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
                                 Jenis Pelanggaran
                             </a>
-                            <a href="{{ route('sanksi.index') }}"
+                            <a href="{{ route("sanksi.index") }}"
                                class="group flex items-center px-4 py-2 text-sm rounded-md 
                                {{ request()->routeIs('sanksi.index') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
                                 Sanksi Pelanggaran
@@ -63,7 +63,7 @@
                     </div>
 
                     <!-- Data Kelas -->
-                    <a href="#"
+                    <a href="{{ route('kelas.index') }}"
                        class="flex items-center px-4 py-2.5 text-5lg font-medium rounded-lg
                               {{ request()->is('kelas*') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
                         <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -74,7 +74,7 @@
                     </a>
 
                     <!-- Data Siswa -->
-                    <a href="#"
+                    <a href="{{ route('siswa.index') }}"
                        class="flex items-center px-4 py-2.5 text-5lg font-medium rounded-lg
                               {{ request()->is('siswa*') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
                         <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
