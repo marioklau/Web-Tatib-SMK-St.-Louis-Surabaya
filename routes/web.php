@@ -19,9 +19,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name('home');
 
-Route::get('/dashboard', function () {
-    return view('layouts.dashboard');
-})->middleware('auth')->name('dashboard');
+Route::get('/dashboard', [HomeController::class, 'dashboard'])->middleware('auth')->name('dashboard');
 Route::resource('kategori', KategoriController::class)-> middleware('auth');
 Route::resource('jenis', JenisController::class)-> middleware('auth') ->parameters(['jenis' => 'jenis']);;
 // Route::get('/show-hash', [AuthController::class, 'showPasswordHash']);
