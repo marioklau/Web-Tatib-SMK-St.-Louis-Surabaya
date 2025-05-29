@@ -3,6 +3,15 @@
 @section('title', 'Form Input Pelanggaran')
 
 @section('content')
+
+<!-- CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold mb-4">Form Input Pelanggaran</h1>
 
@@ -20,15 +29,23 @@
         @csrf
         <div>
             <label class="block mb-1">Nama Siswa</label>
-            <input list="siswa-list" name="siswa_id" class="w-full border p-2 rounded" placeholder="Cari nama siswa..." required>
+            <select name="siswa_id" class="w-full border p-2 rounded" id="siswa-select" required>
+                <option value="">-- Pilih Siswa --</option>
+                @foreach ($siswa as $s)
+                    <!-- <option value="{{ $s->id }}">{{ $s->nama }} - {{ $s->kelas->nama_kelas }}</option> -->
+                    <option value="{{ $s->id }}">{{ $s->nama }}</option>
+                @endforeach
+            </select>
+            <!-- <input list="siswa-list" name="siswa_id" class="w-full border p-2 rounded" placeholder="Cari nama siswa..." required>
             <datalist id="siswa-list">
                 @foreach($siswa as $s)
                     <option value="{{ $s->id }}">{{ $s->nama_siswa }} ({{ $s->kelas->nama_kelas ?? '-' }})</option>
                 @endforeach
-            </datalist>
+            </datalist> -->
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- buat nama dulu e -->
             <!-- <div>
                 <label class="block mb-1">Nama Siswa</label>
                 <select name="siswa_id" class="w-full border p-2 rounded" required>
@@ -66,8 +83,9 @@
                 </select>
             </div>
         </div>
-        <div class="mt-4">
+        <div class="mt-4 flex gap-2">
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+            <button type="button" onclick="history.back()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Kembali</button>
         </div>
     </form>
 </div>
@@ -77,6 +95,21 @@
     const jenisSelect = document.getElementById('jenis-select');
     const sanksiSelect = document.getElementById('sanksi-select');
     const kategoriJenis = @json($kategori);
+    const siswaList = @json($siswa); // Sudah termasuk relasi kelas
+
+    siswaList.forEach(s => {
+        document.getElementById('siswa-select').innerHTML += 
+            `<option value="${s.id}">${s.nama_siswa}</option>`;
+    });
+
+    // pakai select2 untuk search bar
+    $(document).ready(function() {
+        $('#siswa-select').select2({
+            placeholder: "-- Pilih Siswa --",
+            allowClear: true,
+            minimumInputLength: 1
+        });
+    });
 
     kategoriSelect.addEventListener('change', function () {
         const kategoriId = this.value;

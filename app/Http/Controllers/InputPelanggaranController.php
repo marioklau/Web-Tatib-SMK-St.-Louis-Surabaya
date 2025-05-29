@@ -102,8 +102,16 @@ class InputPelanggaranController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         //
+        // $pelanggaran->delete();
+        // return redirect()->route('input-pelanggaran.index')
+        //     ->with('success', 'Pelanggaran Berhasil Dihapus');
+        $pelanggaran = Pelanggaran::findOrFail($id);
+        $pelanggaran->delete();
+
+        return redirect()->route('input-pelanggaran.index')
+                ->with('success', 'Data pelanggaran berhasil dihapus.');
     }
 }

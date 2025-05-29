@@ -14,52 +14,6 @@
         </button>
     </div>
 
-    <!-- Form Input -->
-    <!-- <form method="POST" action="{{ route('input-pelanggaran.store') }}" class="bg-white rounded shadow p-6 mb-10" id="form-section">
-        @csrf
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block mb-1">Nama Siswa</label>
-                <select name="siswa_id" class="w-full border p-2 rounded" required>
-                    <option value="">-- Pilih Siswa --</option>
-                    @foreach($siswa as $s)
-                        <option value="{{ $s->id }}">{{ $s->nama_siswa }} ({{ $s->kelas->nama_kelas ?? '-' }})</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label class="block mb-1">Kategori</label>
-                <select name="kategori_id" class="w-full border p-2 rounded" required id="kategori-select">
-                    <option value="">-- Pilih Kategori --</option>
-                    @foreach($kategori as $k)
-                        <option value="{{ $k->id }}">{{ $k->nama_kategori }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label class="block mb-1">Jenis Pelanggaran</label>
-                <select name="jenis_id" class="w-full border p-2 rounded" required id="jenis-select">
-                    <option value="">-- Pilih Jenis --</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block mb-1">Sanksi</label>
-                <select name="sanksi_id" class="w-full border p-2 rounded" required id="sanksi-select">
-                    <option value="">-- Pilih Sanksi --</option>
-                    @foreach($sanksi as $s)
-                        <option data-kategori="{{ $s->kategori_id }}" value="{{ $s->id }}">{{ $s->nama_sanksi }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-        <div class="mt-4">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
-        </div>
-    </form> -->
-
     <!-- Tabel Pelanggaran -->
     <h2 class="text-xl font-semibold mb-4">Riwayat Pelanggaran</h2>
     <div class="overflow-x-auto bg-white rounded shadow">
@@ -72,6 +26,7 @@
                     <th class="p-3 text-left">Jenis</th>
                     <th class="p-3 text-left">Sanksi</th>
                     <th class="p-3 text-left">Waktu</th>
+                    <th class="p-3 text-left">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,9 +35,24 @@
                     <td class="p-3">{{ $p->siswa->nama_siswa }}</td>
                     <td class="p-3">{{ $p->siswa->kelas->nama_kelas ?? '-' }}</td>
                     <td class="p-3">{{ $p->kategori->nama_kategori }}</td>
-                    <td class="p-3">{{ $p->jenis->nama_jenis }}</td>
+                    <td class="p-3">{{ $p->jenis->bentuk_pelanggaran}}</td> 
                     <td class="p-3">{{ $p->sanksi->nama_sanksi }}</td>
                     <td class="p-3">{{ $p->created_at->format('d M Y H:i') }}</td>
+                    <td class="p-3">
+                        <div class="flex items-center space-x-2">
+                            <!-- Tombol Delete -->
+                            <form action="{{ route('input-pelanggaran.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pelanggaran ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-800 transform hover:scale-110" title="Hapus">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
                 @empty
                 <tr><td colspan="6" class="p-3 text-center">Belum ada data pelanggaran.</td></tr>

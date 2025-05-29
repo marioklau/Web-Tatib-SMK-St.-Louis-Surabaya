@@ -32,7 +32,7 @@ Route::resource('jenis', JenisController::class)-> middleware('auth') ->paramete
 Route::resource('sanksi', SanksiController::class)-> middleware('auth');
 Route::resource('siswa', SiswaController::class)-> middleware('auth');
 Route::resource('kelas', KelasController::class)-> middleware('auth')->parameters(['kelas' => 'kelas']);
-Route::resource('input-pelanggaran', InputPelanggaranController::class);
+Route::resource('input-pelanggaran', InputPelanggaranController::class)-> middleware('auth');
 
 // untuk input pelanggaran
 Route::get('input-pelanggaran', [InputPelanggaranController::class, 'index'])->name('input-pelanggaran.index');
