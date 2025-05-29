@@ -40,7 +40,7 @@
                         <td class="py-2 px-4 border">{{ $item->kelas->nama_kelas }}</td>
                         <td class="py-2 px-4 border">{{ $item->nama_siswa }}</td>
                         <td class="py-2 px-4 border">{{ $item->jenis_kelamin }}</td>
-                        <td class="py-2 px-4 border">-</td> <!-- Nanti diganti jumlah pelanggaran -->
+                        <td class="py-2 px-4 border">{{ $item->pelanggaran_count }}</td>
                     </tr>
                 @endforeach
             </tbody>

@@ -9,7 +9,7 @@ class KategoriController extends Controller
 {
     public function index()
     {
-        $kategori = Kategori::latest()->paginate(10);
+        $kategori = Kategori::withCount('jenis')->latest()->paginate(10);
         return view('data_pelanggaran.kategori.index', compact('kategori'));
     }
 

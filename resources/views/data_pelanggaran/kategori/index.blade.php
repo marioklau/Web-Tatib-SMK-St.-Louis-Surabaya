@@ -36,7 +36,7 @@
                         <td class="py-3 px-6 text-left">{{ $category->nama_kategori }}</td>
                         <td class="py-3 px-6 text-left">
                             {{-- Ganti ini jika Anda memiliki data jumlah pelanggaran --}}
-                            {{ $category->jumlah ?? '-' }}
+                            {{ $category-> jenis_count }}
                         </td>
                         <td class="py-3 px-6 text-center">
                             <div class="flex items-center justify-center space-x-2">

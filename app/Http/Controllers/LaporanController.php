@@ -12,7 +12,9 @@ class LaporanController extends Controller
     {
         $kelasList = Kelas::all();
         $selectedKelas = $request->get('kelas_id');
+
         $siswa = Siswa::with('kelas')
+            ->withCount('pelanggaran')
             ->when($selectedKelas, function ($query, $kelas_id) {
                 return $query->where('kelas_id', $kelas_id);
             })
