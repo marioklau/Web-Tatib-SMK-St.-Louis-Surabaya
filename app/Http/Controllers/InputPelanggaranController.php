@@ -32,16 +32,23 @@ class InputPelanggaranController extends Controller
     public function create()
     {
         //
-        $request->validate([
-            'siswa_id' => 'required|exists:siswa,id',
-            'kategori_id' => 'required|exists:kategori,id',
-            'jenis_id' => 'required|exists:jenis,id',
-            'sanksi_id' => 'required|exists:sanksi,id',
-        ]);
+        // $request->validate([
+        //     'siswa_id' => 'required|exists:siswa,id',
+        //     'kategori_id' => 'required|exists:kategori,id',
+        //     'jenis_id' => 'required|exists:jenis,id',
+        //     'sanksi_id' => 'required|exists:sanksi,id',
+        // ]);
 
-        Pelanggaran::create($request->all());
+        // Pelanggaran::create($request->all());
 
-        return redirect()->back()->with('success', 'Pelanggaran berhasil ditambahkan.');
+        // return redirect()->back()->with('success', 'Pelanggaran berhasil ditambahkan.');
+
+        // Hanya menampilkan form input, tidak butuh $request di sini
+        $siswa = Siswa::with('kelas')->get();
+        $kategori = Kategori::with('jenis')->get();
+        $sanksi = Sanksi::all();
+
+        return view('input_pelanggaran.create', compact('siswa', 'kategori', 'sanksi'));
     }
 
     /**
@@ -50,6 +57,22 @@ class InputPelanggaranController extends Controller
     public function store(Request $request)
     {
         //
+        // Validasi inputan
+        $request->validate([
+            'siswa_id' => 'required|exists:siswa,id',
+            'kategori_id' => 'required|exists:kategori,id',
+            'jenis_id' => 'required|exists:jenis,id',
+            'sanksi_id' => 'required|exists:sanksi,id',
+        ]);
+
+        // Simpan ke DB
+        // Pelanggaran::create($request->all());
+
+        \App\Models\Pelanggaran::create($request->only([
+            'siswa_id', 'kategori_id', 'jenis_id', 'sanksi_id'
+        ]));
+
+        return redirect()->route('input-pelanggaran.index')->with('success', 'Pelanggaran berhasil ditambahkan.');
     }
 
     /**

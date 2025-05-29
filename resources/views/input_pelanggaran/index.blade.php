@@ -8,13 +8,14 @@
 
     <!-- Tombol Input -->
     <div class="flex justify-end mb-4">
+        <a href="{{ route('input-pelanggaran.create') }}">
         <button onclick="document.getElementById('form-section').scrollIntoView();" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
             + Input Pelanggaran
         </button>
     </div>
 
     <!-- Form Input -->
-    <form method="POST" action="{{ route('input-pelanggaran.store') }}" class="bg-white rounded shadow p-6 mb-10" id="form-section">
+    <!-- <form method="POST" action="{{ route('input-pelanggaran.store') }}" class="bg-white rounded shadow p-6 mb-10" id="form-section">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -57,7 +58,7 @@
         <div class="mt-4">
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
         </div>
-    </form>
+    </form> -->
 
     <!-- Tabel Pelanggaran -->
     <h2 class="text-xl font-semibold mb-4">Riwayat Pelanggaran</h2>
