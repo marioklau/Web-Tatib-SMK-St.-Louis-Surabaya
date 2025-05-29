@@ -5,15 +5,28 @@ namespace App\Http\Controllers;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
 use App\Models\Siswa;
+use App\Models\Kelas;
 use Illuminate\Http\Request;
 
 class SiswaController extends Controller
 {
-    public function index()
-    {
-        $siswa = Siswa::latest()->paginate(10);
-        return view('siswa.index', compact('siswa'));
+    public function index(Request $request)
+{
+    $kelasId = $request->input('kelas_id');
+
+    $query = Siswa::query();
+
+    if ($kelasId) {
+        $query->where('kelas_id', $kelasId);
     }
+
+    $siswa = $query->paginate(10); // Sesuaikan dengan kebutuhan
+
+    $kelasList = Kelas::all();
+
+    return view('siswa.index', compact('siswa', 'kelasList'));
+}
+
 
     public function import(Request $request)
 {

@@ -6,6 +6,17 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold text-start mb-8">Data Siswa</h1>
 
+    <form method="GET" action="{{ route('siswa.index') }}" class="mb-4">
+    <label for="kelas" class="font-medium">Filter berdasarkan Kelas:</label>
+    <select name="kelas_id" id="kelas" onchange="this.form.submit()" class="border rounded px-2 py-1 ml-2">
+        <option value="">-- Semua Kelas --</option>
+        @foreach($kelasList as $kelas)
+            <option value="{{ $kelas->id }}" {{ request('kelas_id') == $kelas->id ? 'selected' : '' }}>
+                {{ $kelas->nama_kelas }}
+            </option>
+        @endforeach
+    </select>
+</form>
     
     <div class="flex flex-col md:flex-row justify-end items-center mb-6">
         <!-- Tombol Tambah -->
