@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\JenisController;
-use App\Http\Controllers\KelasController;
-use App\Http\Controllers\SanksiController;
-use App\Http\Controllers\SiswaController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InputPelanggaranController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\JenisController;
+use App\Http\Controllers\KelasController;
+use App\Http\Controllers\SanksiController;
+use App\Http\Controllers\SiswaController;
 
 
 Route::get('/', function () {
@@ -25,11 +26,15 @@ Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name(
 Route::get('/dashboard', function () {
     return view('layouts.dashboard');
 })->middleware('auth')->name('dashboard');
+
 Route::resource('kategori', KategoriController::class)-> middleware('auth');
 Route::resource('jenis', JenisController::class)-> middleware('auth') ->parameters(['jenis' => 'jenis']);;
 Route::resource('sanksi', SanksiController::class)-> middleware('auth');
 Route::resource('siswa', SiswaController::class)-> middleware('auth');
 Route::resource('kelas', KelasController::class)-> middleware('auth')->parameters(['kelas' => 'kelas']);
+Route::resource('input-pelanggaran', InputPelanggaranController::class);
+
+// import excel list siswa 
 Route::get('/siswa-import', [SiswaController::class, 'import'])->middleware('auth');
 Route::post('/siswa-import', [SiswaController::class, 'import'])->name('siswa.import')->middleware('auth');
 // Route::get('/show-hash', [AuthController::class, 'showPasswordHash']);
