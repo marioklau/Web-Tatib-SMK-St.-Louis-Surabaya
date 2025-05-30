@@ -12,8 +12,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-4">Form Input Pelanggaran</h1>
+<div class="container mx-auto">
+    <h1 class="text-2xl font-semibold mb-4">Form Input Pelanggaran</h1>
 
     @if($errors->any())
         <div class="bg-red-100 text-red-700 p-4 rounded mb-4">

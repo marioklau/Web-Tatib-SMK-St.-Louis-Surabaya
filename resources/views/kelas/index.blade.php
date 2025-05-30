@@ -3,14 +3,14 @@
 @section('title', 'Kelas')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-start mb-8">Data Kelas</h1>
+<div class="container mx-aut0">
+    <h1 class="text-3xl font-semibold text-start mb-8">Data Kelas</h1>
     
     <div class="flex flex-col md:flex-row justify-end items-center mb-6">
         <!-- Tombol Tambah -->
         <a href="{{ route('kelas.create') }}">
             <button type="button" class="flex items-center bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
                     <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
                 </svg>
                 Tambah Kelas
@@ -22,7 +22,7 @@
     <div class="overflow-x-auto bg-white rounded-lg shadow">
         <table class="w-full table-auto">
             <thead>
-                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
                     <th class="py-3 px-6 text-left">No</th>
                     <th class="py-3 px-6 text-left">Kode Kelas</th>
                     <th class="py-3 px-6 text-left">Nama Kelas</th>
@@ -30,9 +30,9 @@
                     <th class="py-3 px-6 text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-gray-700 text-sm font-light">
+            <tbody class="text-gray-900 text-sm font-light">
                 @forelse ($kelas as $class)
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <tr class="border-b border-gray-300 hover:bg-gray-100">
                         <td class="py-3 px-6 text-left">{{ $loop->iteration }}</td>
                         <td class="py-3 px-6 text-left">{{ $class->kode_kelas }}</td>
                         <td class="py-3 px-6 text-left">{{ $class->nama_kelas }}</td>

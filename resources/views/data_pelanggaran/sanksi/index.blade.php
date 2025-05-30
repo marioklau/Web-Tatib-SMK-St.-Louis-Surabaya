@@ -3,8 +3,8 @@
 @section('title', 'Sanksi Pelanggaran')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-start mb-8">Sanksi Pelanggaran</h1>
+<div class="container mx-auto">
+    <h1 class="text-3xl font-semibold text-start mb-8">Sanksi Pelanggaran</h1>
 
     <!-- Dropdown dan Tombol Tambah Kategori -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -32,7 +32,7 @@
         <!-- Tombol Tambah -->
         <a href="{{ route('sanksi.create') }}">
             <button type="button" class="flex items-center bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
                     <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
                 </svg>
                 Tambah Sanksi
@@ -44,30 +44,30 @@
     <div class="overflow-x-auto bg-white rounded-lg shadow">
         <table class="w-full table-auto">
             <thead>
-                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                    <th class="py-3 px-6 text-left">No</th>
-                    <th class="py-3 px-6 text-left">Jumlah Pelangaran</th>
-                    <th class="py-3 px-6 text-left">Nama Sanksi</th>
-                    <th class="py-3 px-6 text-left">Pembina</th>
-                    <th class="py-3 px-6 text-left">Keputusan Tindakan</th>
-                    <th class="py-3 px-6 text-center">Aksi</th>
+                <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 border text-left">No</th>
+                    <th class="py-3 px-6 border text-left">Jumlah Pelangaran</th>
+                    <th class="py-3 px-6 border text-left">Pembina</th>
+                    <th class="py-3 px-6 border text-left">Pembinaan</th>
+                    <th class="py-3 px-6 border text-left">Keputusan Tindakan</th>
+                    <th class="py-3 px-6 border text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-gray-700 text-sm font-light">
+            <tbody class="text-gray-900 text-sm font-light">
                 @forelse ($sanksi as $sanctions)
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left">{{ $loop->iteration }}</td>
-                        <td class="py-3 px-6 text-left">
+                    <tr class="border-b border-gray-300 hover:bg-gray-100">
+                        <td class="py-3 px-6 border text-left">{{ $loop->iteration }}</td>
+                        <td class="py-3 px-6 border text-left">
                             @php
                                 $min = $sanctions->bobot_min == 0 ? '' : $sanctions->bobot_min;
                                 $max = $sanctions->bobot_max == 0 ? '' : $sanctions->bobot_max;
                             @endphp
                             {{ $min }}{{ ($min && $max) ? ' - ' : '' }}{{ $max }}
                         </td>
-                        <td class="py-3 px-6 text-left">{!! $sanctions->nama_sanksi !!}</td>
-                        <td class="py-3 px-6 text-left">{{ $sanctions->pembina }}</td>
-                        <td class="py-3 px-6 text-left">{!! $sanctions->keputusan_tindakan !!}</td>
-                        <td class="py-3 px-6 text-center">
+                        <td class="py-3 px-6 border text-left">{{ $sanctions->pembina }}</td>
+                        <td class="py-3 px-6 border text-left">{!! $sanctions->nama_sanksi !!}</td>
+                        <td class="py-3 px-6 border text-left">{!! $sanctions->keputusan_tindakan !!}</td>
+                        <td class="py-3 px-6 border text-center">
                             <div class="flex items-center justify-center gap-1">
                                 <!-- Tombol Detail -->
                                 <a href="{{ route('sanksi.show', $sanctions) }}" class="bg-green-600 text-white flex items-center gap-1 px-3 py-1 rounded-md hover:bg-green-400 transition duration-300 text-sm" title="Lihat Detail">

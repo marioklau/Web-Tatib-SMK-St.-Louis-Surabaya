@@ -3,50 +3,60 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">Selamat datang di Dashboard</h1>
+<div class="px-4 sm:px-8 mt-4">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-4">Selamat Datang Bapa/Ibu...</h1>
 
-    <!-- Konten lainnya -->
-    <div class="grid grid-cols-1 gap-4 px-4 mt-8 sm:grid-cols-4 sm:px-8">
-        <div class="flex items-center bg-white border rounded-sm overflow-hidden shadow">
-            <div class="p-4 bg-green-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
+    <!-- Konten Card -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <!-- Card Total Siswa -->
+        <div class="flex items-center bg-white border rounded-lg shadow overflow-hidden">
+            <div class="p-4 bg-green-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                    </path>
-                </svg></div>
-            <div class="px-4 text-gray-700">
-                <h3 class="text-sm tracking-wider">Total Siswa</h3>
-                <p class="text-3xl">{{ $totalSiswa }}</p>
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+            <div class="px-4 py-2 text-gray-800">
+                <h3 class="text-sm font-medium">Total Siswa</h3>
+                <p class="text-3xl font-bold">{{ $totalSiswa }}</p>
             </div>
         </div>
-        <div class="flex items-center bg-white border rounded-sm overflow-hidden shadow">
-        <div class="p-4 bg-blue-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2">
-                </path>
-            </svg></div>
-        <div class="px-4 text-gray-700">
-            <h3 class="text-sm tracking-wider">Total Kelas</h3>
-            <p class="text-3xl">{{ $totalKelas }}</p>
+
+        <!-- Card Total Kelas -->
+        <div class="flex items-center bg-white border rounded-lg shadow overflow-hidden">
+            <div class="p-4 bg-yellow-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                </svg>
+            </div>
+            <div class="px-4 py-2 text-gray-800">
+                <h3 class="text-sm font-medium">Total Kelas</h3>
+                <p class="text-3xl font-bold">{{ $totalKelas }}</p>
+            </div>
         </div>
-    </div>
-    <div class="flex items-center bg-white border rounded-sm overflow-hidden shadow">
-        <div class="p-4 bg-red-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4">
-                </path>
-            </svg></div>
-        <div class="px-4 text-gray-700">
-            <h3 class="text-sm tracking-wider">Total Pelanggaran</h3>
-            <p class="text-3xl">{{ $totalPelanggaran }}</p>
+
+        <!-- Card Total Pelanggaran -->
+        <div class="flex items-center bg-white border rounded-lg shadow overflow-hidden">
+            <div class="p-4 bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                </svg>
+            </div>
+            <div class="px-4 py-2 text-gray-800">
+                <h3 class="text-sm font-medium">Total Pelanggaran</h3>
+                <p class="text-3xl font-bold">{{ $totalPelanggaran }}</p>
+            </div>
         </div>
     </div>
 </div>
 
     <!-- Chart 1: Pelanggaran per Bulan -->
-    <div class="bg-white p-6 rounded-lg shadow">
+    <div class="bg-white p-6 m-6 rounded-lg shadow">
         <h2 class="text-lg font-semibold text-gray-700 mb-4">Grafik Pelanggaran per Bulan</h2>
         <canvas id="pelanggaranChart" width="400" height="200"></canvas>
     </div>

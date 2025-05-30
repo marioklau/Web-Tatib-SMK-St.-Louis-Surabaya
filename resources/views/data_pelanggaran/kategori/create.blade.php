@@ -3,11 +3,11 @@
 @section('title', 'Tambah Kategori Pelanggaran')
 
 @section('content')
-    <div class="container mx-auto mt-10 mb-10 px-10">
+    <div class="container mx-auto">
         <div class="grid grid-cols-1 gap-4 p-5">
             <div class="col-span-1 mt-2">
-                <h1 class="text-3xl font-bold">
-                    TAMBAH KATEGORI BARU
+                <h1 class="text-2xl font-semibold">
+                    Tambah Kategori Baru
                 </h1>
             </div>
         </div>
@@ -18,7 +18,7 @@
                 <div class="mb-5">
                     <label for="nama_kategori" class="block mb-2 text-sm font-medium text-gray-700">Nama Kategori</label>
                     <input type="text" id="nama_kategori" name="nama_kategori"
-                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-600"
+                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
                         value="{{ old('nama_kategori') }}" required>
 
                     <!-- error message -->

@@ -3,11 +3,11 @@
 @section('title', 'Tambah Sanksi Pelanggaran')
 @section('content')
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-    <div class="container mx-auto mt-10 mb-10 px-10">
+    <div class="container mx-auto">
         <div class="grid grid-cols-1 gap-4 p-5">
             <div class="col-span-1 mt-2">
-                <h1 class="text-3xl font-bold">
-                    TAMBAH SANKSI BARU
+                <h1 class="text-2xl font-semibold">
+                    Tambah Sanksi Baru
                 </h1>
             </div>
         </div>
@@ -19,7 +19,7 @@
                     <!-- Dropdown Kategori -->
                     <label for="kategori_id" class="block mb-2 text-sm font-medium text-gray-700">Kategori Pelanggaran</label>
                     <select id="kategori_id" name="kategori_id"
-                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-600"
+                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
                         required>
                         <option value="">-- Pilih Kategori --</option>
                         @foreach ($kategori as $k)
@@ -36,23 +36,23 @@
                 <div class="mb-7">
                     <label for="bobot_min" class="block mb-2 text-sm font-medium text-gray-700">Jumlah Pelanggaran Minimum</label>
                     <input type="number" id="bobot_min" name="bobot_min" min="0"
-                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-600"
+                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
                         value="{{ old('bobot_min') }}">
 
                     <label for="bobot_max" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Jumlah Pelanggaran Maksimum</label>
                     <input type="number" id="bobot_max" name="bobot_max" min="0"
-                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-600"
+                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
                         value="{{ old('bobot_max') }}" required>
-
-                    <label for="nama_sanksi" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Nama Sanksi</label>
-                    <textarea id="nama_sanksi" name="nama_sanksi" rows="5"
-                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-600"
-                        required>{{ old('nama_sanksi') }}</textarea>
 
                     <label for="pembina" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Pembina</label>
                     <input type="text" id="pembina" name="pembina"
-                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-600"
+                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
                         value="{{ old('pembina') }}" required>
+
+                    <label for="nama_sanksi" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Pembinaan</label>
+                    <textarea id="nama_sanksi" name="nama_sanksi" rows="5"
+                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-600"
+                        required>{{ old('nama_sanksi') }}</textarea>
 
                     <label for="keputusan_tindakan" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Keputusan Tindakan</label>
                     <textarea id="keputusan_tindakan" name="keputusan_tindakan" rows="5"

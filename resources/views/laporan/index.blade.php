@@ -3,7 +3,7 @@
 @section('title', 'Laporan Siswa')
 
 @section('content')
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">Laporan Siswa Berdasarkan Kelas</h1>
+    <h1 class="text-2xl font-semibold text-gray-800 mb-4">Laporan Siswa Berdasarkan Kelas</h1>
 
     <form method="GET" action="{{ route('laporan.index') }}" class="mb-4">
         <select name="kelas_id" class="border rounded px-4 py-2">
@@ -25,7 +25,7 @@
     @if ($siswa->count())
         <table class="min-w-full bg-white border border-gray-200">
             <thead>
-                <tr class="bg-gray-100">
+                <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
                     <th class="py-2 px-4 border">No</th>
                     <th class="py-2 px-4 border">Kelas</th>
                     <th class="py-2 px-4 border">Nama Siswa</th>

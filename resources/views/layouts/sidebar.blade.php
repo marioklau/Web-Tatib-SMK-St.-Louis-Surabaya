@@ -43,7 +43,7 @@
                                       clip-rule="evenodd" />
                             </svg>
                         </button>
-                        <div class="space-y-1 pl-11" id="analytics-dropdown">
+                        <div class="space-y-1 pl-11 {{ request()->is('kategori*', 'jenis*', 'sanksi*') ? '' : 'hidden' }}" id="analytics-dropdown">
                             <a href="{{ route('kategori.index') }}"
                                class="group flex items-center px-4 py-2 text-sm rounded-md
                                       {{ request()->routeIs('kategori.index') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
@@ -87,7 +87,7 @@
                     <!-- Pelanggaran -->
                     <a href="{{ route('input-pelanggaran.index') }}"
                        class="flex items-center px-4 py-2.5 text-5lg font-medium rounded-lg
-                              {{ request()->is('input-pelanggaran*') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
+                              {{ request()->is('pelanggaran*') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
                         <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -97,11 +97,11 @@
 
                     <!-- Laporan -->
                     <a href="{{ route('laporan.index') }}"
-                    class="flex items-center px-4 py-2.5 text-5lg font-medium rounded-lg
-                            {{ request()->routeIs('laporan.index') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
+                       class="flex items-center px-4 py-2.5 text-5lg font-medium rounded-lg
+                              {{ request()->is('laporan*') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
                         <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         Laporan
                     </a>

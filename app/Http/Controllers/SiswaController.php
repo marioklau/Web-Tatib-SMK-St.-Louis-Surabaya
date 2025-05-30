@@ -71,7 +71,7 @@ class SiswaController extends Controller
 
    public function edit(Siswa $siswa) 
    {
-        $daftar_kelas = \App\Models\Kelas::all();
+        $daftar_kelas = Kelas::all();
         return view('siswa.edit', compact('siswa','daftar_kelas'));
    }
    

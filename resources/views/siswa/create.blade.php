@@ -7,7 +7,7 @@
 
 <div class="container mx-auto mt-5 mb-5 px-5">
     <div class="bg-white p-6 rounded-lg shadow-lg">
-        <h3 class="text-3xl font-bold mb-6">Import Data Siswa</h3>
+        <h3 class="text-2xl font-semibold mb-6">Import Data Siswa</h3>
 
         <!-- Form Import -->
         <form action="{{ route('siswa.import') }}" method="POST" enctype="multipart/form-data" class="flex flex-col md:flex-row items-center gap-4 mb-6">

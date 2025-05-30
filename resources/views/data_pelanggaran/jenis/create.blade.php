@@ -3,11 +3,11 @@
 @section('title', 'Tambah Bentuk Pelanggaran')
 
 @section('content')
-    <div class="container mx-auto mt-10 mb-10 px-10">
+    <div class="container mx-auto">
         <div class="grid grid-cols-1 gap-4 p-5">
             <div class="col-span-1 mt-2">
-                <h1 class="text-3xl font-bold">
-                    TAMBAH BENTUK PELANGGARAN BARU
+                <h1 class="text-2xl font-semibold">
+                    Tambah Bentuk Pelanggaran Baru
                 </h1>
             </div>
         </div>
@@ -19,7 +19,7 @@
             <!-- Dropdown Kategori -->
             <label for="kategori_id" class="block mb-2 text-sm font-medium text-gray-700">Kategori Pelanggaran</label>
             <select id="kategori_id" name="kategori_id"
-                class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-600"
+                class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
                 required>
                 <option value="">-- Pilih Kategori --</option>
                 @foreach ($kategori as $k)
@@ -37,7 +37,7 @@
             <!-- Input Bentuk Pelanggaran -->
             <label for="bentuk_pelanggaran" class="block mb-2 text-sm font-medium text-gray-700">Bentuk Pelanggaran</label>
             <input type="text" id="bentuk_pelanggaran" name="bentuk_pelanggaran"
-                class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-600"
+                class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
                 value="{{ old('bentuk_pelanggaran') }}" required>
 
             @error('bentuk_pelanggaran')

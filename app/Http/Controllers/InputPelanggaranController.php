@@ -68,7 +68,7 @@ class InputPelanggaranController extends Controller
         // Simpan ke DB
         // Pelanggaran::create($request->all());
 
-        \App\Models\Pelanggaran::create($request->only([
+        Pelanggaran::create($request->only([
             'siswa_id', 'kategori_id', 'jenis_id', 'sanksi_id'
         ]));
 
