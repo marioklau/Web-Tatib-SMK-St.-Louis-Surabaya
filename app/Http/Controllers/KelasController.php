@@ -22,12 +22,14 @@ class KelasController extends Controller
     {
         $request->validate([
             'kode_kelas' => 'required|unique:kelas,kode_kelas',
-            'nama_kelas' => 'required'
+            'nama_kelas' => 'required',
+            'wali_kelas' => 'required'
         ]);
 
         Kelas::create([
             'kode_kelas' => $request->kode_kelas,
-            'nama_kelas' => $request->nama_kelas
+            'nama_kelas' => $request->nama_kelas,
+            'wali_kelas' => $request->wali_kelas
         ]);
 
         return redirect()->route('kelas.index')
@@ -49,12 +51,14 @@ class KelasController extends Controller
    {
        $request->validate([
             'kode_kelas' => 'required|unique:kelas,kode_kelas,' . $kelas->id,
-            'nama_kelas' => 'required'
+            'nama_kelas' => 'required',
+            'wali_kelas' => 'required'
        ]);
    
        $kelas->update([
             'kode_kelas' => $request->kode_kelas,
-            'nama_kelas' => $request->nama_kelas
+            'nama_kelas' => $request->nama_kelas,
+            'wali_kelas' => $request->wali_kelas
        ]);
    
        return redirect()->route('kelas.index')

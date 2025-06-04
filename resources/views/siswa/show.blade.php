@@ -1,18 +1,9 @@
 @extends('layouts.main')
 
-@section('title', 'Detail Sanksi Pelanggaran')
+@section('title', 'Detail Siswa')
 
 @section('content')
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <div class="container mx-auto mt-10 mb-10 px-10">
-        <div class="grid grid-cols-8 gap-4 mb-4 p-5">
-            <div class="col-span-4 mt-2">
-                <h1 class="text-3xl font-bold">
-                    Detail sanksi Pelanggaran: {{ $sanksi->bobot_pelanggaran }}
-                </h1>
-            </div>
-        </div>
 
         <div class="bg-white p-5 rounded shadow-sm">
             <div class="relative overflow-x-auto">

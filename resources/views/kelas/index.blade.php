@@ -23,23 +23,25 @@
         <table class="w-full table-auto">
             <thead>
                 <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
-                    <th class="py-3 px-6 text-left">No</th>
-                    <th class="py-3 px-6 text-left">Kode Kelas</th>
-                    <th class="py-3 px-6 text-left">Nama Kelas</th>
-                    <th class="py-3 px-6 text-left">Siswa</th>
-                    <th class="py-3 px-6 text-center">Aksi</th>
+                    <th class="py-3 px-6 border text-left">No</th>
+                    <th class="py-3 px-6 border text-left">Kode Kelas</th>
+                    <th class="py-3 px-6 border text-left">Nama Kelas</th>
+                    <th class="py-3 px-6 border text-left">Wali Kelas</th>
+                    <th class="py-3 px-6 border text-left">Siswa</th>
+                    <th class="py-3 px-6 border text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody class="text-gray-900 text-sm font-light">
                 @forelse ($kelas as $class)
                     <tr class="border-b border-gray-300 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left">{{ $loop->iteration }}</td>
-                        <td class="py-3 px-6 text-left">{{ $class->kode_kelas }}</td>
-                        <td class="py-3 px-6 text-left">{{ $class->nama_kelas }}</td>
-                        <td class="py-3 px-6 text-left">
+                        <td class="py-3 px-6 border text-left">{{ $loop->iteration }}</td>
+                        <td class="py-3 px-6 border text-left">{{ $class->kode_kelas }}</td>
+                        <td class="py-3 px-6 border text-left">{{ $class->nama_kelas }}</td>
+                        <td class="py-3 px-6 border text-left">{{ $class->wali_kelas }}</td>
+                        <td class="py-3 px-6 border text-left">
                             {{ $class->siswa_count }}
                         </td>
-                        <td class="py-3 px-6 text-center">
+                        <td class="py-3 px-6 border text-center">
                             <div class="flex items-center justify-center gap-1">
                                 <!-- Tombol Detail -->
                                 <a href="{{ route('kelas.show', $class) }}" class="bg-green-600 text-white flex items-center gap-1 px-3 py-1 rounded-md hover:bg-green-400 transition duration-300 text-sm" title="Lihat Detail">
@@ -75,7 +77,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="py-3 px-6 text-center text-gray-500">Belum ada Kelas.</td>
+                        <td colspan="6" class="py-3 px-6 text-center text-gray-500">Belum ada Kelas.</td>
                     </tr>
                 @endforelse
             </tbody>

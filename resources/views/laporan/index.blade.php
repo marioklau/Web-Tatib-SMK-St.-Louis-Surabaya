@@ -3,7 +3,7 @@
 @section('title', 'Laporan Siswa')
 
 @section('content')
-    <h1 class="text-2xl font-semibold text-gray-800 mb-4">Laporan Siswa Berdasarkan Kelas</h1>
+    <h1 class="text-3xl font-semibold text-gray-800 mb-4">Laporan Pelanggaran Siswa</h1>
 
     <form method="GET" action="{{ route('laporan.index') }}" class="mb-4">
         <select name="kelas_id" class="border rounded px-4 py-2">

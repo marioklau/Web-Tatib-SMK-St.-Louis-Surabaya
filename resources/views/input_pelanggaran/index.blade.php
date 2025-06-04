@@ -20,25 +20,25 @@
         <table class="w-full table-auto">
             <thead class="bg-gray-300 text-gray-900">
                 <tr>
-                    <th class="p-3 text-left">Nama</th>
-                    <th class="p-3 text-left">Kelas</th>
-                    <th class="p-3 text-left">Kategori</th>
-                    <th class="p-3 text-left">Jenis</th>
-                    <th class="p-3 text-left">Sanksi</th>
-                    <th class="p-3 text-left">Waktu</th>
-                    <th class="p-3 text-left">Aksi</th>
+                    <th class="p-3 border text-center">Nama</th>
+                    <th class="p-3 border text-center">Kelas</th>
+                    <th class="p-3 border text-center">Kategori</th>
+                    <th class="p-3 border text-center">Jenis</th>
+                    <th class="p-3 border text-center">Sanksi</th>
+                    <th class="p-3 border text-center">Waktu</th>
+                    <th class="p-3 border text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($pelanggaran as $p)
                 <tr class="border-t">
-                    <td class="p-3">{{ $p->siswa->nama_siswa }}</td>
-                    <td class="p-3">{{ $p->siswa->kelas->nama_kelas ?? '-' }}</td>
-                    <td class="p-3">{{ $p->kategori->nama_kategori }}</td>
-                    <td class="p-3">{{ $p->jenis->bentuk_pelanggaran}}</td> 
-                    <td class="p-3">{{ $p->sanksi->nama_sanksi }}</td>
-                    <td class="p-3">{{ $p->created_at->format('d M Y H:i') }}</td>
-                    <td class="p-3">
+                    <td class="p-3 border">{{ $p->siswa->nama_siswa }}</td>
+                    <td class="p-3 border">{{ $p->siswa->kelas->nama_kelas ?? '-' }}</td>
+                    <td class="p-3 border">{{ $p->kategori->nama_kategori }}</td>
+                    <td class="p-3 border">{{ $p->jenis->bentuk_pelanggaran}}</td> 
+                    <td class="p-3 border">{{ $p->sanksi->nama_sanksi }}</td>
+                    <td class="p-3 border">{{ $p->created_at->format('d M Y H:i') }}</td>
+                    <td class="p-3 border">
                         <div class="flex items-center space-x-2">
                             <!-- Tombol Delete -->
                             <form action="{{ route('input-pelanggaran.destroy', $p) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus sanksi ini?');">

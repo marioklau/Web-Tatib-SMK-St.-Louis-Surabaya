@@ -27,6 +27,11 @@
                         class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
                         value="{{ old('nama_kelas') }}" required>
 
+                    <label for="wali_kelas" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Wali Kelas</label>
+                    <input type="text" id="wali_kelas" name="wali_kelas"
+                        class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
+                        value="{{ old('wali_kelas') }}" required>
+
                     <!-- error messages -->
                     @error('bobot_min')
                         <div class="bg-red-400 text-white p-2 rounded mt-2">{{ $message }}</div>
