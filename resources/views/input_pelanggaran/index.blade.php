@@ -41,7 +41,7 @@
                     <td class="p-3 border">
                         <div class="flex items-center space-x-2">
                             <!-- Tombol Delete -->
-                            <form action="{{ route('input-pelanggaran.destroy', $p) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus sanksi ini?');">
+                            <form action="{{ route('input-pelanggaran.destroy', $p) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pelanggaran ini?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="bg-red-600 text-white flex items-center gap-1 px-3 py-1 rounded-md hover:bg-red-400 transition duration-300 text-sm" title="Hapus">

@@ -58,19 +58,19 @@
     <!-- Chart 1: Pelanggaran per Bulan -->
     <div class="bg-white p-6 m-6 rounded-lg shadow">
         <h2 class="text-lg font-semibold text-gray-700 mb-4">Grafik Pelanggaran per Bulan</h2>
-        <canvas id="pelanggaranChart" width="400" height="200"></canvas>
+        <canvas id="pelanggaranChart" width="150" height="50"></canvas>
     </div>
 
     <!-- Chart 2: Top 10 Siswa -->
-    <div class="bg-white p-6 mt-6 rounded-lg shadow">
+    <div class="bg-white p-6 m-6 rounded-lg shadow">
         <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 10 Siswa Pelanggaran Terbanyak</h2>
-        <canvas id="topSiswaChart" width="400" height="200"></canvas>
+        <canvas id="topSiswaChart" width="150" height="50"></canvas>
     </div>
 
     <!-- Chart 3: Top 10 Kelas + Jurusan -->
-    <div class="bg-white p-6 mt-6 rounded-lg shadow">
+    <div class="bg-white p-6 m-6 rounded-lg shadow">
         <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 10 Kelas & Jurusan Pelanggaran Terbanyak</h2>
-        <canvas id="kelasChart" width="400" height="200"></canvas>
+        <canvas id="kelasChart" width="150" height="50"></canvas>
     </div>
 @endsection
 

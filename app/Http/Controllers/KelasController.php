@@ -62,7 +62,7 @@ class KelasController extends Controller
        ]);
    
        return redirect()->route('kelas.index')
-           ->with('success', 'Siswa Berhasil Diupdate.');
+           ->with('success', 'Kelas Berhasil Diupdate.');
    }
     public function destroy(Kelas $kelas)
     {
