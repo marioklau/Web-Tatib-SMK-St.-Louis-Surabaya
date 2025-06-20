@@ -20,6 +20,7 @@ class InputPelanggaranController extends Controller
         //
         $pelanggaran = Pelanggaran::with('siswa.kelas', 'kategori', 'jenis', 'sanksi')->latest()->get();
         $siswa = Siswa::with('kelas')->get();
+        $jenis = Jenis::all();
         $kategori = Kategori::with('jenis')->get(); // gunakan relasi eager loading
         $sanksi = Sanksi::all();
 
@@ -45,10 +46,12 @@ class InputPelanggaranController extends Controller
 
         // Hanya menampilkan form input, tidak butuh $request di sini
         $siswa = Siswa::with('kelas')->get();
-        $kategori = Kategori::with('jenis')->get();
+        // $jenis = Jenis::all();
+        $jenis = Jenis::with('kategori')->get();
+        // $kategori = Kategori::with('jenis')->get();
         $sanksi = Sanksi::all();
 
-        return view('input_pelanggaran.create', compact('siswa', 'kategori', 'sanksi'));
+        return view('input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
     }
 
     /**
@@ -60,7 +63,7 @@ class InputPelanggaranController extends Controller
         // Validasi inputan
         $request->validate([
             'siswa_id' => 'required|exists:siswa,id',
-            'kategori_id' => 'required|exists:kategori,id',
+            'kategori_id' => 'exists:kategori,id',
             'jenis_id' => 'required|exists:jenis,id',
             'sanksi_id' => 'required|exists:sanksi,id',
         ]);

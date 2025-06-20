@@ -12,6 +12,7 @@
             </div>
         </div>
         <div class="bg-white p-5 rounded shadow-sm">
+            <form action="{{ route('kategori.store') }}" method="POST">
                  @csrf
 
                 <div class="mb-5">
