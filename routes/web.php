@@ -43,4 +43,7 @@ Route::post('/siswa-import', [SiswaController::class, 'import'])->name('siswa.im
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');
 
+// route change status pelanggaran
+Route::patch('/input-pelanggaran/{id}/status', [InputPelanggaranController::class, 'updateStatus'])->name('input-pelanggaran.update-status');
+
 

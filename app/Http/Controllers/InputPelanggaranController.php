@@ -83,7 +83,8 @@ class InputPelanggaranController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $pelanggaran = Pelanggaran::with('siswa.kelas', 'kategori', 'jenis', 'sanksi')->findOrFail($id);
+        return view('input_pelanggaran.show', compact('pelanggaran'));
     }
 
     /**
@@ -116,5 +117,19 @@ class InputPelanggaranController extends Controller
 
         return redirect()->route('input-pelanggaran.index')
                 ->with('success', 'Data pelanggaran berhasil dihapus.');
+    }
+
+    // func untuk update status
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:Done,Not Done',
+        ]);
+
+        $pelanggaran = Pelanggaran::findOrFail($id);
+        $pelanggaran->status = $request->status;
+        $pelanggaran->save();
+
+        return redirect()->back()->with('success', 'Status pelanggaran berhasil diperbarui.');
     }
 }

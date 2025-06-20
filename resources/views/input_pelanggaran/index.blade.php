@@ -26,10 +26,11 @@
                 <tr>
                     <th class="py-1 px-2 border text-left">Nama</th>
                     <th class="py-1 px-2 border text-left">Kelas</th>
-                    <th class="py-1 px-2 border text-left">Kategori</th>
+                    {{-- <th class="py-1 px-2 border text-left">Kategori</th> --}}
                     <th class="py-1 px-2 border text-left">Jenis</th>
                     <th class="py-1 px-2 border text-left">Sanksi</th>
-                    <th class="py-1 px-2 border text-left">Waktu</th>
+                    {{-- <th class="py-1 px-2 border text-left">Waktu</th> --}}
+                    <th class="py-1 px-2 border text-left">Status</th>
                     <th class="py-1 px-2 border text-center">Aksi</th>
                 </tr>
             </thead>
@@ -38,23 +39,41 @@
                 <tr class="border-b border-gray-300 hover:bg-gray-100">
                     <td class="py-1 px-2 border">{{ $p->siswa->nama_siswa }}</td>
                     <td class="py-1 px-2 border">{{ $p->siswa->kelas->nama_kelas ?? '-' }}</td>
-                    <td class="py-1 px-2 border">{{ $p->kategori->nama_kategori }}</td>
+                    {{-- <td class="py-1 px-2 border">{{ $p->kategori->nama_kategori }}</td> --}}
                     <td class="py-1 px-2 border">{{ $p->jenis->bentuk_pelanggaran}}</td> 
                     <td class="py-1 px-2 border">{{ $p->sanksi->nama_sanksi }}</td>
-                    <td class="py-1 px-2 border">{{ $p->created_at->format('d M Y H:i') }}</td>
+                    {{-- <td class="py-1 px-2 border">{{ $p->created_at->format('d M Y H:i') }}</td> --}}
+                    <td class="py-1 px-2 border">
+                        {{ $p->status ?? 'Not Done' }}
+                    </td>
                     <td class="py-1 px-2 border">
                         <div class="flex items-center space-x-2">
+                            <!-- Tombol Toggle Status -->
+                            <form action="{{ route('input-pelanggaran.update-status', $p->id) }}" method="POST" onsubmit="return confirm('Ubah status pelanggaran ini?');">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="status" value="{{ $p->status === 'Done' ? 'Not Done' : 'Done' }}">
+                                <button type="submit" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-yellow-600 text-sm" title="Ubah Status">
+                                    Ubah Status
+                                </button>
+                            </form>
+                            <!-- Tombol Detail -->
+                            <a href="{{ route('input-pelanggaran.show', $p->id) }}">
+                                <button class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm" title="Detail">
+                                    Detail
+                                </button>
+                            </a>
                             <!-- Tombol Delete -->
                             <form action="{{ route('input-pelanggaran.destroy', $p) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pelanggaran ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="bg-red-600 text-white flex items-center gap-1 px-3 py-1 rounded-md hover:bg-red-400 transition duration-300 text-sm" title="Hapus">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </form>
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-600 text-white flex items-center gap-1 px-3 py-1 rounded-md hover:bg-red-400 transition duration-300 text-sm" title="Hapus">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>
