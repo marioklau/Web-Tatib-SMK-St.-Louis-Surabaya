@@ -45,6 +45,24 @@
                 @enderror
             </div>
 
+            <div class="mb-5">
+                <label for="wali_kelas" class="block mb-2 font-semibold text-gray-700">
+                    Wali Kelas
+                </label>
+                <input 
+                    type="text" 
+                    id="wali_kelas" 
+                    name="wali_kelas" 
+                    value="{{ old('wali_kelas', $kelas->wali_kelas) }}" 
+                    required
+                    class="block w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                @error('wali_kelas')
+                    <p class="text-red-600 mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+
             <div class="flex space-x-4 mt-6">
                 <button 
                     type="submit" 

@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="px-4 sm:px-8 mt-4">
+<div class="px-4 sm:px-8">
     <h1 class="text-3xl font-semibold text-gray-800 mb-4">Selamat Datang Bapa/Ibu...</h1>
 
     <!-- Konten Card -->

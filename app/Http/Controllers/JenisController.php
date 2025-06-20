@@ -20,7 +20,8 @@ class JenisController extends Controller
             $query->where('kategori_id', $filterKategori);
         }
 
-        $jenis = $query->get();
+
+        $jenis = $query->paginate(10);
 
         return view('data_pelanggaran.jenis.index', compact('jenis', 'kategori', 'filterKategori'));
     }

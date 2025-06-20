@@ -5,11 +5,11 @@
 @section('content')
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <div class="container mx-auto mt-10 mb-10 px-10">
-        <div class="grid grid-cols-8 gap-4 mb-4 p-5">
-            <div class="col-span-4 mt-2">
-                <h1 class="text-3xl font-bold">
-                    Detail sanksi Pelanggaran: {{ $sanksi->bobot_pelanggaran }}
+    <div class="container mx-auto">
+        <div class="grid grid-cols-8 mb-2">
+            <div class="col-span-4">
+                <h1 class="text-2xl font-semibold">
+                    Detail sanksi Pelanggaran {{ $sanksi->bobot_pelanggaran }}
                 </h1>
             </div>
         </div>
@@ -61,7 +61,7 @@
 
         <div class="mt-5 flex space-x-3">
             <a href="{{ route('sanksi.index') }}"
-               class="px-6 py-2.5 bg-gray-200 text-gray-700 font-medium text-xs uppercase rounded-full hover:bg-gray-300 transition">
+               class="px-6 py-2.5 bg-gray-200 font-medium text-xs uppercase hover:bg-gray-300 transition">
                 Kembali
             </a>
         </div>

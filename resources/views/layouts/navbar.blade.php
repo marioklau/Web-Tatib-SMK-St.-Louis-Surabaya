@@ -11,8 +11,9 @@
             <div class="flex justify-between h-16 items-center">
                 <!-- Bagian kiri navbar -->
                 <div class="flex items-center gap-4">
-                    <span class="flex items-center gap-1 text-green-600 text-sm font-semibold">
-                        <span class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span> Online
+                    <span class="flex items-center gap-1 text-sm font-semibold">
+                        <span class="h-2 w-2 rounded-full"></span>
+                        {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
                     </span>
                 </div>
 

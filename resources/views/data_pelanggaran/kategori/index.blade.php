@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container mx-auto">
-    <h1 class="text-3xl font-semibold text-start mb-8">Kategori Pelanggaran</h1>
+    <h1 class="text-2xl font-semibold text-start mb-2">Kategori Pelanggaran</h1>
 
     <!-- Tombol Tambah Kategori -->
     <div class="flex flex-col md:flex-row justify-end items-center mb-6">
@@ -23,22 +23,22 @@
         <table class="w-full table-auto">
             <thead>
                 <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
-                    <th class="py-3 px-6 border text-left">No</th>
-                    <th class="py-3 px-6 border text-left">Kategori Pelanggaran</th>
-                    <th class="py-3 px-6 border text-left">Jumlah</th>
-                    <th class="py-3 px-6 border text-center">Aksi</th>
+                    <th class="py-1 px-2 border text-center">No</th>
+                    <th class="py-1 px-2 border text-left">Kategori Pelanggaran</th>
+                    <th class="py-1 px-2 border text-center">Jumlah</th>
+                    <th class="py-1 px-2 border text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-gray-900 text-sm font-light">
+            <tbody class="text-sm">
                 @forelse ($kategori as $category)
                     <tr class="border-b border-gray-300 hover:bg-gray-100">
-                        <td class="py-3 px-6 border text-left">{{ $loop->iteration }}</td>
-                        <td class="py-3 px-6 border text-left">{{ $category->nama_kategori }}</td>
-                        <td class="py-3 px-6 border text-left">
+                        <td class="py-1 px-2 border text-center">{{ $loop->iteration }}</td>
+                        <td class="py-1 px-2 border text-left">{{ $category->nama_kategori }}</td>
+                        <td class="py-1 px-2 border text-center">
                             {{-- Ganti ini jika Anda memiliki data jumlah pelanggaran --}}
                             {{ $category-> jenis_count }}
                         </td>
-                        <td class="py-3 px-6 text-center">
+                        <td class="py-1 px-2 text-center">
                             <div class="flex items-center justify-center space-x-2">
                                 <!-- Tombol Edit -->
                                 <a href="{{ route('kategori.edit', $category) }}" class="bg-blue-600 text-white flex items-center gap-1 px-3 py-1 rounded-md hover:bg-blue-400 transition duration-300 text-sm" title="Edit">

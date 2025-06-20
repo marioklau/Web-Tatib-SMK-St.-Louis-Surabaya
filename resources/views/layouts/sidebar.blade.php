@@ -6,11 +6,11 @@
         <aside class="w-64 bg-blue-800 text-white">
             <div class="p-4 border-b border-gray-800">
                 <div class="flex items-center gap-1">
-                    <img src="{{ asset('images/logosmk.png') }}" alt="Logo" class="h-20 w-25">
-                    <span class="text-3xl font-bold ml-1">Tata Tertib</span>
+                    <img src="{{ asset('images/logosmk.png') }}" alt="Logo" class="h-10 w-15">
+                    <span class="text-2xl font-bold ml-1">Tata Tertib</span>
                 </div>
             </div>
-            <nav class="mt-5 px-2">
+            <nav class="mt-3 px-2">
                 <!-- Main Navigation -->
                 <div class="space-y-4">
                     <!-- Dashboard -->
@@ -61,6 +61,16 @@
                             </a>
                         </div>
                     </div>
+                    <!-- Data Tahun Ajaran -->
+                    <a href="{{ route('tahun-ajaran.index') }}"
+                       class="flex items-center px-4 py-2.5 text-5lg font-medium rounded-lg
+                              {{ request()->is('tahun-ajaran*') ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white' }}">
+                        <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                        </svg>
+                        Tahun Ajaran
+                    </a>
 
                     <!-- Data Kelas -->
                     <a href="{{ route('kelas.index') }}"
