@@ -14,7 +14,7 @@ class LaporanController extends Controller
         $selectedKelas = $request->get('kelas_id');
 
         $siswa = Siswa::with('kelas')
-            ->withCount('pelanggaran')
+            ->withCount('pelanggaran') // tambahin ini buat nampilkan count pelanggaran
             ->when($selectedKelas, function ($query, $kelas_id) {
                 return $query->where('kelas_id', $kelas_id);
             })
