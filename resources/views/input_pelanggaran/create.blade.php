@@ -85,7 +85,7 @@
         </div>
         <div class="mt-4 flex gap-2">
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
-            <button type="button" onclick="history.back()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Kembali</button>
+            <button type="button" onclick="history.back()" class="inline-block px-6 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">Kembali</button>
         </div>
     </form>
 </div>

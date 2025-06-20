@@ -12,8 +12,7 @@
             </div>
         </div>
         <div class="bg-white p-5 rounded shadow-sm">
-            <form action="{{ route('kategori.store') }}" method="POST">
-                @csrf
+                 @csrf
 
                 <div class="mb-5">
                     <label for="nama_kategori" class="block mb-2 text-sm font-medium text-gray-700">Nama Kategori</label>

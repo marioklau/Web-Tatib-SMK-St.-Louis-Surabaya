@@ -3,8 +3,8 @@
 @section('title', 'Kategori Pelanggaran')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-start mb-8">Kategori Pelanggaran</h1>
+<div class="container mx-auto">
+    <h1 class="text-2xl font-semibold text-start mb-2">Kategori Pelanggaran</h1>
 
     <!-- Tombol Tambah Kategori -->
     <div class="flex flex-col md:flex-row justify-end items-center mb-6">
@@ -22,23 +22,23 @@
     <div class="overflow-x-auto bg-white rounded-lg shadow">
         <table class="w-full table-auto">
             <thead>
-                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                    <th class="py-3 px-6 text-left">No</th>
-                    <th class="py-3 px-6 text-left">Kategori Pelanggaran</th>
-                    <th class="py-3 px-6 text-left">Jumlah</th>
-                    <th class="py-3 px-6 text-center">Aksi</th>
+                <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
+                    <th class="py-1 px-2 border text-center">No</th>
+                    <th class="py-1 px-2 border text-left">Kategori Pelanggaran</th>
+                    <th class="py-1 px-2 border text-center">Jumlah</th>
+                    <th class="py-1 px-2 border text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-gray-700 text-sm font-light">
+            <tbody class="text-sm">
                 @forelse ($kategori as $category)
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left">{{ $loop->iteration }}</td>
-                        <td class="py-3 px-6 text-left">{{ $category->nama_kategori }}</td>
-                        <td class="py-3 px-6 text-left">
+                    <tr class="border-b border-gray-300 hover:bg-gray-100">
+                        <td class="py-1 px-2 border text-center">{{ $loop->iteration }}</td>
+                        <td class="py-1 px-2 border text-left">{{ $category->nama_kategori }}</td>
+                        <td class="py-1 px-2 border text-center">
                             {{-- Ganti ini jika Anda memiliki data jumlah pelanggaran --}}
                             {{ $category->  ?? '-' }}
                         </td>
-                        <td class="py-3 px-6 text-center">
+                        <td class="py-1 px-2 text-center">
                             <div class="flex items-center justify-center space-x-2">
                                 <!-- Tombol Edit -->
                                 <a href="{{ route('kategori.edit', $category) }}" class="text-blue-600 hover:text-blue-800 transform hover:scale-110">

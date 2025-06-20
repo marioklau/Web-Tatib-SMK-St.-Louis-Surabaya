@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TahunAjaranController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -31,6 +32,8 @@ Route::resource('sanksi', SanksiController::class)-> middleware('auth');
 Route::resource('siswa', SiswaController::class)-> middleware('auth');
 Route::resource('kelas', KelasController::class)-> middleware('auth')->parameters(['kelas' => 'kelas']);
 Route::resource('input-pelanggaran', InputPelanggaranController::class)-> middleware('auth');
+Route::resource('tahun-ajaran', TahunAjaranController::class)-> middleware('auth');
+
 // import excel list siswa 
 Route::get('/siswa-import', [SiswaController::class, 'import'])->middleware('auth');
 Route::post('/siswa-import', [SiswaController::class, 'import'])->name('siswa.import')->middleware('auth');

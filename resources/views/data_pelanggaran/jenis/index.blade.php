@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container mx-auto">
-    <h1 class="text-3xl font-semibold text-start mb-8">Jenis Pelanggaran</h1>
+    <h1 class="text-2xl font-semibold text-start mb-6">Jenis Pelanggaran</h1>
 
     <!-- Dropdown dan Tombol Tambah Kategori -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -46,17 +46,17 @@
         <table class="w-full table-auto">
             <thead>
                 <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
-                    <th class="py-3 px-6 border text-left">No</th>
-                    <th class="py-3 px-6 border text-left">Bentuk Pelanggaran</th>
-                    <th class="py-3 px-6 border text-center">Aksi</th>
+                    <th class="py-1 px-2 border text-center">No</th>
+                    <th class="py-1 px-2 border text-left">Bentuk Pelanggaran</th>
+                    <th class="py-1 px-2 border text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-gray-900 text-sm font-light">
+            <tbody class="text-sm">
                 @forelse ($jenis as $type)
                     <tr class="border-b border-gray-300 hover:bg-gray-100">
-                        <td class="py-3 px-6 border text-left">{{ $loop->iteration }}</td>
-                        <td class="py-3 px-6 border text-left">{{ $type->bentuk_pelanggaran }}</td>
-                        <td class="py-3 px-6 border text-center">
+                    <td class="py-1 px-2 border text-center">{{ $loop->iteration + ($jenis->currentPage() - 1) * $jenis->perPage() }}</td>
+                        <td class="py-1 px-2 border text-left">{{ $type->bentuk_pelanggaran }}</td>
+                        <td class="py-1 px-2 border text-center">
                             <div class="flex items-center justify-center space-x-2">
                                 <!-- Tombol Edit -->
                                 <a href="{{ route('jenis.edit', $type) }}" class="bg-blue-600 text-white flex items-center gap-1 px-3 py-1 rounded-md hover:bg-blue-400 transition duration-300 text-sm" title="Edit">
@@ -88,6 +88,20 @@
                 @endforelse
             </tbody>
         </table>
+
+        <!-- Info jumlah data & pagination -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between p-4 text-sm">
+            <div>
+                Menampilkan <span class="font-bold">{{ $jenis->firstItem() }}</span> sampai 
+                <span class="font-bold">{{ $jenis->lastItem() }}</span> dari total 
+                <span class="font-bold">{{ $jenis->total() }}</span> 
+            </div>
+
+            <div class="mt-2 md:mt-0">
+            {{ $jenis->withQueryString()->links('pagination::simple-tailwind') }}
+            </div>
+        </div>
+
     </div>
 </div>
 

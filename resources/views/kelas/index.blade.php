@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="container mx-aut0">
-    <h1 class="text-3xl font-semibold text-start mb-8">Data Kelas</h1>
+    <h1 class="text-2xl font-semibold text-start mb-8">Data Kelas</h1>
     
     <div class="flex flex-col md:flex-row justify-end items-center mb-6">
         <!-- Tombol Tambah -->
         <a href="{{ route('kelas.create') }}">
-            <button type="button" class="flex items-center bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300">
+            <button type="button" class="flex items-center bg-green-600 text-white px-2 py-2 rounded-md hover:bg-green-700 transition duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
                     <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
                 </svg>
@@ -19,29 +19,29 @@
     </div>
 
     <!-- Tabel Kategori -->
-    <div class="overflow-x-auto bg-white rounded-lg shadow">
+    <div class="overflow-x-auto bg-white shadow">
         <table class="w-full table-auto">
             <thead>
                 <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
-                    <th class="py-3 px-6 border text-left">No</th>
-                    <th class="py-3 px-6 border text-left">Kode Kelas</th>
-                    <th class="py-3 px-6 border text-left">Nama Kelas</th>
-                    <th class="py-3 px-6 border text-left">Wali Kelas</th>
-                    <th class="py-3 px-6 border text-left">Siswa</th>
-                    <th class="py-3 px-6 border text-center">Aksi</th>
+                    <th class="py-1 px-2 border text-center">No</th>
+                    <th class="py-1 px-2 border text-left">Kode Kelas</th>
+                    <th class="py-1 px-2 border text-left">Nama Kelas</th>
+                    <th class="py-1 px-2 border text-left">Wali Kelas</th>
+                    <th class="py-1 px-2 border text-center">Siswa</th>
+                    <th class="py-1 px-2 border text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-gray-900 text-sm font-light">
+            <tbody class="text-sm">
                 @forelse ($kelas as $class)
                     <tr class="border-b border-gray-300 hover:bg-gray-100">
-                        <td class="py-3 px-6 border text-left">{{ $loop->iteration }}</td>
-                        <td class="py-3 px-6 border text-left">{{ $class->kode_kelas }}</td>
-                        <td class="py-3 px-6 border text-left">{{ $class->nama_kelas }}</td>
-                        <td class="py-3 px-6 border text-left">{{ $class->wali_kelas }}</td>
-                        <td class="py-3 px-6 border text-left">
+                        <td class="py-1 px-2 border text-center">{{ $loop->iteration }}</td>
+                        <td class="py-1 px-2 border text-left">{{ $class->kode_kelas }}</td>
+                        <td class="py-1 px-2 border text-left">{{ $class->nama_kelas }}</td>
+                        <td class="py-1 px-2 border text-left">{{ $class->wali_kelas }}</td>
+                        <td class="py-1 px-2 border text-center">
                             {{ $class->siswa_count }}
                         </td>
-                        <td class="py-3 px-6 border text-center">
+                        <td class="py-1 px-2 border text-center">
                             <div class="flex items-center justify-center gap-1">
                                 <!-- Tombol Detail -->
                                 <a href="{{ route('kelas.show', $class) }}" class="bg-green-600 text-white flex items-center gap-1 px-3 py-1 rounded-md hover:bg-green-400 transition duration-300 text-sm" title="Lihat Detail">

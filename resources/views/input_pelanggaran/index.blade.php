@@ -4,41 +4,45 @@
 
 @section('content')
 <div class="container mx-auto">
-    <h1 class="text-3xl font-semibold mb-8">Input Pelanggaran</h1>
+    <h1 class="text-2xl font-semibold mb-8">Input Pelanggaran</h1>
 
     <!-- Tombol Input -->
-    <div class="flex justify-end mb-4">
+    <div class="flex flex-col md:flex-row justify-end items-center mb-6">
         <a href="{{ route('input-pelanggaran.create') }}">
-        <button onclick="document.getElementById('form-section').scrollIntoView();" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            + Input Pelanggaran
-        </button>
+            <button type="button" class="flex items-center bg-green-600 text-white px-2 py-2 rounded-md hover:bg-green-700 transition duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+                    <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
+                </svg>
+                Tambah Pelanggaran
+            </button>
+        </a>
     </div>
 
     <!-- Tabel Pelanggaran -->
-    <h2 class="text-xl font-semibold mb-4">Riwayat Pelanggaran</h2>
-    <div class="overflow-x-auto bg-white rounded shadow">
+    <h2 class="text-xl font-semibold mb-2">Riwayat Pelanggaran</h2>
+    <div class="min-w-full bg-white border border-gray-200">
         <table class="w-full table-auto">
             <thead class="bg-gray-300 text-gray-900">
                 <tr>
-                    <th class="p-3 border text-center">Nama</th>
-                    <th class="p-3 border text-center">Kelas</th>
-                    <th class="p-3 border text-center">Kategori</th>
-                    <th class="p-3 border text-center">Jenis</th>
-                    <th class="p-3 border text-center">Sanksi</th>
-                    <th class="p-3 border text-center">Waktu</th>
-                    <th class="p-3 border text-center">Aksi</th>
+                    <th class="py-1 px-2 border text-left">Nama</th>
+                    <th class="py-1 px-2 border text-left">Kelas</th>
+                    <th class="py-1 px-2 border text-left">Kategori</th>
+                    <th class="py-1 px-2 border text-left">Jenis</th>
+                    <th class="py-1 px-2 border text-left">Sanksi</th>
+                    <th class="py-1 px-2 border text-left">Waktu</th>
+                    <th class="py-1 px-2 border text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="text-sm">
                 @forelse($pelanggaran as $p)
-                <tr class="border-t">
-                    <td class="p-3 border">{{ $p->siswa->nama_siswa }}</td>
-                    <td class="p-3 border">{{ $p->siswa->kelas->nama_kelas ?? '-' }}</td>
-                    <td class="p-3 border">{{ $p->kategori->nama_kategori }}</td>
-                    <td class="p-3 border">{{ $p->jenis->bentuk_pelanggaran}}</td> 
-                    <td class="p-3 border">{{ $p->sanksi->nama_sanksi }}</td>
-                    <td class="p-3 border">{{ $p->created_at->format('d M Y H:i') }}</td>
-                    <td class="p-3 border">
+                <tr class="border-b border-gray-300 hover:bg-gray-100">
+                    <td class="py-1 px-2 border">{{ $p->siswa->nama_siswa }}</td>
+                    <td class="py-1 px-2 border">{{ $p->siswa->kelas->nama_kelas ?? '-' }}</td>
+                    <td class="py-1 px-2 border">{{ $p->kategori->nama_kategori }}</td>
+                    <td class="py-1 px-2 border">{{ $p->jenis->bentuk_pelanggaran}}</td> 
+                    <td class="py-1 px-2 border">{{ $p->sanksi->nama_sanksi }}</td>
+                    <td class="py-1 px-2 border">{{ $p->created_at->format('d M Y H:i') }}</td>
+                    <td class="py-1 px-2 border">
                         <div class="flex items-center space-x-2">
                             <!-- Tombol Delete -->
                             <form action="{{ route('input-pelanggaran.destroy', $p) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pelanggaran ini?');">

@@ -4,9 +4,9 @@
 @section('content')
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <div class="container mx-auto">
-        <div class="grid grid-cols-1 gap-4 p-5">
-            <div class="col-span-1 mt-2">
-                <h1 class="text-2xl font-semibold">
+        <div class="grid grid-cols-1">
+            <div class="col-span-1">
+                <h1 class="text-2xl font-semibold mb-2">
                     Tambah Sanksi Baru
                 </h1>
             </div>
@@ -70,11 +70,11 @@
 
                 <div class="mt-3">
                     <button type="submit"
-                        class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-sm uppercase rounded-full shadow-md hover:bg-blue-700 transition duration-150 ease-in-out">
+                        class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-sm uppercase shadow-md hover:bg-blue-700 transition duration-150 ease-in-out">
                         Simpan
                     </button>
                     <a href="{{ route('sanksi.index') }}"
-                        class="inline-block px-6 py-2.5 bg-gray-200 text-gray-700 font-medium text-sm uppercase rounded-full shadow-md hover:bg-gray-300 transition duration-150 ease-in-out">
+                        class="inline-block px-6 py-2.5 bg-gray-200 text-gray-700 font-medium text-sm uppercase shadow-md hover:bg-gray-300 transition duration-150 ease-in-out">
                         Kembali
                     </a>
                 </div>
