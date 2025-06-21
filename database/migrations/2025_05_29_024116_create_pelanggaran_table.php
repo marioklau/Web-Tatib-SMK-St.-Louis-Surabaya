@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('kategori_id')->constrained('kategori');
             $table->foreignId('jenis_id')->constrained('jenis');
             $table->foreignId('sanksi_id')->constrained('sanksi');
+            $table->foreignId('status')->default(0);
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

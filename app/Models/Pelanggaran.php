@@ -12,7 +12,8 @@ class Pelanggaran extends Model
         'siswa_id', 
         'kategori_id', 
         'jenis_id', 
-        'sanksi_id', 
+        'sanksi_id',
+        'status', 
         'keterangan'
     ];
 
