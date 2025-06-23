@@ -8,6 +8,7 @@ use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\Tahun;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class SiswaController extends Controller
 {
@@ -15,8 +16,12 @@ class SiswaController extends Controller
     {
         $tahunAktif = Tahun::where('status', 'aktif')->first();
         if (!$tahunAktif) {
-            return view('siswa.index')->with('error', 'Tidak ada tahun ajaran aktif.');
-        }
+            $kelasList = collect();
+            $siswa = new LengthAwarePaginator([], 0, 10); // total = 0, perPage = 10
+        
+            return view('siswa.index', compact('kelasList', 'siswa'))
+                ->with('error', 'Tidak ada tahun ajaran aktif.');
+        }              
 
         $kelasId = $request->input('kelas_id');
 

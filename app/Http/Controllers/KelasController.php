@@ -12,7 +12,9 @@ class KelasController extends Controller
     {
         $tahunAktif = Tahun::where('status', 'aktif')->first();
         if (!$tahunAktif) {
-            return view('kelas.index')->with('error', 'Tidak ada tahun ajaran aktif.');
+            $kelas = collect(); // supaya tidak error di view saat foreach
+            return view('kelas.index', compact('kelas'))
+                ->with('error', 'Tidak ada tahun ajaran aktif.');
         }
 
         $kelas = Kelas::withCount('siswa')
@@ -22,6 +24,7 @@ class KelasController extends Controller
 
         return view('kelas.index', compact('kelas'));
     }
+
 
     public function create()
     {
@@ -88,5 +91,3 @@ class KelasController extends Controller
             ->with('success', 'Kelas Berhasil Dihapus');
     }
 }
-
-
