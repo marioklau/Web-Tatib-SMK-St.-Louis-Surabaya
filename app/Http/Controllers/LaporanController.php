@@ -16,15 +16,13 @@ class LaporanController extends Controller
         $kelasList = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
         $selectedKelas = $request->get('kelas_id');
 
-        $siswa = Siswa::with('kelas')
-            ->withCount('pelanggaran')
-            ->whereHas('kelas', function ($query) use ($tahunAktif) {
-                $query->where('tahun_ajaran_id', $tahunAktif->id);
-            })
-            ->when($selectedKelas, function ($query, $kelas_id) {
-                return $query->where('kelas_id', $kelas_id);
-            })
-            ->get();
+        $siswa = Siswa::with(['kelas', 'pelanggaran.kategori'])
+        ->withCount('pelanggaran')
+        ->when($selectedKelas, function ($query, $kelas_id) {
+            return $query->where('kelas_id', $kelas_id);
+        })
+        ->whereHas('pelanggaran')
+        ->get();
 
         return view('laporan.index', compact('siswa', 'kelasList', 'selectedKelas'));
     }

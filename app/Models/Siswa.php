@@ -14,6 +14,7 @@ class Siswa extends Model
         'kelas',
         'nama_siswa',
         'jenis_kelamin',
+        'nis',
         'kelas_id',
         'tahun_ajaran_id'
     ];

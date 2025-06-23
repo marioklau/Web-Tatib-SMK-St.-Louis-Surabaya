@@ -31,6 +31,25 @@ class SiswaController extends Controller
             $query->where('tahun_ajaran_id', $tahunAktif->id);
         });
 
+        $query = Siswa::with('kelas') // penting: relasi kelas
+        ->withCount([
+            'pelanggaran as ringan_count' => function ($query) {
+                $query->whereHas('kategori', function ($q) {
+                    $q->where('nama_kategori', 'RINGAN');
+                });
+            },
+            'pelanggaran as berat_count' => function ($query) {
+                $query->whereHas('kategori', function ($q) {
+                    $q->where('nama_kategori', 'BERAT');
+                });
+            },
+            'pelanggaran as sangat_berat_count' => function ($query) {
+                $query->whereHas('kategori', function ($q) {
+                    $q->where('nama_kategori', 'SANGAT BERAT');
+                });
+            },
+        ]);
+
         if ($kelasId) {
             $query->where('kelas_id', $kelasId);
         }
@@ -64,6 +83,7 @@ class SiswaController extends Controller
         $request->validate([
             'kelas_id' => 'required|exists:kelas,id',
             'nama_siswa' => 'required',
+            'nis' => 'required|unique:siswa,nis',
             'jenis_kelamin' => 'required',
         ]);
 
@@ -102,6 +122,7 @@ class SiswaController extends Controller
         $siswa->update([
             'kelas_id' => $request->kelas_id,
             'nama_siswa' => $request->nama_siswa,
+            'nis' => 'required|unique:siswa,nis,' . $siswa->id,
             'jenis_kelamin' => $request->jenis_kelamin,
         ]);
 

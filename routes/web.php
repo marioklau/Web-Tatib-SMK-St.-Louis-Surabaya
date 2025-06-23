@@ -48,3 +48,6 @@ Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('lapor
 // route change status pelanggaran
 // Changed {id} to {pelanggaran} for implicit Route Model Binding
 Route::patch('/input-pelanggaran/{pelanggaran}/status', [InputPelanggaranController::class, 'updateStatus'])->name('input-pelanggaran.update-status');
+
+//tahun ajaran post
+Route::post('/tahun-ajaran', [TahunAjaranController::class, 'store'])->name('tahun-ajaran.store');

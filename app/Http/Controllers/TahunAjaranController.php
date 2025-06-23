@@ -21,33 +21,18 @@ class TahunAjaranController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'siswa_id' => 'required|exists:siswa,id',
-            'kategori_id' => 'required|exists:kategori,id',
-            'jenis_id' => 'required|exists:jenis,id',
-            'sanksi_id' => 'required|exists:sanksi,id',
-            'keterangan' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'tahun_ajaran' => 'required|string|max:20',
+    ]);
 
-        $tahunAktif = Tahun::where('status', 'aktif')->first();
-
-        if (!$tahunAktif) {
-            return back()->with('error', 'Tahun ajaran aktif belum diatur.');
-        }
-
-        Pelanggaran::create([
-            'siswa_id' => $request->siswa_id,
-            'kategori_id' => $request->kategori_id,
-            'jenis_id' => $request->jenis_id,
-            'sanksi_id' => $request->sanksi_id,
-            'tahun_ajaran_id' => $tahunAktif->id, // wajib isi ini
-            'keterangan' => $request->keterangan,
-            'status' => 'Belum',
-        ]);
-
-        return redirect()->route('input-pelanggaran.index')->with('success', 'Pelanggaran berhasil ditambahkan.');
-    }
+    Tahun::create([
+        'tahun_ajaran' => $request->tahun_ajaran,
+        'status' => 'nonaktif', // default langsung di-set
+    ]);
+    
+    return redirect()->route('tahun-ajaran.index')->with('success', 'Tahun ajaran berhasil ditambahkan.');
+}
 
      public function aktifkan($id)
     {

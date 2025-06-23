@@ -32,28 +32,37 @@ class KelasController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'kode_kelas' => 'required|unique:kelas,kode_kelas',
-            'nama_kelas' => 'required',
-            'wali_kelas' => 'required'
-        ]);
-
-        $tahunAktif = Tahun::where('status', 'aktif')->first();
-        if (!$tahunAktif) {
-            return back()->with('error', 'Tidak ada tahun ajaran aktif.');
-        }
-
-        Kelas::create([
-            'kode_kelas' => $request->kode_kelas,
-            'nama_kelas' => $request->nama_kelas,
-            'wali_kelas' => $request->wali_kelas,
-            'tahun_ajaran_id' => $tahunAktif->id
-        ]);
-
-        return redirect()->route('kelas.index')
-            ->with('success', 'Kelas Berhasil Ditambahkan.');
+{
+    $tahunAktif = Tahun::where('status', 'aktif')->first();
+    if (!$tahunAktif) {
+        return back()->with('error', 'Tidak ada tahun ajaran aktif.');
     }
+
+    $request->validate([
+        'kode_kelas' => [
+            'required',
+            function ($attribute, $value, $fail) use ($tahunAktif) {
+                if (Kelas::where('kode_kelas', $value)
+                        ->where('tahun_ajaran_id', $tahunAktif->id)
+                        ->exists()) {
+                    $fail('Kode kelas sudah digunakan di tahun ajaran ini.');
+                }
+            }
+        ],
+        'nama_kelas' => 'required',
+        'wali_kelas' => 'required'
+    ]);
+
+    Kelas::create([
+        'kode_kelas' => $request->kode_kelas,
+        'nama_kelas' => $request->nama_kelas,
+        'wali_kelas' => $request->wali_kelas,
+        'tahun_ajaran_id' => $tahunAktif->id
+    ]);
+
+    return redirect()->route('kelas.index')
+        ->with('success', 'Kelas Berhasil Ditambahkan.');
+}
 
     public function show($id)
     {
@@ -67,22 +76,33 @@ class KelasController extends Controller
     }
 
     public function update(Request $request, Kelas $kelas)
-    {
-        $request->validate([
-            'kode_kelas' => 'required|unique:kelas,kode_kelas,' . $kelas->id,
-            'nama_kelas' => 'required',
-            'wali_kelas' => 'required'
-        ]);
+{
+    $request->validate([
+        'kode_kelas' => [
+            'required',
+            function ($attribute, $value, $fail) use ($kelas) {
+                if (Kelas::where('kode_kelas', $value)
+                        ->where('tahun_ajaran_id', $kelas->tahun_ajaran_id)
+                        ->where('id', '!=', $kelas->id)
+                        ->exists()) {
+                    $fail('Kode kelas sudah digunakan di tahun ajaran ini.');
+                }
+            }
+        ],
+        'nama_kelas' => 'required',
+        'wali_kelas' => 'required'
+    ]);
 
-        $kelas->update([
-            'kode_kelas' => $request->kode_kelas,
-            'nama_kelas' => $request->nama_kelas,
-            'wali_kelas' => $request->wali_kelas
-        ]);
+    $kelas->update([
+        'kode_kelas' => $request->kode_kelas,
+        'nama_kelas' => $request->nama_kelas,
+        'wali_kelas' => $request->wali_kelas
+    ]);
 
-        return redirect()->route('kelas.index')
-            ->with('success', 'Kelas Berhasil Diupdate.');
-    }
+    return redirect()->route('kelas.index')
+        ->with('success', 'Kelas Berhasil Diupdate.');
+}
+
 
     public function destroy(Kelas $kelas)
     {

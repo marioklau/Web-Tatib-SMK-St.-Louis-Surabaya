@@ -14,14 +14,6 @@
             <input type="text" name="tahun_ajaran" id="tahun_ajaran" class="border rounded w-full px-2 py-1" placeholder="Contoh: 2024/2025" required>
         </div>
 
-        <div>
-            <label for="status" class="block font-medium">Status</label>
-            <select name="status" id="status" class="border rounded w-full px-2 py-1" required>
-                <option value="aktif">Aktif</option>
-                <option value="nonaktif">Nonaktif</option>
-            </select>
-        </div>
-
         <div class="flex space-x-4 mt-6">
             <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300">Simpan</button>
                 <a href="{{ route('tahun-ajaran.index') }}"

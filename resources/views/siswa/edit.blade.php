@@ -13,22 +13,22 @@
 
             {{-- Pilihan kelas --}}
             <div class="mb-5">
-                <label for="kelas" class="block mb-2 font-semibold text-gray-700">
+                <label for="kelas_id" class="block mb-2 font-semibold text-gray-700">
                     Kelas
                 </label>
                 <select 
-                    id="kelas" 
-                    name="kelas" 
+                    id="kelas_id" 
+                    name="kelas_id" 
                     class="block w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
                     required>
                     <option value="">-- Pilih Kelas --</option>
                     @foreach ($daftar_kelas as $kelas)
-                        <option value="{{ $kelas->nama_kelas }}" {{ old('kelas', $siswa->kelas) == $kelas->nama_kelas ? 'selected' : '' }}>
+                        <option value="{{ $kelas->id }}" {{ old('kelas_id', $siswa->kelas_id) == $kelas->id ? 'selected' : '' }}>
                             {{ $kelas->nama_kelas }} ({{ $kelas->kode_kelas }})
                         </option>
                     @endforeach
                 </select>
-                @error('kelas')
+                @error('kelas_id')
                     <p class="text-red-600 mt-2">{{ $message }}</p>
                 @enderror
             </div>
@@ -47,6 +47,42 @@
                     class="block w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                 @error('nama_siswa')
+                    <p class="text-red-600 mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- NIS --}}
+            <div class="mb-5">
+                <label for="nis" class="block mb-2 font-semibold text-gray-700">
+                    NIS
+                </label>
+                <input 
+                    type="text" 
+                    id="nis" 
+                    name="nis" 
+                    value="{{ old('nis', $siswa->nis) }}" 
+                    required
+                    class="block w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                @error('nis')
+                    <p class="text-red-600 mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- NIS --}}
+            <div class="mb-5">
+                <label for="nis" class="block mb-2 font-semibold text-gray-700">
+                    NIS
+                </label>
+                <input 
+                    type="text" 
+                    id="nis" 
+                    name="nis" 
+                    value="{{ old('nis', $siswa->nis) }}" 
+                    required
+                    class="block w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                @error('nis')
                     <p class="text-red-600 mt-2">{{ $message }}</p>
                 @enderror
             </div>
