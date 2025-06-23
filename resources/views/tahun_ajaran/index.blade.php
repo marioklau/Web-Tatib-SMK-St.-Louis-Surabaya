@@ -23,25 +23,25 @@
         <table class="min-w-full rounded-xl">
             <thead>
                 <tr class="bg-gray-200">
-                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
-                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Tahun Ajaran</th>
-                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Status</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Tahun Ajaran</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Status</th>
                     <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-300">
                 @foreach ($tahunAjaran as $i => $t)
-                    <tr>
-                        <td class="p-1">{{ $i + 1 }}</td>
-                        <td class="p-1">{{ $t->tahun_ajaran }}</td>
-                        <td class="p-1">
+                    <tr  class="bg-white transition-all duration-500 hover:bg-gray-50">
+                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $i + 1 }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $t->tahun_ajaran }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">
                             @if ($t->status == 'aktif')
                                 <span class="text-green-600 font-semibold">Aktif</span>
                             @else
                                 <span class="text-gray-500">Nonaktif</span>
                             @endif
                         </td>
-                        <td class="p-1 text-center">
+                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">
                             <form action="{{ route('tahun-ajaran.aktifkan', $t->id) }}" method="POST">
                                 @csrf
                                 @method('PATCH')

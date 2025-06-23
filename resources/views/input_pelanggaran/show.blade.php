@@ -12,7 +12,7 @@
             <tr><td class="font-semibold">Kelas</td><td>{{ $pelanggaran->siswa->kelas->nama_kelas ?? '-' }}</td></tr>
             <tr><td class="font-semibold">Kategori</td><td>{{ $pelanggaran->kategori->nama_kategori ?? '-' }}</td></tr>
             <tr><td class="font-semibold">Jenis Pelanggaran</td><td>{{ $pelanggaran->jenis->bentuk_pelanggaran }}</td></tr>
-            <tr><td class="font-semibold">Sanksi</td><td>{{ $pelanggaran->sanksi->nama_sanksi }}</td></tr>
+            <tr><td class="font-semibold">Sanksi</td><td>{{ $pelanggaran->sanksi->keputusan_tindakan }}</td></tr>
             <tr><td class="font-semibold">Status</td><td>{{ $pelanggaran->status }}</td></tr>
             <tr><td class="font-semibold">Waktu Input</td><td>{{ $pelanggaran->created_at->format('d M Y H:i') }}</td></tr>
         </table>

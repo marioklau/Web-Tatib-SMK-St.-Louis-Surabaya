@@ -23,12 +23,12 @@
         <table class="min-w-full rounded-xl">
             <thead>
                 <tr class="bg-gray-200">
-                    <th scope="col" class=" text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
-                    <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Kode Kelas</th>
-                    <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Nama Kelas</th>
-                    <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Wali Kelas</th>
-                    <th scope="col" class=" text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Total Siswa</th>
-                    <th scope="col" class=" text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Aksi</th>
+                    <th scope="col" class="p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
+                    <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Kode Kelas</th>
+                    <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Nama Kelas</th>
+                    <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Wali Kelas</th>
+                    <th scope="col" class="p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Total Siswa</th>
+                    <th scope="col" class="p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-300">

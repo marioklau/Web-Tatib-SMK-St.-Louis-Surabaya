@@ -14,6 +14,12 @@ class TahunAjaranController extends Controller
         $tahunAjaran = Tahun::all(); // Atau pakai paginate jika banyak
         return view('tahun_ajaran.index', compact('tahunAjaran'));
     }
+
+    public function create()
+    {
+        return view('tahun_ajaran.create'); // Pastikan kamu punya view `create.blade.php`
+    }
+
     public function store(Request $request)
     {
         $request->validate([

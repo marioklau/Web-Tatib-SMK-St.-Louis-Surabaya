@@ -95,8 +95,9 @@ class InputPelanggaranController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-    {
-        // Belum diimplementasikan
+    {   
+        $pelanggaran = Pelanggaran::findOrFail($id);
+        return view('input_pelanggaran.edit', compact('pelanggaran'));
     }
 
     /**
@@ -104,12 +105,32 @@ class InputPelanggaranController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Belum diimplementasikan
+        $request->validate([
+            'siswa_id' => 'required|exists:siswa,id',
+            'kategori_id' => 'exists:kategori,id',
+            'jenis_id' => 'required|exists:jenis,id',
+            'sanksi_id' => 'required|exists:sanksi,id',
+        ]);
+
+        $pelanggaran = Pelanggaran::findOrFail($id); // Find the existing record
+
+        // Ambil tahun ajaran aktif (only if you need to update it, otherwise remove)
+        $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
+        if (!$tahunAjaranAktif) {
+            return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
+        }
+
+        $pelanggaran->update([ // Update the existing record
+            'siswa_id' => $request->siswa_id,
+            'kategori_id' => $request->kategori_id,
+            'jenis_id' => $request->jenis_id,
+            'sanksi_id' => $request->sanksi_id,
+            'tahun_ajaran_id' => $tahunAjaranAktif->id, // Update if needed
+        ]);
+
+        return redirect()->route('input-pelanggaran.index')->with('success', 'Pelanggaran berhasil diupdate.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $pelanggaran = Pelanggaran::findOrFail($id);

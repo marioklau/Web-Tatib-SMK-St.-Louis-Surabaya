@@ -32,6 +32,7 @@ Route::resource('sanksi', SanksiController::class)-> middleware('auth');
 Route::resource('siswa', SiswaController::class)-> middleware('auth');
 Route::resource('kelas', KelasController::class)-> middleware('auth')->parameters(['kelas' => 'kelas']);
 Route::resource('input-pelanggaran', InputPelanggaranController::class)-> middleware('auth');
+Route::patch('/input-pelanggaran/{offense}/update-status', [InputPelanggaranController::class, 'updateStatus'])->name('input-pelanggaran.update-status');
 Route::patch('/tahun-ajaran/{id}/aktifkan', [TahunAjaranController::class, 'aktifkan'])->name('tahun-ajaran.aktifkan');
 Route::resource('tahun-ajaran', TahunAjaranController::class)-> middleware('auth');
 

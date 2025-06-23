@@ -22,8 +22,12 @@
             </select>
         </div>
 
-        <div>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+        <div class="flex space-x-4 mt-6">
+            <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300">Simpan</button>
+                <a href="{{ route('tahun-ajaran.index') }}"
+                    class="px-3 py-1.5 bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition duration-300">
+                    Kembali
+                </a>
         </div>
     </form>
 </div>
