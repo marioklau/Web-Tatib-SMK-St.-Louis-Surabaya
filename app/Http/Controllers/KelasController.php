@@ -3,13 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kelas;
+use App\Models\Tahun;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
 {
     public function index()
     {
-        $kelas = Kelas::withCount('siswa')->latest()->paginate(10);
+        $tahunAktif = Tahun::where('status', 'aktif')->first();
+        if (!$tahunAktif) {
+            return view('kelas.index')->with('error', 'Tidak ada tahun ajaran aktif.');
+        }
+
+        $kelas = Kelas::withCount('siswa')
+            ->where('tahun_ajaran_id', $tahunAktif->id)
+            ->latest()
+            ->paginate(10);
+
         return view('kelas.index', compact('kelas'));
     }
 
@@ -26,10 +36,16 @@ class KelasController extends Controller
             'wali_kelas' => 'required'
         ]);
 
+        $tahunAktif = Tahun::where('status', 'aktif')->first();
+        if (!$tahunAktif) {
+            return back()->with('error', 'Tidak ada tahun ajaran aktif.');
+        }
+
         Kelas::create([
             'kode_kelas' => $request->kode_kelas,
             'nama_kelas' => $request->nama_kelas,
-            'wali_kelas' => $request->wali_kelas
+            'wali_kelas' => $request->wali_kelas,
+            'tahun_ajaran_id' => $tahunAktif->id
         ]);
 
         return redirect()->route('kelas.index')
@@ -42,28 +58,29 @@ class KelasController extends Controller
         return view('kelas.show', compact('kelas'));
     }
 
-   public function edit(Kelas $kelas) 
-   {
-       return view('kelas.edit', compact('kelas'));
-   }
-   
-   public function update(Request $request, Kelas $kelas) 
-   {
-       $request->validate([
+    public function edit(Kelas $kelas)
+    {
+        return view('kelas.edit', compact('kelas'));
+    }
+
+    public function update(Request $request, Kelas $kelas)
+    {
+        $request->validate([
             'kode_kelas' => 'required|unique:kelas,kode_kelas,' . $kelas->id,
             'nama_kelas' => 'required',
             'wali_kelas' => 'required'
-       ]);
-   
-       $kelas->update([
+        ]);
+
+        $kelas->update([
             'kode_kelas' => $request->kode_kelas,
             'nama_kelas' => $request->nama_kelas,
             'wali_kelas' => $request->wali_kelas
-       ]);
-   
-       return redirect()->route('kelas.index')
-           ->with('success', 'Kelas Berhasil Diupdate.');
-   }
+        ]);
+
+        return redirect()->route('kelas.index')
+            ->with('success', 'Kelas Berhasil Diupdate.');
+    }
+
     public function destroy(Kelas $kelas)
     {
         $kelas->delete();
@@ -71,4 +88,5 @@ class KelasController extends Controller
             ->with('success', 'Kelas Berhasil Dihapus');
     }
 }
+
 

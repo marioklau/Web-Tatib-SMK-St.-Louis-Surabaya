@@ -32,6 +32,7 @@ Route::resource('sanksi', SanksiController::class)-> middleware('auth');
 Route::resource('siswa', SiswaController::class)-> middleware('auth');
 Route::resource('kelas', KelasController::class)-> middleware('auth')->parameters(['kelas' => 'kelas']);
 Route::resource('input-pelanggaran', InputPelanggaranController::class)-> middleware('auth');
+Route::patch('/tahun-ajaran/{id}/aktifkan', [TahunAjaranController::class, 'aktifkan'])->name('tahun-ajaran.aktifkan');
 Route::resource('tahun-ajaran', TahunAjaranController::class)-> middleware('auth');
 
 // import excel list siswa 
@@ -44,6 +45,6 @@ Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index
 Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');
 
 // route change status pelanggaran
-Route::patch('/input-pelanggaran/{id}/status', [InputPelanggaranController::class, 'updateStatus'])->name('input-pelanggaran.update-status');
-
+// Changed {id} to {pelanggaran} for implicit Route Model Binding
+Route::patch('/input-pelanggaran/{pelanggaran}/status', [InputPelanggaranController::class, 'updateStatus'])->name('input-pelanggaran.update-status');
 

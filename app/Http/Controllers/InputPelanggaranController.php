@@ -9,6 +9,7 @@ use App\Models\Jenis;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\Sanksi;
+use App\Models\Tahun;
 
 class InputPelanggaranController extends Controller
 {
@@ -17,14 +18,25 @@ class InputPelanggaranController extends Controller
      */
     public function index(Request $request)
     {
-        //
-        $pelanggaran = Pelanggaran::with('siswa.kelas', 'kategori', 'jenis', 'sanksi')->latest()->get();
+        // Ambil tahun ajaran aktif
+        $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
+
+        if (!$tahunAjaranAktif) {
+            return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
+        }
+
+        // Ambil data pelanggaran sesuai tahun ajaran aktif
+        $pelanggaran = Pelanggaran::with('siswa.kelas', 'kategori', 'jenis', 'sanksi')
+            ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+            ->latest()
+            ->get();
+
         $siswa = Siswa::with('kelas')->get();
         $jenis = Jenis::all();
-        $kategori = Kategori::with('jenis')->get(); // gunakan relasi eager loading
+        $kategori = Kategori::with('jenis')->get();
         $sanksi = Sanksi::all();
 
-        return view('input_pelanggaran.index', compact('pelanggaran', 'siswa', 'kategori', 'sanksi'));
+        return view('input_pelanggaran.index', compact('pelanggaran', 'siswa', 'kategori', 'sanksi', 'tahunAjaranAktif'));
     }
 
     /**
@@ -32,23 +44,8 @@ class InputPelanggaranController extends Controller
      */
     public function create()
     {
-        //
-        // $request->validate([
-        //     'siswa_id' => 'required|exists:siswa,id',
-        //     'kategori_id' => 'required|exists:kategori,id',
-        //     'jenis_id' => 'required|exists:jenis,id',
-        //     'sanksi_id' => 'required|exists:sanksi,id',
-        // ]);
-
-        // Pelanggaran::create($request->all());
-
-        // return redirect()->back()->with('success', 'Pelanggaran berhasil ditambahkan.');
-
-        // Hanya menampilkan form input, tidak butuh $request di sini
         $siswa = Siswa::with('kelas')->get();
-        // $jenis = Jenis::all();
         $jenis = Jenis::with('kategori')->get();
-        // $kategori = Kategori::with('jenis')->get();
         $sanksi = Sanksi::all();
 
         return view('input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
@@ -59,8 +56,6 @@ class InputPelanggaranController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        // Validasi inputan
         $request->validate([
             'siswa_id' => 'required|exists:siswa,id',
             'kategori_id' => 'exists:kategori,id',
@@ -68,12 +63,21 @@ class InputPelanggaranController extends Controller
             'sanksi_id' => 'required|exists:sanksi,id',
         ]);
 
-        // Simpan ke DB
-        // Pelanggaran::create($request->all());
+        // Ambil tahun ajaran aktif
+        $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
 
-        Pelanggaran::create($request->only([
-            'siswa_id', 'kategori_id', 'jenis_id', 'sanksi_id'
-        ]));
+        if (!$tahunAjaranAktif) {
+            return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
+        }
+
+        // Simpan data pelanggaran
+        Pelanggaran::create([
+            'siswa_id' => $request->siswa_id,
+            'kategori_id' => $request->kategori_id,
+            'jenis_id' => $request->jenis_id,
+            'sanksi_id' => $request->sanksi_id,
+            'tahun_ajaran_id' => $tahunAjaranAktif->id,
+        ]);
 
         return redirect()->route('input-pelanggaran.index')->with('success', 'Pelanggaran berhasil ditambahkan.');
     }
@@ -92,7 +96,7 @@ class InputPelanggaranController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // Belum diimplementasikan
     }
 
     /**
@@ -100,7 +104,7 @@ class InputPelanggaranController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Belum diimplementasikan
     }
 
     /**
@@ -108,10 +112,6 @@ class InputPelanggaranController extends Controller
      */
     public function destroy($id)
     {
-        //
-        // $pelanggaran->delete();
-        // return redirect()->route('input-pelanggaran.index')
-        //     ->with('success', 'Pelanggaran Berhasil Dihapus');
         $pelanggaran = Pelanggaran::findOrFail($id);
         $pelanggaran->delete();
 
@@ -119,17 +119,28 @@ class InputPelanggaranController extends Controller
                 ->with('success', 'Data pelanggaran berhasil dihapus.');
     }
 
-    // func untuk update status
-    public function updateStatus(Request $request, $id)
+    /**
+     * Update status pelanggaran (AJAX).
+     */
+    public function updateStatus(Request $request, Pelanggaran $offense)
     {
         $request->validate([
-            'status' => 'required|in:Done,Not Done',
+            'status' => ['required', 'in:Sudah,Belum'],
         ]);
 
-        $pelanggaran = Pelanggaran::findOrFail($id);
-        $pelanggaran->status = $request->status;
-        $pelanggaran->save();
+        try {
+            $offense->status = $request->input('status');
+            $offense->save();
 
-        return redirect()->back()->with('success', 'Status pelanggaran berhasil diperbarui.');
+            return response()->json([
+                'message' => 'Status updated successfully',
+                'status' => $offense->status
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update status',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

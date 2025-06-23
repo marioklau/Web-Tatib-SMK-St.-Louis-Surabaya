@@ -35,11 +35,11 @@
         <table class="min-w-full rounded-xl">
             <thead>
                 <tr class="bg-gray-200">
-                    <th scope="col" class=" text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
-                    <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Kelas</th>
-                    <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Nama Siswa</th>
-                    <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Jenis Kelamin</th>
-                    <th scope="col" class=" text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Aksi</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Kelas</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Nama Siswa</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Jenis Kelamin</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-300">
@@ -91,8 +91,8 @@
         <!-- Info jumlah data & pagination -->
         <div class="flex flex-col md:flex-row justify-between p-2 text-sm">
             <div>
-                Menampilkan <span class="font-bold">{{ $siswa->firstItem() }}</span> sampai 
-                <span class="font-bold">{{ $siswa->lastItem() }}</span> dari total 
+                Show <span class="font-bold">{{ $siswa->firstItem() }}</span> to
+                <span class="font-bold">{{ $siswa->lastItem() }}</span> from  
                 <span class="font-bold">{{ $siswa->total() }}</span>
             </div>
 

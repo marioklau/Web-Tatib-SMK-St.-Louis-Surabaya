@@ -9,12 +9,13 @@ class Pelanggaran extends Model
     protected $table = 'pelanggaran';
 
     protected $fillable = [
-        'siswa_id', 
-        'kategori_id', 
-        'jenis_id', 
+        'siswa_id',
+        'kategori_id',
+        'jenis_id',
         'sanksi_id',
-        'status', 
-        'keterangan'
+        'tahun_ajaran_id',
+        'keterangan',
+        'status'
     ];
 
     public function siswa() {

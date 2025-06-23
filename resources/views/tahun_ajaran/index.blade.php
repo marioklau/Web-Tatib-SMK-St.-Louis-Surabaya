@@ -19,17 +19,37 @@
     </div>
 
     <!-- Tabel Kategori -->
-    <div class="overflow-x-auto bg-white shadow">
-        <table class="w-full table-auto">
+    <div class="overflow-hidden">
+        <table class="min-w-full rounded-xl">
             <thead>
-                <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
-                    <th class="py-1 px-3 border text-left">No</th>
-                    <th class="py-1 px-3 border text-left">Tahun Ajaran</th>
-                    <th class="py-1 px-3 border text-left">Status</th>
-                    <th class="py-1 px-3 border text-center">Aksi</th>
+                <tr class="bg-gray-200">
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Tahun Ajaran</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Status</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-gray-900 text-sm font-light">
+            <tbody class="divide-y divide-gray-300">
+                @foreach ($tahunAjaran as $i => $t)
+                    <tr>
+                        <td class="p-1">{{ $i + 1 }}</td>
+                        <td class="p-1">{{ $t->tahun_ajaran }}</td>
+                        <td class="p-1">
+                            @if ($t->status == 'aktif')
+                                <span class="text-green-600 font-semibold">Aktif</span>
+                            @else
+                                <span class="text-gray-500">Nonaktif</span>
+                            @endif
+                        </td>
+                        <td class="p-1 text-center">
+                            <form action="{{ route('tahun-ajaran.aktifkan', $t->id) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <button class="bg-blue-500 text-white px-2 py-1 text-sm rounded hover:bg-blue-600">Aktifkan</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>

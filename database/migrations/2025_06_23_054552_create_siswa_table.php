@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
             $table->string('nama_siswa');
             $table->string('jenis_kelamin');
+            $table->unsignedBigInteger('tahun_ajaran_id');
+            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajaran')->onDelete('cascade');
             $table->timestamps();
         });
     }

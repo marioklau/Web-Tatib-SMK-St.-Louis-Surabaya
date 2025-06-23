@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded shadow-sm">
+        <div class="bg-white p-5 shadow-sm">
             <div class="relative overflow-x-auto">
                 <table class="w-full text-sm text-left text-gray-500">
                     <tbody>
@@ -61,7 +61,7 @@
 
         <div class="mt-5 flex space-x-3">
             <a href="{{ route('sanksi.index') }}"
-               class="px-6 py-2.5 bg-gray-200 font-medium text-xs uppercase hover:bg-gray-300 transition">
+               class="px-3 py-1.5 bg-gray-200 font-medium text-xs uppercase hover:bg-gray-300 transition">
                 Kembali
             </a>
         </div>

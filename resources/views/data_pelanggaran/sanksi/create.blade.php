@@ -70,11 +70,11 @@
 
                 <div class="mt-3">
                     <button type="submit"
-                        class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-sm uppercase shadow-md hover:bg-blue-700 transition duration-150 ease-in-out">
+                        class="inline-block px-3 py-1.5 bg-blue-600 text-white font-medium text-sm uppercase shadow-md hover:bg-blue-700 transition duration-150 ease-in-out">
                         Simpan
                     </button>
                     <a href="{{ route('sanksi.index') }}"
-                        class="inline-block px-6 py-2.5 bg-gray-200 text-gray-700 font-medium text-sm uppercase shadow-md hover:bg-gray-300 transition duration-150 ease-in-out">
+                        class="inline-block px-3 py-1.5 bg-gray-200 text-gray-700 font-medium text-sm uppercase shadow-md hover:bg-gray-300 transition duration-150 ease-in-out">
                         Kembali
                     </a>
                 </div>

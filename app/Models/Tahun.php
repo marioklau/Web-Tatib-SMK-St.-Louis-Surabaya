@@ -10,7 +10,8 @@ class Tahun extends Model
     protected $table = 'tahun_ajaran';  // 👈 Tambahkan baris ini
 
     protected $fillable = [
-        '',
+        'tahun_ajaran',
+        'status'
     ];
 
    

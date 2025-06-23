@@ -17,7 +17,9 @@ return new class extends Migration
             $table->foreignId('kategori_id')->constrained('kategori');
             $table->foreignId('jenis_id')->constrained('jenis');
             $table->foreignId('sanksi_id')->constrained('sanksi');
-            $table->foreignId('status')->default(0);
+            $table->string('status')->default('Belum');
+            $table->unsignedBigInteger('tahun_ajaran_id');
+            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajaran')->onDelete('cascade');
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

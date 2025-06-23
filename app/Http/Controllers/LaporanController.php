@@ -4,17 +4,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Siswa;
 use App\Models\Kelas;
-use Barryvdh\DomPDF\Facade\Pdf;  // <-- import ini
+use App\Models\Tahun;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        $kelasList = Kelas::all();
+        $tahunAktif = Tahun::where('status', 'aktif')->first();
+
+        $kelasList = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
         $selectedKelas = $request->get('kelas_id');
 
         $siswa = Siswa::with('kelas')
-            ->withCount('pelanggaran') // tambahin ini buat nampilkan count pelanggaran
+            ->withCount('pelanggaran')
+            ->whereHas('kelas', function ($query) use ($tahunAktif) {
+                $query->where('tahun_ajaran_id', $tahunAktif->id);
+            })
             ->when($selectedKelas, function ($query, $kelas_id) {
                 return $query->where('kelas_id', $kelas_id);
             })
@@ -28,8 +34,8 @@ class LaporanController extends Controller
         $kelas = Kelas::find($request->kelas_id);
         $siswa = Siswa::where('kelas_id', $request->kelas_id)->get();
 
-        $pdf = Pdf::loadView('laporan.pdf', compact('siswa', 'kelas')); // <== gunakan Pdf::loadView
-
+        $pdf = Pdf::loadView('laporan.pdf', compact('siswa', 'kelas'));
         return $pdf->download('laporan-siswa.pdf');
     }
 }
+

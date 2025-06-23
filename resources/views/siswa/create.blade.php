@@ -55,7 +55,7 @@
 
         <!-- Tombol Kembali -->
         <a href="{{ route('siswa.index') }}"
-           class="inline-block px-6 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">
+           class="inline-block px-3 py-1.5 bg-gray-200 hover:bg-gray-300 transition">
             Kembali
         </a>
     </div>

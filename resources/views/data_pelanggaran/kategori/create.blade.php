@@ -4,14 +4,14 @@
 
 @section('content')
     <div class="container mx-auto">
-        <div class="grid grid-cols-1 gap-4 p-5">
-            <div class="col-span-1 mt-2">
+        <div class="grid grid-cols-1 ">
+            <div class="col-span-1">
                 <h1 class="text-2xl font-semibold">
                     Tambah Kategori Baru
                 </h1>
             </div>
         </div>
-        <div class="bg-white p-5 rounded shadow-sm">
+        <div class="bg-white p-5 shadow-sm">
             <form action="{{ route('kategori.store') }}" method="POST">
                  @csrf
 
@@ -31,11 +31,11 @@
 
                 <div class="mt-3">
                     <button type="submit"
-                        class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-sm uppercase rounded-full shadow-md hover:bg-blue-700 transition duration-150 ease-in-out">
+                        class="inline-block px-3 py-1.5 bg-blue-600 text-white font-medium text-sm uppercase shadow-md hover:bg-blue-700 transition duration-150 ease-in-out">
                         Simpan
                     </button>
                     <a href="{{ route('kategori.index') }}"
-                        class="inline-block px-6 py-2.5 bg-gray-200 text-gray-700 font-medium text-sm uppercase rounded-full shadow-md hover:bg-gray-300 transition duration-150 ease-in-out">
+                        class="inline-block px-3 py-1.5 bg-gray-200 text-gray-700 font-medium text-sm uppercase shadow-md hover:bg-gray-300 transition duration-150 ease-in-out">
                         Kembali
                     </a>
                 </div>

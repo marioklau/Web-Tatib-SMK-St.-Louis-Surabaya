@@ -1,47 +1,57 @@
 <?php
 
 namespace App\Http\Controllers;
-    
+
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
 use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\Tahun;
 use Illuminate\Http\Request;
 
 class SiswaController extends Controller
 {
     public function index(Request $request)
-{
-    $kelasId = $request->input('kelas_id');
+    {
+        $tahunAktif = Tahun::where('status', 'aktif')->first();
+        if (!$tahunAktif) {
+            return view('siswa.index')->with('error', 'Tidak ada tahun ajaran aktif.');
+        }
 
-    $query = Siswa::query();
+        $kelasId = $request->input('kelas_id');
 
-    if ($kelasId) {
-        $query->where('kelas_id', $kelasId);
+        $kelasList = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
+
+        $query = Siswa::whereHas('kelas', function ($query) use ($tahunAktif) {
+            $query->where('tahun_ajaran_id', $tahunAktif->id);
+        });
+
+        if ($kelasId) {
+            $query->where('kelas_id', $kelasId);
+        }
+
+        $siswa = $query->paginate(10);
+
+        return view('siswa.index', compact('siswa', 'kelasList'));
     }
 
-    $siswa = $query->paginate(10); // Sesuaikan dengan kebutuhan
-
-    $kelasList = Kelas::all();
-
-    return view('siswa.index', compact('siswa', 'kelasList'));
-}
-
-
     public function import(Request $request)
-{
-    $request->validate([
-        'file' => 'required|mimes:xlsx,xls,csv',
-    ]);
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
 
-    Excel::import(new SiswaImport, $request->file('file'));
+        Excel::import(new SiswaImport, $request->file('file'));
 
-    return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil diimport.');
-}
+        return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil diimport.');
+    }
 
     public function create()
     {
-        return view('siswa.create');
+        $tahunAktif = Tahun::where('status', 'aktif')->first();
+        $daftar_kelas = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
+
+        return view('siswa.create', compact('daftar_kelas'));
     }
 
     public function store(Request $request)
@@ -51,17 +61,16 @@ class SiswaController extends Controller
             'nama_siswa' => 'required',
             'jenis_kelamin' => 'required',
         ]);
-        
+
         Siswa::create([
             'kelas_id' => $request->kelas_id,
             'nama_siswa' => $request->nama_siswa,
             'jenis_kelamin' => $request->jenis_kelamin,
         ]);
-    
+
         return redirect()->route('siswa.index')
             ->with('success', 'Siswa Berhasil Ditambahkan.');
     }
-    
 
     public function show($id)
     {
@@ -69,30 +78,32 @@ class SiswaController extends Controller
         return view('siswa.show', compact('siswa'));
     }
 
-   public function edit(Siswa $siswa) 
-   {
-        $daftar_kelas = Kelas::all();
-        return view('siswa.edit', compact('siswa','daftar_kelas'));
-   }
-   
-   public function update(Request $request, Siswa $siswa) 
-   {
+    public function edit(Siswa $siswa)
+    {
+        $tahunAktif = Tahun::where('status', 'aktif')->first();
+        $daftar_kelas = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
+
+        return view('siswa.edit', compact('siswa', 'daftar_kelas'));
+    }
+
+    public function update(Request $request, Siswa $siswa)
+    {
         $request->validate([
             'kelas_id' => 'required|exists:kelas,id',
             'nama_siswa' => 'required',
             'jenis_kelamin' => 'required',
         ]);
-    
-   
-       $siswa->update([
+
+        $siswa->update([
             'kelas_id' => $request->kelas_id,
             'nama_siswa' => $request->nama_siswa,
             'jenis_kelamin' => $request->jenis_kelamin,
-       ]);
-   
-       return redirect()->route('siswa.index')
-           ->with('success', 'Siswa Berhasil Diupdate.');
-   }
+        ]);
+
+        return redirect()->route('siswa.index')
+            ->with('success', 'Siswa Berhasil Diupdate.');
+    }
+
     public function destroy(Siswa $siswa)
     {
         $siswa->delete();
@@ -100,4 +111,5 @@ class SiswaController extends Controller
             ->with('success', 'Siswa Berhasil Dihapus');
     }
 }
+
 

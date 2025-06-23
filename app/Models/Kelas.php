@@ -12,6 +12,7 @@ class Kelas extends Model
         'kode_kelas',
         'nama_kelas',
         'wali_kelas',
+        'tahun_ajaran_id'
     ];
 
     public function siswa()
