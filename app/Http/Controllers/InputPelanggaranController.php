@@ -72,17 +72,46 @@ class InputPelanggaranController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        $siswa = Siswa::with('kelas')->get();
-        $jenis = Jenis::with('kategori')->get();
-        $sanksi = Sanksi::all();
+{
+    $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
 
-        return view('input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
+    if (!$tahunAjaranAktif) {
+        return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    $siswa = Siswa::whereHas('kelas', function ($query) use ($tahunAjaranAktif) {
+        $query->where('tahun_ajaran_id', $tahunAjaranAktif->id);
+    })
+    ->with('kelas')
+    ->withCount([
+        'pelanggaran as ringan_count' => function ($query) use ($tahunAjaranAktif) {
+            $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                  ->whereHas('kategori', function ($q) {
+                      $q->where('nama_kategori', 'RINGAN');
+                  });
+        },
+        'pelanggaran as berat_count' => function ($query) use ($tahunAjaranAktif) {
+            $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                  ->whereHas('kategori', function ($q) {
+                      $q->where('nama_kategori', 'BERAT');
+                  });
+        },
+        'pelanggaran as sangat_berat_count' => function ($query) use ($tahunAjaranAktif) {
+            $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                  ->whereHas('kategori', function ($q) {
+                      $q->where('nama_kategori', 'SANGAT BERAT');
+                  });
+        },
+    ])
+    ->get();
+
+    $jenis = Jenis::with('kategori')->get();
+    $sanksi = Sanksi::all();
+
+    return view('input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
+}
+
+
     public function store(Request $request)
     {
         $request->validate([

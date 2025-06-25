@@ -83,7 +83,7 @@ class SiswaController extends Controller
         $jenis = Jenis::with('kategori')->get();
         $sanksi = Sanksi::all();
 
-        return view('pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
+        return view('input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
     }
 
 

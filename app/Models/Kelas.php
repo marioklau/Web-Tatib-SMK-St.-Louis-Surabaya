@@ -20,4 +20,10 @@ class Kelas extends Model
     {
         return $this->hasMany(Siswa::class, 'kelas_id');
     }
+
+    public function tahun()
+    {
+        return $this->belongsTo(Tahun::class);
+    }
+
 }
