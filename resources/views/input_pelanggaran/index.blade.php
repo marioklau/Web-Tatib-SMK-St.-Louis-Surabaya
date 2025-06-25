@@ -24,6 +24,7 @@
                 <tr class="bg-gray-200">
                     <th scope="col" class=" text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
                     <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Nama</th>
+                    <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">NIS</th>
                     <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Kelas</th>
                     <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Jenis</th>
                     <th scope="col" class=" text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Sanksi</th>
@@ -36,6 +37,7 @@
                 <tr class="bg-white transition-all duration-500 hover:bg-gray-50" data-id="{{ $offense->id }}">
                 <td class=" p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $loop->iteration }}</td>
                     <td class=" p-1 whitespace-nowrap text-sm leading-6 font-medium text-left text-gray-900">{{ $offense->siswa->nama_siswa }}</td>
+                    <td class=" p-1 whitespace-nowrap text-sm leading-6 font-medium text-left text-gray-900">{{ $offense->siswa->nis ?? '-' }}</td>
                     <td class=" p-1 whitespace-nowrap text-sm leading-6 font-medium text-left text-gray-900">{{ $offense->siswa->kelas->nama_kelas ?? '-' }}</td>
                     @php
                         $words = explode(' ', $offense->jenis->bentuk_pelanggaran);

@@ -17,38 +17,33 @@ class SiswaController extends Controller
         $tahunAktif = Tahun::where('status', 'aktif')->first();
         if (!$tahunAktif) {
             $kelasList = collect();
-            $siswa = new LengthAwarePaginator([], 0, 10); // total = 0, perPage = 10
-        
+            $siswa = new LengthAwarePaginator([], 0, 10); 
             return view('siswa.index', compact('kelasList', 'siswa'))
                 ->with('error', 'Tidak ada tahun ajaran aktif.');
         }              
 
         $kelasId = $request->input('kelas_id');
-
         $kelasList = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
 
-        $query = Siswa::whereHas('kelas', function ($query) use ($tahunAktif) {
-            $query->where('tahun_ajaran_id', $tahunAktif->id);
-        });
-
-        $query = Siswa::with('kelas') // penting: relasi kelas
-        ->withCount([
-            'pelanggaran as ringan_count' => function ($query) {
-                $query->whereHas('kategori', function ($q) {
-                    $q->where('nama_kategori', 'RINGAN');
-                });
-            },
-            'pelanggaran as berat_count' => function ($query) {
-                $query->whereHas('kategori', function ($q) {
-                    $q->where('nama_kategori', 'BERAT');
-                });
-            },
-            'pelanggaran as sangat_berat_count' => function ($query) {
-                $query->whereHas('kategori', function ($q) {
-                    $q->where('nama_kategori', 'SANGAT BERAT');
-                });
-            },
-        ]);
+        $query = Siswa::with('kelas')
+            ->where('tahun_ajaran_id', $tahunAktif->id)
+            ->withCount([
+                'pelanggaran as ringan_count' => function ($query) {
+                    $query->whereHas('kategori', function ($q) {
+                        $q->where('nama_kategori', 'RINGAN');
+                    });
+                },
+                'pelanggaran as berat_count' => function ($query) {
+                    $query->whereHas('kategori', function ($q) {
+                        $q->where('nama_kategori', 'BERAT');
+                    });
+                },
+                'pelanggaran as sangat_berat_count' => function ($query) {
+                    $query->whereHas('kategori', function ($q) {
+                        $q->where('nama_kategori', 'SANGAT BERAT');
+                    });
+                },
+            ]);
 
         if ($kelasId) {
             $query->where('kelas_id', $kelasId);
@@ -87,10 +82,14 @@ class SiswaController extends Controller
             'jenis_kelamin' => 'required',
         ]);
 
+        $kelas = Kelas::findOrFail($request->kelas_id);
+
         Siswa::create([
-            'kelas_id' => $request->kelas_id,
-            'nama_siswa' => $request->nama_siswa,
-            'jenis_kelamin' => $request->jenis_kelamin,
+            'kelas_id'         => $kelas->id,
+            'nama_siswa'       => $request->nama_siswa,
+            'nis'              => $request->nis,
+            'jenis_kelamin'    => $request->jenis_kelamin,
+            'tahun_ajaran_id'  => $kelas->tahun_ajaran_id, // PASTIKAN DISET
         ]);
 
         return redirect()->route('siswa.index')
@@ -111,23 +110,24 @@ class SiswaController extends Controller
         return view('siswa.edit', compact('siswa', 'daftar_kelas'));
     }
 
-    public function update(Request $request, Siswa $siswa)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'kelas_id' => 'required|exists:kelas,id',
-            'nama_siswa' => 'required',
-            'jenis_kelamin' => 'required',
+            'nama_siswa' => 'required|string|max:255',
+            'nis' => 'required|string|max:50',
         ]);
 
-        $siswa->update([
-            'kelas_id' => $request->kelas_id,
-            'nama_siswa' => $request->nama_siswa,
-            'nis' => 'required|unique:siswa,nis,' . $siswa->id,
-            'jenis_kelamin' => $request->jenis_kelamin,
-        ]);
+        $siswa = Siswa::findOrFail($id);
+        $kelas = Kelas::findOrFail($request->kelas_id);
 
-        return redirect()->route('siswa.index')
-            ->with('success', 'Siswa Berhasil Diupdate.');
+        $siswa->kelas_id = $kelas->id;
+        $siswa->nama_siswa = $request->nama_siswa;
+        $siswa->nis = $request->nis;
+        $siswa->tahun_ajaran_id = $kelas->tahun_ajaran_id; // JAGA KONSISTENSI
+        $siswa->save();
+
+        return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil diperbarui.');
     }
 
     public function destroy(Siswa $siswa)
@@ -137,5 +137,3 @@ class SiswaController extends Controller
             ->with('success', 'Siswa Berhasil Dihapus');
     }
 }
-
-

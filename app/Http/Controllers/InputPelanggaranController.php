@@ -106,6 +106,7 @@ class InputPelanggaranController extends Controller
             'jenis_id' => $request->jenis_id,
             'sanksi_id' => $request->sanksi_id,
             'tahun_ajaran_id' => $tahunAjaranAktif->id,
+            'status' => 'Belum',
         ]);
 
         return redirect()->route('input-pelanggaran.index')->with('success', 'Pelanggaran berhasil ditambahkan.');
@@ -123,11 +124,23 @@ class InputPelanggaranController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {   
+    public function edit($id)
+    {
         $pelanggaran = Pelanggaran::findOrFail($id);
-        return view('input_pelanggaran.edit', compact('pelanggaran'));
+        $siswa = Siswa::with('kelas')->get();
+        $kategori = Kategori::with('jenis')->get();
+        $jenis = Jenis::all();
+        $sanksi = Sanksi::all();
+
+        return view('input_pelanggaran.edit', compact(
+            'pelanggaran',
+            'siswa',
+            'kategori',
+            'jenis',
+            'sanksi'
+        ));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -139,6 +152,7 @@ class InputPelanggaranController extends Controller
             'kategori_id' => 'exists:kategori,id',
             'jenis_id' => 'required|exists:jenis,id',
             'sanksi_id' => 'required|exists:sanksi,id',
+            'status' => 'required|in:Sudah,Belum',
         ]);
 
         $pelanggaran = Pelanggaran::findOrFail($id); // Find the existing record
@@ -155,6 +169,7 @@ class InputPelanggaranController extends Controller
             'jenis_id' => $request->jenis_id,
             'sanksi_id' => $request->sanksi_id,
             'tahun_ajaran_id' => $tahunAjaranAktif->id, // Update if needed
+            'status' => $request->status,
         ]);
 
         return redirect()->route('input-pelanggaran.index')->with('success', 'Pelanggaran berhasil diupdate.');
