@@ -7,7 +7,7 @@
 <!-- CSS Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<!-- jQuery dan JS Select2 -->
+<!-- jQuery dan JS Select2 (Pastikan jQuery dimuat sebelum Select2) -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
@@ -19,40 +19,29 @@
         @csrf
         @method('PUT')
 
-        <!-- Pilih Siswa -->
+        <!-- Siswa (Read-only, but its ID is submitted via hidden input) -->
         <div>
-            <label for="siswa_id">Siswa</label>
-                <select name="siswa_id" class="form-control">
-                    @foreach($siswa as $s)
-                        <option value="{{ $s->id }}" {{ $pelanggaran->siswa_id == $s->id ? 'selected' : '' }}>
-                            {{ $s->nama_siswa }}
-                        </option>
-                    @endforeach
-                </select>
+            <label class="block mb-1 text-sm font-medium">Nama Siswa</label>
+            <p class="font-medium text-gray-900">{{ $pelanggaran->siswa->nama_siswa }}</p>
+            <input type="hidden" name="siswa_id" value="{{ $pelanggaran->siswa_id }}">
         </div>
 
-        <!-- Pilih Kategori -->
+        <!-- Kategori Pelanggaran (Read-only, but its ID is submitted via hidden input) -->
         <div>
-            <label class="block mb-1 text-sm font-medium text-gray-700">Kategori</label>
-            <input type="text" id="kategori-display" 
-                class="w-full border p-2 rounded bg-gray-100 text-gray-600" 
-                value="{{ $pelanggaran->kategori->nama_kategori }}" 
-                readonly>
-
-            <input type="hidden" name="kategori_id" id="kategori-id" value="{{ $pelanggaran->kategori_id }}">
+            <label class="block mb-1 text-sm font-medium">Kategori Pelanggaran</label>
+            <p class="font-medium text-gray-900">{{ $pelanggaran->kategori->nama_kategori }}</p>
+            <input type="hidden" name="kategori_id" value="{{ $pelanggaran->kategori_id }}">
         </div>
-
 
         <!-- Pilih Jenis -->
         <div>
-            <label for="jenis_id" class="block text-sm font-medium text-gray-700">Jenis Pelanggaran</label>
+            <label for="jenis_id" class="block text-sm font-medium">Jenis Pelanggaran</label>
             <select name="jenis_id" id="jenis-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                 <option value="">-- Pilih Jenis Pelanggaran --</option>
                 @foreach($jenis as $j)
-                    <option 
+                    <option
                         value="{{ $j->id }}"
                         data-kategori="{{ $j->kategori_id }}"
-                        data-kategori-nama="{{ $j->kategori->nama_kategori }}"
                         {{ $pelanggaran->jenis_id == $j->id ? 'selected' : '' }}>
                         {{ $j->nama_jenis }}
                     </option>
@@ -62,10 +51,13 @@
 
         <!-- Pilih Sanksi -->
         <div>
-            <label for="sanksi_id" class="block text-sm font-medium text-gray-700">Sanksi</label>
+            <label for="sanksi_id" class="block text-sm font-medium">Sanksi</label>
             <select name="sanksi_id" id="sanksi-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                <option value="">-- Pilih Sanksi --</option>
                 @foreach($sanksi as $s)
-                    <option value="{{ $s->id }}" data-kategori="{{ $s->kategori_id }}"
+                    <option
+                        value="{{ $s->id }}"
+                        data-kategori="{{ $s->kategori_id }}"
                         {{ $pelanggaran->sanksi_id == $s->id ? 'selected' : '' }}>
                         {{ $s->keputusan_tindakan }}
                     </option>
@@ -75,7 +67,7 @@
 
         <!-- Status -->
         <div>
-            <label class="block text-sm font-medium text-gray-700">Status</label>
+            <label class="block text-sm font-medium">Status</label>
             <div class="mt-2">
                 <label class="inline-flex items-center">
                     <input type="radio" name="status" value="Belum" {{ $pelanggaran->status == 'Belum' ? 'checked' : '' }} class="form-radio text-red-600">
@@ -101,26 +93,42 @@
 </div>
 
 <script>
-    const kategoriSelect = document.getElementById('kategori-select');
-    const jenisSelect = document.getElementById('jenis-select');
-    const sanksiSelect = document.getElementById('sanksi-select');
-    const kategoriJenis = @json($kategori);
+    document.addEventListener('DOMContentLoaded', function () {
+        const jenisSelect = document.getElementById('jenis-select');
+        const sanksiSelect = document.getElementById('sanksi-select');
+        const currentKategoriId = {{ $pelanggaran->kategori_id }}; // Get the current category ID of the violation
 
-    kategoriSelect.addEventListener('change', function () {
-        const kategoriId = this.value;
+        function filterOptionsByKategori(selectElement, kategoriId) {
+            Array.from(selectElement.options).forEach(opt => {
+                // Ensure the 'kategoriId' matches the current violation's category ID,
+                // or if it's the placeholder option with no data-kategori attribute.
+                if (opt.dataset.kategori && opt.dataset.kategori != kategoriId) {
+                    opt.style.display = 'none';
+                } else {
+                    opt.style.display = '';
+                }
+            });
 
-        jenisSelect.innerHTML = '<option value="">-- Pilih Jenis --</option>';
-        kategoriJenis.forEach(kat => {
-            if (kat.id == kategoriId) {
-                kat.jenis.forEach(j => {
-                    jenisSelect.innerHTML += `<option value="${j.id}">${j.bentuk_pelanggaran}</option>`;
-                });
+            // If the currently selected option is now hidden, re-select a visible one or the default
+            let selectedOption = selectElement.querySelector('option:checked');
+            if (selectedOption && selectedOption.style.display === 'none') {
+                 // Try to select the placeholder or the first visible option
+                let firstVisibleOption = selectElement.querySelector('option[style*="display:"]');
+                if (firstVisibleOption) {
+                    selectElement.value = firstVisibleOption.value;
+                } else {
+                    selectElement.value = ''; // Fallback to no selection
+                }
             }
-        });
+        }
 
-        Array.from(sanksiSelect.options).forEach(opt => {
-            opt.style.display = opt.dataset.kategori == kategoriId || !opt.dataset.kategori ? '' : 'none';
-        });
+        // Apply filtering on page load
+        filterOptionsByKategori(jenisSelect, currentKategoriId);
+        filterOptionsByKategori(sanksiSelect, currentKategoriId);
+
+        // Initialize Select2 on both dropdowns
+        $(jenisSelect).select2();
+        $(sanksiSelect).select2();
     });
 </script>
 @endsection

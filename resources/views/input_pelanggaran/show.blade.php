@@ -9,6 +9,7 @@
     <div class="bg-white rounded shadow p-6">
         <table class="table-auto w-full text-sm">
             <tr><td class="font-semibold w-1/3">Nama Siswa</td><td>{{ $pelanggaran->siswa->nama_siswa }}</td></tr>
+            <tr><td class="font-semibold w-1/3">NIS</td><td>{{ $pelanggaran->siswa->nis }}</td></tr>
             <tr><td class="font-semibold">Kelas</td><td>{{ $pelanggaran->siswa->kelas->nama_kelas ?? '-' }}</td></tr>
             <tr><td class="font-semibold">Kategori</td><td>{{ $pelanggaran->kategori->nama_kategori ?? '-' }}</td></tr>
             <tr><td class="font-semibold">Jenis Pelanggaran</td><td>{{ $pelanggaran->jenis->bentuk_pelanggaran }}</td></tr>
