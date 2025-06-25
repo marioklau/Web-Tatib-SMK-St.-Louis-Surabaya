@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Jenis;
+use App\Models\Sanksi;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
 use App\Models\Siswa;
@@ -68,10 +70,22 @@ class SiswaController extends Controller
     public function create()
     {
         $tahunAktif = Tahun::where('status', 'aktif')->first();
-        $daftar_kelas = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
 
-        return view('siswa.create', compact('daftar_kelas'));
+        $siswa = Siswa::with('kelas')
+            ->where('tahun_ajaran_id', $tahunAktif->id)
+            ->withCount([
+                'pelanggaran as ringan_count' => fn($q) => $q->whereHas('kategori', fn($k) => $k->where('nama_kategori', 'RINGAN')),
+                'pelanggaran as berat_count' => fn($q) => $q->whereHas('kategori', fn($k) => $k->where('nama_kategori', 'BERAT')),
+                'pelanggaran as sangat_berat_count' => fn($q) => $q->whereHas('kategori', fn($k) => $k->where('nama_kategori', 'SANGAT BERAT')),
+            ])
+            ->get();
+
+        $jenis = Jenis::with('kategori')->get();
+        $sanksi = Sanksi::all();
+
+        return view('pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
     }
+
 
     public function store(Request $request)
     {

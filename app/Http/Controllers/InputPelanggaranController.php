@@ -17,55 +17,55 @@ class InputPelanggaranController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-{
-    // Ambil tahun ajaran aktif
-    $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
+    {
+        $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
 
-    if (!$tahunAjaranAktif) {
-        return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
-    }
+        if (!$tahunAjaranAktif) {
+            return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
+        }
 
-    // Ambil data pelanggaran dengan kategori
-    $pelanggaran = Pelanggaran::with('siswa.kelas', 'kategori', 'jenis', 'sanksi')
-        ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-        ->latest()
-        ->get();
+        $pelanggaran = Pelanggaran::with('siswa.kelas', 'kategori', 'jenis', 'sanksi')
+            ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+            ->latest()
+            ->get();
 
-    // Hitung jumlah pelanggaran per siswa berdasarkan kategori
-    $siswa = Siswa::with('kelas')
+        $siswa = Siswa::with('kelas')
+        ->where('tahun_ajaran_id', $tahunAjaranAktif->id) // ✅ tambahkan ini
         ->withCount([
             'pelanggaran as ringan_count' => function ($query) use ($tahunAjaranAktif) {
                 $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                      ->whereHas('kategori', function ($q) {
-                          $q->where('nama_kategori', 'RINGAN');
-                      });
+                    ->whereHas('jenis.kategori', function ($q) {
+                        $q->whereRaw('LOWER(nama_kategori) = ?', ['ringan']);
+                    });
             },
             'pelanggaran as berat_count' => function ($query) use ($tahunAjaranAktif) {
                 $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                      ->whereHas('kategori', function ($q) {
-                          $q->where('nama_kategori', 'BERAT');
-                      });
+                    ->whereHas('jenis.kategori', function ($q) {
+                        $q->whereRaw('LOWER(nama_kategori) = ?', ['berat']);
+                    });
             },
             'pelanggaran as sangat_berat_count' => function ($query) use ($tahunAjaranAktif) {
                 $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                      ->whereHas('kategori', function ($q) {
-                          $q->where('nama_kategori', 'SANGAT BERAT');
-                      });
+                    ->whereHas('jenis.kategori', function ($q) {
+                        $q->whereRaw('LOWER(nama_kategori) = ?', ['sangat berat']);
+                    });
             },
         ])
         ->get();
 
-    $kategori = Kategori::with('jenis')->get();
-    $sanksi = Sanksi::all();
 
-    return view('input_pelanggaran.index', compact(
-        'pelanggaran',
-        'siswa',
-        'kategori',
-        'sanksi',
-        'tahunAjaranAktif'
-    ));
-}
+        $kategori = Kategori::with('jenis')->get();
+        $sanksi = Sanksi::all();
+
+        return view('input_pelanggaran.index', compact(
+            'pelanggaran',
+            'siswa',
+            'kategori',
+            'sanksi',
+            'tahunAjaranAktif'
+        ));
+    }
+
 
 
     /**

@@ -9,7 +9,7 @@
     <div class="flex flex-col md:flex-row justify-between items-center mb-3">
         <h2 class="text-xl font-semibold">Riwayat Pelanggaran</h2>
         <a href="{{ route('input-pelanggaran.create') }}">
-            <button type="button" class="flex items-center bg-green-600 text-white px-2 py-1 hover:bg-green-700 transition duration-300 rounded-md">
+            <button type="button" class="flex items-center bg-green-600 text-white px-2 py-1 hover:bg-green-700 transition duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="18" height="18" viewBox="0 0 22 22" fill="#ffffff">
                     <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
                 </svg>
@@ -55,7 +55,7 @@
                         <div class="flex items-center justify-center space-x-2">
                             <a href="{{ route('input-pelanggaran.show', $offense->id) }}" class="p-2 rounded-full group transition-all duration-500 flex items-center hover:bg-gray-100">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                    fill="currentColor" viewBox="0 0 24 24" >
+                                    fill="green" viewBox="0 0 24 24" >
                                     <path class="fill-green-600" d="M7 10h10v2H7zM7 14h7v2H7z"></path><path d="M19 3h-2c0-.55-.45-1-1-1H8c-.55 0-1 .45-1 1H5c-1.1 0-2 .9-2 2v15c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 17H5V5h2v2h10V5h2z"></path>
                                 </svg>
                             </a>

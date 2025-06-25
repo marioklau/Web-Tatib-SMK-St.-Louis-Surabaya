@@ -39,23 +39,23 @@
                     <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Kelas</th>
                     <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Nama Siswa</th>
                     <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">NIS</th>
-                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">R</th>
-                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">B</th>
-                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">SB</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">R</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">B</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">SB</th>
                     <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-300">
                 @forelse ($siswa as $student)
                     <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $loop->iteration + ($siswa->currentPage() - 1) * $siswa->perPage() }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $student->kelas->nama_kelas }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $student->nama_siswa }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $student->nis }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $student->ringan_count }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $student->berat_count }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $student->sangat_berat_count }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $loop->iteration + ($siswa->currentPage() - 1) * $siswa->perPage() }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-gray-900">{{ $student->kelas->nama_kelas }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-gray-900">{{ $student->nama_siswa }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-gray-900">{{ $student->nis }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $student->ringan_count }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $student->berat_count }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $student->sangat_berat_count }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">
                             <div class="flex items-center justify-center space-x-1">
                                 <!-- Detail -->
                                 <a href="{{ route('siswa.show', $student) }}" class="p-2  rounded-full  group transition-all duration-500  flex item-center">
