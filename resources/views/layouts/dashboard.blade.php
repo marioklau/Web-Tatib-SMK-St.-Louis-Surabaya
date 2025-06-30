@@ -53,17 +53,17 @@
 </div>
 
 <!-- Chart Section -->
-<div class="bg-white p-6 m-6 rounded-lg shadow">
+<div class="bg-white p-2 m-6 rounded-lg shadow">
     <h2 class="text-lg font-semibold text-gray-700 mb-4">Grafik Pelanggaran per Bulan</h2>
     <canvas id="pelanggaranChart"></canvas>
 </div>
 
-<div class="bg-white p-6 m-6 rounded-lg shadow">
+<div class="bg-white p-2 m-6 rounded-lg shadow">
     <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 10 Siswa Pelanggaran Terbanyak</h2>
     <canvas id="topSiswaChart"></canvas>
 </div>
 
-<div class="bg-white p-6 m-6 rounded-lg shadow">
+<div class="bg-white p-2 m-6 rounded-lg shadow">
     <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 10 Kelas & Jurusan Pelanggaran Terbanyak</h2>
     <canvas id="kelasChart"></canvas>
 </div>
@@ -141,5 +141,5 @@
         }
     });
 </script>
-const pelanggaranPerBulan = @json($pelanggaranPerBulanChart);
+
 @endsection

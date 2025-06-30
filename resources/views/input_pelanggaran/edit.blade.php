@@ -43,7 +43,7 @@
                         value="{{ $j->id }}"
                         data-kategori="{{ $j->kategori_id }}"
                         {{ $pelanggaran->jenis_id == $j->id ? 'selected' : '' }}>
-                        {{ $j->nama_jenis }}
+                        {{ $j->bentuk_pelanggaran }}
                     </option>
                 @endforeach
             </select>

@@ -34,14 +34,14 @@
             <tbody class="divide-y divide-gray-300">
                 @forelse ($kelas as $class)
                     <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $loop->iteration }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $class->kode_kelas }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $class->nama_kelas }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $class->wali_kelas }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-center text-gray-900">
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $loop->iteration }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-gray-900">{{ $class->kode_kelas }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-gray-900">{{ $class->nama_kelas }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-gray-900">{{ $class->wali_kelas }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-center text-gray-900">
                             {{ $class->siswa_count }}
                         </td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-gray-900">
                             <div class="flex items-center justify-center gap-1">
                                 <!-- Tombol Detail -->
                                 <a href="{{ route('kelas.show', $class) }}" class="p-2  rounded-full  group transition-all duration-500  flex item-center">

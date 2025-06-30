@@ -54,9 +54,9 @@
             <tbody class="divide-y divide-gray-300">
                 @forelse ($jenis as $type)
                     <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                    <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $loop->iteration + ($jenis->currentPage() - 1) * $jenis->perPage() }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-left text-gray-900">{{ $type->bentuk_pelanggaran }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-center text-gray-900">
+                    <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $loop->iteration + ($jenis->currentPage() - 1) * $jenis->perPage() }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{{ $type->bentuk_pelanggaran }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-center text-gray-900">
                             <div class="flex items-center justify-center space-x-2">
                                 <!-- Tombol Edit -->
                                 <a href="{{ route('jenis.edit', $type) }}" class="p-2  rounded-full  group transition-all duration-500  flex item-center">

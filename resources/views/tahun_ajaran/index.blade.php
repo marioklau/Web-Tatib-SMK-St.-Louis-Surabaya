@@ -32,9 +32,9 @@
             <tbody class="divide-y divide-gray-300">
                 @foreach ($tahunAjaran as $i => $t)
                     <tr  class="bg-white transition-all duration-500 hover:bg-gray-50">
-                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $i + 1 }}</td>
-                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $t->tahun_ajaran }}</td>
-                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $i + 1 }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $t->tahun_ajaran }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">
                             @if ($t->status == 'aktif')
                                 <span class="text-green-600 font-semibold">Aktif</span>
                             @else
@@ -45,7 +45,7 @@
                             <form action="{{ route('tahun-ajaran.aktifkan', $t->id) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <button class="bg-blue-500 text-white px-2 py-1 text-sm rounded hover:bg-blue-600">Aktifkan</button>
+                                <button class="bg-blue-500 text-white px-1 py-1 text-xs rounded hover:bg-blue-600">Aktifkan</button>
                             </form>
                         </td>
                     </tr>

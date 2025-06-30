@@ -56,18 +56,18 @@
             <tbody class="divide-y divide-gray-300">
                 @forelse ($sanksi as $sanctions)
                     <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $loop->iteration }}</td>
-                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $loop->iteration }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">
                             @php
                                 $min = $sanctions->bobot_min == 0 ? '' : $sanctions->bobot_min;
                                 $max = $sanctions->bobot_max == 0 ? '' : $sanctions->bobot_max;
                             @endphp
                             {{ $min }}{{ ($min && $max) ? ' - ' : '' }}{{ $max }}
                         </td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-left text-gray-900">{{ $sanctions->pembina }}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-left text-gray-900">{!! $sanctions->nama_sanksi !!}</td>
-                        <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-left text-gray-900">{!! $sanctions->keputusan_tindakan !!}</td>
-                        <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{{ $sanctions->pembina }}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{!! $sanctions->nama_sanksi !!}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{!! $sanctions->keputusan_tindakan !!}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">
                             <div class="flex items-center justify-center gap-1">
                                 <!-- Tombol Detail -->
                                 <a href="{{ route('sanksi.show', $sanctions) }}" class="p-2  rounded-full  group transition-all duration-500  flex item-center">

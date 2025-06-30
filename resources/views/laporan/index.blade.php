@@ -26,38 +26,39 @@
         </div>
     </form>
     @if ($siswa->count())
-        <table class="min-w-full bg-white border border-gray-200">
+    <div class="overflow-hidden">
+    <table class="min-w-full rounded-xl">
             <thead>
-                <tr class="bg-gray-300 text-gray-900 uppercase text-sm leading-normal">
-                    <th class="py-1 px-2 border text-center">No</th>
-                    <th class="py-1 px-2 border">Kelas</th>
-                    <th class="py-1 px-2 border">Nama Siswa</th>
-                    <th class="py-1 px-2 border">NIS</th>
-                    <th class="py-1 px-2 border">Jenis Pelanggaran</th>
-                    <th class="py-1 px-2 border">Sanksi Pelanggaran</th>
-                    <th class="py-1 px-2 border text-center">Status Pelanggaran</th>
+                <tr class="bg-gray-200">
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Kelas</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Nama Siswa</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">NIS</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Jenis Pelanggaran</th>
+                    <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Sanksi Pelanggaran</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Status Pelanggaran</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($siswa as $index => $item)
                     <tr>
-                        <td class="py-1 px-2 border text-center">{{ $index + 1 }}</td>
-                        <td class="py-1 px-2 border">{{ $item->kelas->nama_kelas }}</td>
-                        <td class="py-1 px-2 border">{{ $item->nama_siswa }}</td>
-                        <td class="py-1 px-2 border">{{ $item->nis }}</td>
-                        <td class="py-1 px-2 border">
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $index + 1 }}</td>
+                        <td class="p-1 whitespace-nowrap text-left text-xs leading-6 font-medium text-gray-900">{{ $item->kelas->nama_kelas }}</td>
+                        <td class="p-1 whitespace-nowrap text-left text-xs leading-6 font-medium text-gray-900">{{ $item->nama_siswa }}</td>
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">{{ $item->nis }}</td>
+                        <td class="p-1 whitespace-nowrap text-left text-xs leading-6 font-medium text-gray-900">
                             @php
                                 $jenisPelanggaran = $item->pelanggaran->pluck('jenis.bentuk_pelanggaran')->unique()->implode(', ');
                             @endphp
                             {{ $jenisPelanggaran ?: '-' }}
                         </td>
-                        <td class="py-1 px-2 border">
+                        <td class="p-1 whitespace-nowrap text-left text-xs leading-6 font-medium text-gray-900">
                             @php
                                 $sanksi = $item->pelanggaran->pluck('sanksi.keputusan_tindakan')->unique()->implode(', ');
                             @endphp
                             {{ $sanksi ?: '-' }}
                         </td>
-                        <td class="py-1 px-2 border text-center">
+                        <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">
                             @php
                                 $statuses = $item->pelanggaran->pluck('status')->unique();
                             @endphp
@@ -78,6 +79,7 @@
                 @endforeach
             </tbody>
         </table>
+    </div>
     @else
         <p class="text-gray-600 mt-4">Tidak ada siswa untuk kelas ini.</p>
     @endif
