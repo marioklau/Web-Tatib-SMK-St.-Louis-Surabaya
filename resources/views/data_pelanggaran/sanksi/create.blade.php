@@ -49,15 +49,15 @@
                         class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-none focus:outline-none focus:ring focus:border-blue-600"
                         value="{{ old('pembina') }}" required>
 
-                    <label for="nama_sanksi" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Pembinaan</label>
+                    <label for="nama_sanksi" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Pembinaan (Pisahkan dengan baris baru)</label>
                     <textarea id="nama_sanksi" name="nama_sanksi" rows="5"
                         class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-600"
-                        required>{{ old('nama_sanksi') }}</textarea>
+                        required>{{ old('nama_sanksi') ? implode("\n", old('nama_sanksi')) : (isset($sanksi) ? implode("\n", $sanksi->nama_sanksi) : '') }}</textarea>
 
-                    <label for="keputusan_tindakan" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Keputusan Tindakan</label>
+                    <label for="keputusan_tindakan" class="block mb-2 text-sm font-medium text-gray-700 mt-4">Keputusan Tindakan (Pisahkan dengan baris baru)</label>
                     <textarea id="keputusan_tindakan" name="keputusan_tindakan" rows="5"
                         class="block w-full px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-600"
-                        required>{{ old('keputusan_tindakan') }}</textarea>
+                        required>{{ old('keputusan_tindakan') ? implode("\n", old('keputusan_tindakan')) : (isset($sanksi) ? implode("\n", $sanksi->keputusan_tindakan) : '') }}</textarea>
 
                     <!-- error messages -->
                     @error('bobot_min')

@@ -65,8 +65,28 @@
                             {{ $min }}{{ ($min && $max) ? ' - ' : '' }}{{ $max }}
                         </td>
                         <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{{ $sanctions->pembina }}</td>
-                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{!! $sanctions->nama_sanksi !!}</td>
-                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{!! $sanctions->keputusan_tindakan !!}</td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
+                            @if(is_array($sanctions->nama_sanksi))
+                                <ul class="list-disc list-inside">
+                                    @foreach($sanctions->nama_sanksi as $item)
+                                        <li>{!! $item !!}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                {!! $sanctions->nama_sanksi !!}
+                            @endif
+                        </td>
+                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
+                            @if(is_array($sanctions->keputusan_tindakan))
+                                <ul class="list-disc list-inside">
+                                    @foreach($sanctions->keputusan_tindakan as $item)
+                                        <li>{!! $item !!}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                {!! $sanctions->keputusan_tindakan !!}
+                            @endif
+                        </td>
                         <td class="p-1 whitespace-nowrap text-center text-xs leading-6 font-medium text-gray-900">
                             <div class="flex items-center justify-center gap-1">
                                 <!-- Tombol Detail -->

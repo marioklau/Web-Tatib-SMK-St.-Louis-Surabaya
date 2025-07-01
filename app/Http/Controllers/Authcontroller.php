@@ -5,53 +5,55 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User; // Pastikan untuk mengimpor model User
+use App\Models\User;
+
 
 class AuthController extends Controller
 {
+    // Menampilkan halaman login
     public function login()
     {
         return view('auth.login');
-
     }
 
+    // Proses autentikasi login
     public function authenticate(Request $request)
     {
+        // Validasi input
         $credentials = $request->validate([
             'username' => 'required',
             'password' => 'required',
         ]);
 
-        // Cek apakah username ada di database
+        // Cari user berdasarkan username
         $user = User::where('username', $credentials['username'])->first();
 
-        // Jika user ditemukan dan password cocok
-        if ($user && Hash::check($credentials['password'], $user->password())) {
+        // Cek apakah user ditemukan dan password cocok
+        if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::login($user);
             $request->session()->regenerate(); 
             return redirect()->route('dashboard'); 
         }
 
+        // Jika gagal login
         return back()->with('loginError', 'Login Gagal');
     }
 
-
-    public function logout(Request $request){   
+    // Logout user
+    public function logout(Request $request)
+    {   
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        // session()->flush();
+
         return redirect('/login')->with('success', 'Berhasil logout');
     }
 
-//     public function showPasswordHash()
-// {
-//     $password = 'admin'; // Ganti sesuai password yang ingin di-hash
-//     $hash = Hash::make($password);
-
-//     dd($hash); // akan tampilkan hasil hash di browser
-// }
-
-
+    // Optional: menampilkan hash dari password (untuk testing)
+    // public function showPasswordHash()
+    // {
+    //     $password = 'admin'; // Ganti sesuai password yang ingin di-hash
+    //     $hash = Hash::make($password);
+    //     dd($hash); // tampilkan hash di browser
+    // }
 }
-

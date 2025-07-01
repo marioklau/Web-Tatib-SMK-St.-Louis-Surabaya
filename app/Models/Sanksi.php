@@ -19,6 +19,12 @@ class Sanksi extends Model
         'kategori_id'
     ];
 
+    protected $casts = [
+        'nama_sanksi' => 'array', 
+        'keputusan_tindakan' => 'array', 
+    ];
+
+
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'kategori_id');

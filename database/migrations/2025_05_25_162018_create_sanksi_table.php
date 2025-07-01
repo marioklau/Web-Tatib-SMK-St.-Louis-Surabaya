@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('kategori_id')->constrained('kategori')->onDelete('cascade');
             $table->unsignedInteger('bobot_min');
             $table->unsignedInteger('bobot_max');
-            $table->string('nama_sanksi');
+            $table->json('nama_sanksi');
             $table->string('pembina');
-            $table->string('keputusan_tindakan');
+            $table->json('keputusan_tindakan');
             $table->timestamps();
         });
     }
