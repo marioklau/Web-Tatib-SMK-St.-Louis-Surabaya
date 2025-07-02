@@ -46,7 +46,7 @@
             <thead>
                 <tr class="bg-gray-200">
                     <th cope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
-                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Jumlah Pelangaran</th>
+                    <th scope="col" class=" p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Jumlah Pelanggaran</th>
                     <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Pembina</th>
                     <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Pembinaan</th>
                     <th scope="col" class=" p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Keputusan Tindakan</th>

@@ -15,7 +15,7 @@
 <div class="container mx-auto px-4">
     <h1 class="text-2xl font-semibold mb-6">Edit Pelanggaran</h1>
 
-    <form action="{{ route('input-pelanggaran.update', $pelanggaran->id) }}" method="POST" class="space-y-6">
+    <form action="{{ route('input_pelanggaran.update', $pelanggaran->id) }}" method="POST" class="space-y-6">
         @csrf
         @method('PUT')
 
@@ -65,6 +65,18 @@
             </select>
         </div>
 
+        <div class="mt-4">
+            <label class="block mt-4 mb-1">Pilih Keputusan Tindakan</label>
+            <select name="keputusan_tindakan_id" id="keputusan-select" class="w-full border p-2 rounded" required>
+                <option value="">-- Pilih Keputusan --</option>
+                @foreach ($keputusan_tindakan_options as $keputusan)
+                    <option value="{{ $keputusan->id }}" {{ $pelanggaran->keputusan_tindakan_id == $keputusan->id ? 'selected' : '' }}>
+                        {{ $keputusan->nama_keputusan }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
         <!-- Status -->
         <div>
             <label class="block text-sm font-medium">Status</label>
@@ -82,7 +94,7 @@
 
         <!-- Tombol -->
         <div class="flex justify-end gap-4">
-            <a href="{{ route('input-pelanggaran.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+            <a href="{{ route('input_pelanggaran.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
                 Batal
             </a>
             <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">

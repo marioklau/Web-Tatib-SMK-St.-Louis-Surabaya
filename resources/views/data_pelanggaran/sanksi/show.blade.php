@@ -9,7 +9,7 @@
         <div class="grid grid-cols-8 mb-2">
             <div class="col-span-4">
                 <h1 class="text-2xl font-semibold">
-                    Detail sanksi Pelanggaran {{ $sanksi->bobot_pelanggaran }}
+                    Detail sanksi Pelanggaran {{ $sanksi->bobot_min }} - {{ $sanksi->bobot_max }} {{-- Lebih relevan --}}
                 </h1>
             </div>
         </div>
@@ -29,10 +29,10 @@
 
                         <tr class="bg-white border-b border-gray-200">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                Nama Sanksi
+                                Nama Sanksi (Pembinaan)
                             </th>
                             <td class="px-6 py-4">
-                                {{ $sanksi->nama_sanksi }}
+                                {{ is_array($sanksi->nama_sanksi) ? implode(', ', $sanksi->nama_sanksi) : $sanksi->nama_sanksi }}
                             </td>
                         </tr>
 
@@ -50,10 +50,10 @@
                                 Keputusan Tindakan
                             </th>
                             <td class="px-6 py-4">
-                                {{ $sanksi->keputusan_tindakan }}
+                                {{ is_array($sanksi->keputusan_tindakan) ? implode(', ', $sanksi->keputusan_tindakan) : $sanksi->keputusan_tindakan }}
                             </td>
                         </tr>
-                        
+
                     </tbody>
                 </table>
             </div>

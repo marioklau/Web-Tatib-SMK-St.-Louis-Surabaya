@@ -4,7 +4,6 @@
 
 @section('content')
 
-<!-- Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -22,30 +21,26 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('input-pelanggaran.store') }}" class="bg-white rounded shadow p-6">
+    <form method="POST" action="{{ route('input_pelanggaran.store') }}" class="bg-white rounded shadow p-6">
         @csrf
 
-        <!-- SISWA + R B SB -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
-            <!-- Siswa -->
             <div>
                 <label class="block mb-1">Nama Siswa</label>
                 <select name="siswa_id" id="siswa-select" class="w-full p-2 border rounded" required>
                     <option value="">-- Pilih Siswa --</option>
                     @foreach ($siswa as $student)
-                        <option 
+                        <option
                             value="{{ $student->id }}"
                             data-r="{{ $student->ringan_count ?? 0 }}"
                             data-b="{{ $student->berat_count ?? 0 }}"
-                            data-sb="{{ $student->sangat_berat_count ?? 0 }}"
-                        >
+                            data-sb="{{ $student->sangat_berat_count ?? 0 }}">
                             {{ $student->nama_siswa }} - ({{ $student->kelas->kode_kelas ?? 'Tanpa Kelas' }})
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            <!-- R B SB Count -->
             <div class="flex items-end gap-2 col-span-3">
                 <div class="flex flex-col items-center">
                     <label class="text-xs font-semibold text-gray-700 mb-1">R</label>
@@ -62,15 +57,13 @@
             </div>
         </div>
 
-        <!-- JENIS & KATEGORI -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <!-- Jenis Pelanggaran -->
             <div>
                 <label class="block mb-1">Jenis Pelanggaran</label>
-                <select name="jenis_id" id="jenis-select" class="w-full border rounded" required>
+                <select name="jenis_id" id="jenis-select" class="w-full border" required>
                     <option value="">-- Pilih Jenis --</option>
                     @foreach ($jenis as $j)
-                        <option 
+                        <option
                             value="{{ $j->id }}"
                             data-kategori-id="{{ $j->kategori->id }}"
                             data-kategori-nama="{{ $j->kategori->nama_kategori }}">
@@ -80,46 +73,48 @@
                 </select>
             </div>
 
-            <!-- Kategori -->
             <div>
                 <label class="block mb-1">Kategori</label>
-                <input type="text" id="kategori-display" class="border-2 text-gray-600 bg-gray-100 rounded w-full" readonly>
+                <input type="text" id="kategori-display" class="border-2 text-gray-600 " readonly>
                 <input type="hidden" name="kategori_id" id="kategori-id">
             </div>
         </div>
 
-        <!-- Sanksi -->
         <div class="mt-4">
-            <label class="block mb-1">Sanksi</label>
-            <select name="sanksi_id" id="sanksi-select" class="w-full border p-2 rounded" required>
-                <option value="">-- Pilih Sanksi --</option>
-                @foreach($sanksi as $s)
-                    <option data-kategori="{{ $s->kategori_id }}" value="{{ $s->id }}">
-                        {{ $s->nama_sanksi }}
-                    </option>
+            <label class="block mb-1">Pilih Pembinaan</label>
+            <select name="sanksi_id" id="sanksi-select" class="w-full border p-2" required>
+                {{-- Opsi akan ditambahkan via JS --}}
+            </select>
+        </div>
+
+        <div class="mt-4">
+            <label class="block mt-4 mb-1">Pilih Keputusan Tindakan</label>
+            <select name="keputusan_tindakan_id" id="keputusan-select" class="border p-2" required>
+                <option value="">-- Pilih Keputusan --</option>
+                @foreach ($keputusanTindakan as $keputusan)
+                    <option value="{{ $keputusan->id }}">{{ $keputusan->nama_keputusan }}</option>
                 @endforeach
             </select>
         </div>
 
-        <!-- Tombol -->
         <div class="mt-6 flex gap-2">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
-            <button type="button" onclick="history.back()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">Kembali</button>
+            <button type="submit" class="bg-blue-600 text-white px-2 py-1 hover:bg-blue-700">Simpan</button>
+            <button type="button" onclick="history.back()" class="bg-gray-200 text-gray-700 px-2 py-1 hover:bg-gray-300">Kembali</button>
         </div>
     </form>
 </div>
 
-<!-- SCRIPT -->
+
 <script>
     $(document).ready(function () {
-        // Inisialisasi Select2
         $('#siswa-select, #jenis-select, #sanksi-select').select2({
             placeholder: "-- Pilih --",
             allowClear: true,
-            minimumResultsForSearch: 0 // AKTIFKAN pencarian walau data sedikit
+            minimumResultsForSearch: 0
         });
 
-        // ==== Update Count R/B/SB ====
+        const allSanksiData = @json($sanksi);
+
         function updateCounts() {
             const selected = $('#siswa-select option:selected');
             $('#count-r').val(selected.data('r') ?? 0);
@@ -128,25 +123,55 @@
         }
 
         $('#siswa-select').on('change', updateCounts);
-        updateCounts(); // initial load if any preselected
+        updateCounts();
 
-        // ==== Jenis => Update Kategori + Filter Sanksi ====
         $('#jenis-select').on('change', function () {
-            const selected = $(this).find(':selected');
-            const kategoriId = selected.data('kategori-id');
-            const kategoriNama = selected.data('kategori-nama');
+            const selectedJenis = $(this).find(':selected');
+            const kategoriId = selectedJenis.data('kategori-id');
+            const kategoriNama = selectedJenis.data('kategori-nama');
 
             $('#kategori-id').val(kategoriId);
             $('#kategori-display').val(kategoriNama);
 
-            // Filter sanksi sesuai kategori
-            $('#sanksi-select option').each(function () {
-                const sanksiKategori = $(this).data('kategori');
-                $(this).toggle(!sanksiKategori || sanksiKategori == kategoriId);
-            });
+            $('#sanksi-select').empty();
+            const filteredSanksi = allSanksiData.filter(sanksi => sanksi.kategori_id == kategoriId);
 
-            $('#sanksi-select').val(null).trigger('change');
+            if (filteredSanksi.length > 0) {
+                $('#sanksi-select').append(new Option('-- Pilih Sanksi --', '', false, false));
+                filteredSanksi.forEach(sanksi => {
+                    const newOption = new Option(sanksi.nama_sanksi, sanksi.id, false, false);
+                    $(newOption).data('pembinaan', sanksi.pembinaan_text);
+                    $(newOption).data('keputusan', sanksi.keputusan_tindakan);
+                    $('#sanksi-select').append(newOption);
+                });
+            } else {
+                $('#sanksi-select').append(new Option('-- Tidak ada sanksi untuk kategori ini --', '', false, false));
+            }
+
+            $('#sanksi-select').val('').trigger('change');
+            updateKeputusanDisplay(); // Memanggil fungsi untuk memperbarui dropdown keputusan
         });
+
+        function updateKeputusanDisplay() {
+            const selectedSanksiOption = $('#sanksi-select option:selected');
+            const keputusanSelect = $('#keputusan-select');
+
+            keputusanSelect.empty().append(new Option('-- Pilih Keputusan --', '', false, false));
+
+            if (selectedSanksiOption.val() && selectedSanksiOption.val() !== '') {
+                const keputusanArray = selectedSanksiOption.data('keputusan'); // Ambil data keputusan dari sanksi yang dipilih
+
+                if (Array.isArray(keputusanArray)) {
+                    keputusanArray.forEach(k => {
+                        keputusanSelect.append(new Option(k, k, false, false));
+                    });
+                }
+            }
+        }
+        
+
+        $('#sanksi-select').on('change', updateKeputusanDisplay);
+        $('#jenis-select').trigger('change');
     });
 </script>
 

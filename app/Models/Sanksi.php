@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sanksi extends Model
 {
-    // Tentukan nama tabel jika tidak sesuai dengan konvensi Laravel
     protected $table = 'sanksi';
-    
 
     protected $fillable = [
         'bobot_min',
@@ -20,10 +18,9 @@ class Sanksi extends Model
     ];
 
     protected $casts = [
-        'nama_sanksi' => 'array', 
-        'keputusan_tindakan' => 'array', 
+        'nama_sanksi' => 'array',
+        'keputusan_tindakan' => 'array', // Pastikan ini di-cast sebagai array
     ];
-
 
     public function kategori()
     {

@@ -31,8 +31,8 @@ Route::resource('jenis', JenisController::class)-> middleware('auth') ->paramete
 Route::resource('sanksi', SanksiController::class)-> middleware('auth');
 Route::resource('siswa', SiswaController::class)-> middleware('auth');
 Route::resource('kelas', KelasController::class)-> middleware('auth')->parameters(['kelas' => 'kelas']);
-Route::resource('input-pelanggaran', InputPelanggaranController::class)-> middleware('auth');
-Route::patch('/input-pelanggaran/{offense}/update-status', [InputPelanggaranController::class, 'updateStatus'])->name('input-pelanggaran.update-status');
+Route::resource('input_pelanggaran', InputPelanggaranController::class)-> middleware('auth');
+Route::patch('/input_pelanggaran/{offense}/update-status', [InputPelanggaranController::class, 'updateStatus'])->name('input_pelanggaran.update-status');
 Route::patch('/tahun-ajaran/{id}/aktifkan', [TahunAjaranController::class, 'aktifkan'])->name('tahun-ajaran.aktifkan');
 Route::resource('tahun-ajaran', TahunAjaranController::class)-> middleware('auth');
 
@@ -47,7 +47,7 @@ Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('lapor
 
 // route change status pelanggaran
 // Changed {id} to {pelanggaran} for implicit Route Model Binding
-Route::patch('/input-pelanggaran/{pelanggaran}/status', [InputPelanggaranController::class, 'updateStatus'])->name('input-pelanggaran.update-status');
+Route::patch('/input_pelanggaran/{pelanggaran}/status', [InputPelanggaranController::class, 'updateStatus'])->name('input_pelanggaran.update-status');
 
 //tahun ajaran post
 Route::post('/tahun-ajaran', [TahunAjaranController::class, 'store'])->name('tahun-ajaran.store');
