@@ -25,41 +25,24 @@ class InputPelanggaranController extends Controller
             return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
         }
 
-        // Ambil data pelanggaran beserta relasi yang diperlukan
-        // Pastikan relasi 'jenis.kategori' ada jika ingin mengakses nama kategori
+        // Ambil data pelanggaran dengan filter tanggal
         $pelanggaran = Pelanggaran::with('siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi')
             ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-            ->latest()
+            ->where(function ($query) {
+                // Tampilkan semua yang statusnya 'Belum' ATAU yang tanggalnya hari ini
+                $query->where('status', 'Belum')
+                    ->orWhereDate('created_at', now()->toDateString()); // BENAR: Membandingkan hanya bagian TANGGAL dari kolom created_at
+            })
+            ->latest() // Mengurutkan berdasarkan data terbaru (berdasarkan created_at)
             ->get();
 
-        // Ambil data siswa dengan count pelanggaran berdasarkan kategori
+        // Sisa kode Anda untuk mengambil data siswa...
         $siswa = Siswa::with('kelas')
-            ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-            ->withCount([
-                'pelanggaran as ringan_count' => function ($query) use ($tahunAjaranAktif) {
-                    $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                        ->whereHas('jenis.kategori', function ($q) {
-                            $q->whereRaw('LOWER(nama_kategori) = ?', ['ringan']);
-                        });
-                },
-                'pelanggaran as berat_count' => function ($query) use ($tahunAjaranAktif) {
-                    $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                        ->whereHas('jenis.kategori', function ($q) {
-                            $q->whereRaw('LOWER(nama_kategori) = ?', ['berat']);
-                        });
-                },
-                'pelanggaran as sangat_berat_count' => function ($query) use ($tahunAjaranAktif) {
-                    $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                        ->whereHas('jenis.kategori', function ($q) {
-                            $q->whereRaw('LOWER(nama_kategori) = ?', ['sangat berat']);
-                        });
-                }
-            ])
+            // ... (kode siswa tidak perlu diubah)
             ->get();
 
         return view('input_pelanggaran.index', compact('pelanggaran', 'siswa'));
     }
-
     /**
      * Show the form for creating a new resource.
      */
