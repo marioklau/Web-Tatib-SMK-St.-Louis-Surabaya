@@ -160,8 +160,24 @@ class SiswaController extends Controller
 
     public function destroy(Siswa $siswa)
     {
-        $siswa->delete();
-        return redirect()->route('siswa.index')
-            ->with('success', 'Siswa Berhasil Dihapus');
+        // 1. Cek apakah siswa memiliki relasi dengan data pelanggaran.
+        // Method exists() lebih efisien karena tidak me-load semua data.
+        if ($siswa->pelanggaran()->exists()) {
+            // 2. Jika ADA, batalkan proses hapus dan kembalikan dengan pesan error.
+            return redirect()->back()
+                ->with('error', 'Gagal! Siswa ini tidak dapat dihapus karena masih memiliki data pelanggaran.');
+        }
+
+        // 3. Jika TIDAK ADA, lanjutkan proses hapus.
+        try {
+            $siswa->delete();
+            // Kembalikan dengan pesan sukses.
+            return redirect()->route('siswa.index')
+                ->with('success', 'Siswa berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Tangani jika ada error tak terduga saat proses hapus.
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menghapus data siswa: ' . $e->getMessage());
+        }
     }
 }
