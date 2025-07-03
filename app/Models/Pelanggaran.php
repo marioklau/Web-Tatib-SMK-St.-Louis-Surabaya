@@ -20,7 +20,8 @@ class Pelanggaran extends Model
         'sanksi_id',
         'tahun_ajaran_id',
         'keterangan',
-        'status'
+        'status',
+        'keputusan_tindakan_terpilih'
     ];
 
     public function siswa() {

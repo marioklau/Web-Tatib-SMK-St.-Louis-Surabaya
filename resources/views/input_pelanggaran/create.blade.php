@@ -34,7 +34,9 @@
                             value="{{ $student->id }}"
                             data-r="{{ $student->ringan_count ?? 0 }}"
                             data-b="{{ $student->berat_count ?? 0 }}"
-                            data-sb="{{ $student->sangat_berat_count ?? 0 }}">
+                            data-sb="{{ $student->sangat_berat_count ?? 0 }}"
+                            {{ old('siswa_id') == $student->id ? 'selected' : '' }}
+                        >
                             {{ $student->nama_siswa }} - ({{ $student->kelas->kode_kelas ?? 'Tanpa Kelas' }})
                         </option>
                     @endforeach
@@ -66,7 +68,9 @@
                         <option
                             value="{{ $j->id }}"
                             data-kategori-id="{{ $j->kategori->id }}"
-                            data-kategori-nama="{{ $j->kategori->nama_kategori }}">
+                            data-kategori-nama="{{ $j->kategori->nama_kategori }}"
+                            {{ old('jenis_id') == $j->id ? 'selected' : '' }}
+                        >
                             {{ $j->bentuk_pelanggaran }}
                         </option>
                     @endforeach
@@ -75,13 +79,13 @@
 
             <div>
                 <label class="block mb-1">Kategori</label>
-                <input type="text" id="kategori-display" class="border-2 text-gray-600 " readonly>
+                <input type="text" id="kategori-display" class="border-2 text-gray-600 w-full p-2" readonly>
                 <input type="hidden" name="kategori_id" id="kategori-id">
             </div>
         </div>
 
         <div class="mt-4">
-            <label class="block mb-1">Pilih Pembinaan</label>
+            <label class="block mb-1">Pilih Sanksi/Pembinaan</label>
             <select name="sanksi_id" id="sanksi-select" class="w-full border p-2" required>
                 {{-- Opsi akan ditambahkan via JS --}}
             </select>
@@ -89,11 +93,10 @@
 
         <div class="mt-4">
             <label class="block mt-4 mb-1">Pilih Keputusan Tindakan</label>
-            <select name="keputusan_tindakan_id" id="keputusan-select" class="border p-2" required>
+            {{-- Nama input diubah menjadi keputusan_tindakan_terpilih --}}
+            <select name="keputusan_tindakan_terpilih" id="keputusan-select" class="w-full border p-2" required>
                 <option value="">-- Pilih Keputusan --</option>
-                @foreach ($keputusanTindakan as $keputusan)
-                    <option value="{{ $keputusan->id }}">{{ $keputusan->nama_keputusan }}</option>
-                @endforeach
+                {{-- Opsi akan ditambahkan via JS berdasarkan sanksi yang dipilih --}}
             </select>
         </div>
 
@@ -107,13 +110,13 @@
 
 <script>
     $(document).ready(function () {
-        $('#siswa-select, #jenis-select, #sanksi-select').select2({
+        $('#siswa-select, #jenis-select, #sanksi-select, #keputusan-select').select2({
             placeholder: "-- Pilih --",
             allowClear: true,
-            minimumResultsForSearch: 0
+            // minimumResultsForSearch: 0 // Hapus baris ini jika Anda ingin fitur pencarian selalu aktif
         });
 
-        const allSanksiData = @json($sanksi);
+        const allSanksiData = @json($sanksi); // Pastikan ini adalah array of objects dari model Sanksi
 
         function updateCounts() {
             const selected = $('#siswa-select option:selected');
@@ -123,7 +126,7 @@
         }
 
         $('#siswa-select').on('change', updateCounts);
-        updateCounts();
+        updateCounts(); // Panggil saat halaman pertama kali dimuat untuk nilai default
 
         $('#jenis-select').on('change', function () {
             const selectedJenis = $(this).find(':selected');
@@ -133,45 +136,69 @@
             $('#kategori-id').val(kategoriId);
             $('#kategori-display').val(kategoriNama);
 
-            $('#sanksi-select').empty();
+            $('#sanksi-select').empty().append(new Option('-- Pilih Sanksi --', '', false, false));
+            $('#keputusan-select').empty().append(new Option('-- Pilih Keputusan --', '', false, false)); // Reset juga keputusan
+
             const filteredSanksi = allSanksiData.filter(sanksi => sanksi.kategori_id == kategoriId);
 
             if (filteredSanksi.length > 0) {
-                $('#sanksi-select').append(new Option('-- Pilih Sanksi --', '', false, false));
                 filteredSanksi.forEach(sanksi => {
-                    const newOption = new Option(sanksi.nama_sanksi, sanksi.id, false, false);
-                    $(newOption).data('pembinaan', sanksi.pembinaan_text);
-                    $(newOption).data('keputusan', sanksi.keputusan_tindakan);
+                    // Pastikan nama_sanksi adalah array dan ambil elemen pertama jika ada
+                    const namaSanksiDisplay = Array.isArray(sanksi.nama_sanksi) ? sanksi.nama_sanksi[0] : sanksi.nama_sanksi;
+                    const newOption = new Option(namaSanksiDisplay, sanksi.id, false, false);
+                    $(newOption).data('keputusan', sanksi.keputusan_tindakan); // Simpan array keputusan
                     $('#sanksi-select').append(newOption);
                 });
             } else {
                 $('#sanksi-select').append(new Option('-- Tidak ada sanksi untuk kategori ini --', '', false, false));
             }
 
-            $('#sanksi-select').val('').trigger('change');
-            updateKeputusanDisplay(); // Memanggil fungsi untuk memperbarui dropdown keputusan
+            $('#sanksi-select').val('').trigger('change'); // Reset dan trigger change untuk memperbarui keputusan
         });
 
         function updateKeputusanDisplay() {
-            const selectedSanksiOption = $('#sanksi-select option:selected');
-            const keputusanSelect = $('#keputusan-select');
+        const selectedSanksiOption = $('#sanksi-select option:selected');
+        const keputusanSelect = $('#keputusan-select');
 
-            keputusanSelect.empty().append(new Option('-- Pilih Keputusan --', '', false, false));
+        keputusanSelect.empty().append(new Option('-- Pilih Keputusan --', '', false, false));
 
-            if (selectedSanksiOption.val() && selectedSanksiOption.val() !== '') {
-                const keputusanArray = selectedSanksiOption.data('keputusan'); // Ambil data keputusan dari sanksi yang dipilih
+        if (selectedSanksiOption.val() && selectedSanksiOption.val() !== '') {
+            const keputusanArray = selectedSanksiOption.data('keputusan');
 
-                if (Array.isArray(keputusanArray)) {
-                    keputusanArray.forEach(k => {
-                        keputusanSelect.append(new Option(k, k, false, false));
-                    });
-                }
+            console.log('Selected Sanksi ID:', selectedSanksiOption.val());
+            console.log('Keputusan array from selected Sanksi:', keputusanArray);
+
+            if (Array.isArray(keputusanArray)) {
+                keputusanArray.forEach(k => {
+                    keputusanSelect.append(new Option(k, k, false, false));
+                });
+                console.log('Keputusan dropdown updated with:', keputusanArray);
+            } else {
+                console.log('Keputusan data is not an array or is missing.');
             }
+        } else {
+            console.log('No Sanksi selected.');
         }
-        
+    }
 
         $('#sanksi-select').on('change', updateKeputusanDisplay);
+
+        // Panggil trigger change pada #jenis-select saat halaman pertama kali dimuat
+        // ini akan mengisi dropdown sanksi dan keputusan sesuai dengan jenis yang mungkin sudah terpilih (misal dari old())
         $('#jenis-select').trigger('change');
+
+        // Jika ada old('sanksi_id') setelah validasi gagal
+        @if(old('sanksi_id'))
+            $('#sanksi-select').val("{{ old('sanksi_id') }}").trigger('change');
+            // Untuk keputusan, kita perlu logic tambahan jika ingin mempertahankan old('keputusan_tindakan_terpilih')
+            // Ini akan mengisi dropdown keputusan berdasarkan sanksi yang dipilih,
+            // kemudian mencoba memilih old('keputusan_tindakan_terpilih')
+            setTimeout(() => {
+                @if(old('keputusan_tindakan_terpilih'))
+                    $('#keputusan-select').val("{{ old('keputusan_tindakan_terpilih') }}").trigger('change');
+                @endif
+            }, 100); // Sedikit delay untuk memastikan sanksi-select sudah terisi opsinya
+        @endif
     });
 </script>
 
