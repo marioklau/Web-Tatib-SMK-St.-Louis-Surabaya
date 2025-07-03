@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KeputusanTindakan;
 use Illuminate\Http\Request;
 use App\Models\Pelanggaran;
 use App\Models\Kategori;
@@ -28,7 +27,7 @@ class InputPelanggaranController extends Controller
 
         // Ambil data pelanggaran beserta relasi yang diperlukan
         // Pastikan relasi 'jenis.kategori' ada jika ingin mengakses nama kategori
-        $pelanggaran = Pelanggaran::with('siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi', 'keputusanTindakan')
+        $pelanggaran = Pelanggaran::with('siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi')
             ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
             ->latest()
             ->get();
@@ -94,9 +93,8 @@ class InputPelanggaranController extends Controller
         // Ambil semua sanksi. Karena kolom `nama_sanksi` dan `keputusan_tindakan` di-cast ke array di model Sanksi,
         // data ini akan otomatis menjadi array saat diambil dari database.
         $sanksi = Sanksi::all();
-        $keputusanTindakan = KeputusanTindakan::all(); // Pastikan model ini ada dan di-import
 
-        return view('input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi', 'keputusanTindakan'));
+        return view('input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
     }
 
     /**
@@ -152,7 +150,7 @@ class InputPelanggaranController extends Controller
     {
         // $input_pelanggaran sudah berisi data Pelanggaran yang dicari berdasarkan ID
         // Pastikan relasi sudah di-load jika ingin menampilkan data terkait
-        $input_pelanggaran->load('siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi', 'keputusanTindakan');
+        $input_pelanggaran->load('siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi');
         return view('input_pelanggaran.show', ['pelanggaran' => $input_pelanggaran]);
     }
 
@@ -177,9 +175,8 @@ class InputPelanggaranController extends Controller
 
         $jenis = Jenis::with('kategori')->get();
         $sanksi = Sanksi::all();
-        $keputusanTindakan = KeputusanTindakan::all();
 
-        return view('input_pelanggaran.edit', compact('input_pelanggaran', 'siswa', 'jenis', 'sanksi', 'keputusanTindakan'));
+        return view('input_pelanggaran.edit', compact('input_pelanggaran', 'siswa', 'jenis', 'sanksi'));
     }
 
     /**

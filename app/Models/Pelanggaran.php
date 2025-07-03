@@ -16,7 +16,6 @@ class Pelanggaran extends Model
         'siswa_id',
         'kategori_id',
         'jenis_id',
-        'keputusan_tindakan_id', 
         'sanksi_id',
         'tahun_ajaran_id',
         'keterangan',
@@ -38,10 +37,6 @@ class Pelanggaran extends Model
 
     public function sanksi() {
         return $this->belongsTo(Sanksi::class);
-    }
-
-    public function keputusanTindakan() {
-        return $this->belongsTo(KeputusanTindakan::class, 'keputusan_tindakan_id');
     }
 
 }
