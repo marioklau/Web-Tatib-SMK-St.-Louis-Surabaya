@@ -7,6 +7,7 @@ use App\Models\Kelas;
 use App\Models\Tahun;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Illuminate\Validation\ValidationException;
 
 class SiswaImport implements ToModel, WithHeadingRow
 {
@@ -19,24 +20,40 @@ class SiswaImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        if (!$this->tahunAktif) {
-            return null;
+        $tahunAktif = Tahun::where('status', 'aktif')->first();
+        if (!$tahunAktif) {
+            throw ValidationException::withMessages([
+                'tahun_ajaran' => 'Tidak ada tahun ajaran aktif.',
+            ]);
         }
 
         $kelas = Kelas::where('kode_kelas', $row['kode_kelas'])
-                      ->where('tahun_ajaran_id', $this->tahunAktif->id)
-                      ->first();
+            ->where('tahun_ajaran_id', $tahunAktif->id)
+            ->first();
 
         if (!$kelas) {
-            return null;
+            throw ValidationException::withMessages([
+                'kelas' => 'Kelas dengan kode ' . $row['kode_kelas'] . ' tidak ditemukan pada tahun ajaran aktif.',
+            ]);
+        }
+
+        $nisSudahAda = Siswa::where('nis', $row['nis'])
+            ->where('tahun_ajaran_id', $tahunAktif->id)
+            ->exists();
+
+        if ($nisSudahAda) {
+            throw ValidationException::withMessages([
+                'nis' => 'NIS ' . $row['nis'] . ' sudah ada di tahun ajaran aktif.',
+            ]);
         }
 
         return new Siswa([
-            'kelas_id'        => $kelas->id,
-            'nama_siswa'      => $row['nama_siswa'],
-            'nis'             => $row['nis'],
-            'jenis_kelamin'   => $row['jenis_kelamin'],
-            'tahun_ajaran_id' => $this->tahunAktif->id, // PENTING!
+            'nama_siswa' => $row['nama_siswa'],
+            'nis' => $row['nis'],
+            'jenis_kelamin' => $row['jenis_kelamin'],
+            'kelas_id' => $kelas->id,
+            'tahun_ajaran_id' => $kelas->tahun_ajaran_id,
         ]);
     }
+
 }

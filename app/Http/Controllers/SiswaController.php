@@ -101,7 +101,21 @@ class SiswaController extends Controller
         Siswa::create([
             'kelas_id'         => $kelas->id,
             'nama_siswa'       => $request->nama_siswa,
-            'nis'              => $request->nis,
+            'nis' => [
+                        'required',
+                        function ($attribute, $value, $fail) use ($request) {
+                            $kelas = \App\Models\Kelas::find($request->kelas_id);
+                            if (!$kelas) return;
+                    
+                            $sudahAda = \App\Models\Siswa::where('nis', $value)
+                                ->where('tahun_ajaran_id', $kelas->tahun_ajaran_id)
+                                ->exists();
+                    
+                            if ($sudahAda) {
+                                $fail('NIS sudah digunakan pada tahun ajaran yang sama.');
+                            }
+                        },
+                    ],            
             'jenis_kelamin'    => $request->jenis_kelamin,
             'tahun_ajaran_id'  => $kelas->tahun_ajaran_id, // PASTIKAN DISET
         ]);
