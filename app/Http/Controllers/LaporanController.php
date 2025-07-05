@@ -15,21 +15,24 @@ class LaporanController extends Controller
         $tahunAktif = Tahun::where('status', 'aktif')->first();
         $selectedKelas = $request->get('kelas_id');
 
-        // Ambil hanya kelas yang memiliki siswa dengan pelanggaran
+        // Definisikan filter pelanggaran di sini agar bisa dipakai ulang
+        $pelanggaranFilter = function ($query) use ($tahunAktif) {
+            $query->where('tahun_ajaran_id', $tahunAktif->id)
+                  ->where(function ($subQuery) {
+                      $subQuery->where('status', 'Belum')
+                               ->orWhereDate('created_at', now()->toDateString());
+                  });
+        };
+
+        // Ambil hanya kelas yang memiliki siswa dengan pelanggaran (yang sudah difilter)
         $kelasList = Kelas::where('tahun_ajaran_id', $tahunAktif->id)
-            ->whereHas('siswa.pelanggaran', function ($query) use ($tahunAktif) {
-                $query->where('tahun_ajaran_id', $tahunAktif->id);
-            })
+            ->whereHas('siswa.pelanggaran', $pelanggaranFilter) // Gunakan filter
             ->get();
 
-        // Ambil siswa dengan pelanggaran saja
-        $siswa = Siswa::with(['kelas', 'pelanggaran.kategori'])
-            ->withCount(['pelanggaran' => function ($query) use ($tahunAktif) {
-                $query->where('tahun_ajaran_id', $tahunAktif->id);
-            }])
-            ->whereHas('pelanggaran', function ($query) use ($tahunAktif) {
-                $query->where('tahun_ajaran_id', $tahunAktif->id);
-            })
+        // Ambil siswa dengan pelanggaran (yang sudah difilter)
+        $siswa = Siswa::with(['kelas', 'pelanggaran' => $pelanggaranFilter, 'pelanggaran.kategori']) // Gunakan filter pada relasi
+            ->withCount(['pelanggaran' => $pelanggaranFilter]) // Gunakan filter pada count
+            ->whereHas('pelanggaran', $pelanggaranFilter) // Gunakan filter pada pengecekan
             ->when($selectedKelas, function ($query, $kelas_id) {
                 return $query->where('kelas_id', $kelas_id);
             })
@@ -43,14 +46,19 @@ class LaporanController extends Controller
         $tahunAktif = Tahun::where('status', 'aktif')->first();
         $kelasId = $request->get('kelas_id');
 
-        // Ambil siswa dengan pelanggaran saja
-        $query = Siswa::with(['kelas', 'pelanggaran.kategori'])
-            ->withCount(['pelanggaran' => function ($query) use ($tahunAktif) {
-                $query->where('tahun_ajaran_id', $tahunAktif->id);
-            }])
-            ->whereHas('pelanggaran', function ($query) use ($tahunAktif) {
-                $query->where('tahun_ajaran_id', $tahunAktif->id);
-            });
+        // Definisikan filter pelanggaran yang sama untuk konsistensi data di PDF
+        $pelanggaranFilter = function ($query) use ($tahunAktif) {
+            $query->where('tahun_ajaran_id', $tahunAktif->id)
+                  ->where(function ($subQuery) {
+                      $subQuery->where('status', 'Belum')
+                               ->orWhereDate('created_at', now()->toDateString());
+                  });
+        };
+
+        // Ambil siswa dengan pelanggaran (yang sudah difilter)
+        $query = Siswa::with(['kelas', 'pelanggaran' => $pelanggaranFilter, 'pelanggaran.kategori']) // Gunakan filter
+            ->withCount(['pelanggaran' => $pelanggaranFilter]) // Gunakan filter
+            ->whereHas('pelanggaran', $pelanggaranFilter); // Gunakan filter
 
         if ($kelasId) {
             $query->where('kelas_id', $kelasId);
