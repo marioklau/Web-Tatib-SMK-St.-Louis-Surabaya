@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kategori;
 use App\Models\Sanksi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str; // Tambahkan ini jika ingin menggunakan Str::lines
+use Illuminate\Support\Str;
 
 class SanksiController extends Controller
 {
@@ -36,19 +36,19 @@ class SanksiController extends Controller
     {
         $request->validate([
             'kategori_id' => 'required|exists:kategori,id',
-            'bobot_min' => 'required|integer|min:0',
-            'bobot_max' => 'required|integer|min:0|gte:bobot_min',
-            'nama_sanksi' => 'required|string', // Validasi ini untuk memastikan input adalah string (dari textarea)
+            'bobot_min' => 'nullable|integer|min:0', // Diubah dari required ke nullable
+            'bobot_max' => 'required|integer|min:0|gte:bobot_min', // Tetap required
+            'nama_sanksi' => 'required|string',
             'pembina' => 'required|string|max:255',
-            'keputusan_tindakan' => 'required|string' // Validasi ini untuk memastikan input adalah string
+            'keputusan_tindakan' => 'required|string'
         ]);
 
-        // Ubah string dari textarea menjadi array berdasarkan baris baru
-        // Dengan `protected $casts = ['nama_sanksi' => 'array'];` di model,
-        // Laravel akan otomatis mengonversi array ini ke JSON saat disimpan.
+        // Jika bobot_min kosong, set ke 0
+        $bobotMin = $request->bobot_min ?? 0;
+
         Sanksi::create([
             'kategori_id' => $request->kategori_id,
-            'bobot_min' => $request->bobot_min,
+            'bobot_min' => $bobotMin,
             'bobot_max' => $request->bobot_max,
             'nama_sanksi' => array_map('trim', explode("\n", $request->nama_sanksi)),
             'pembina' => $request->pembina,
@@ -58,6 +58,7 @@ class SanksiController extends Controller
         return redirect()->route('sanksi.index')
             ->with('success', 'Sanksi Berhasil Ditambahkan.');
     }
+
     public function show($id)
     {
         $sanksi = Sanksi::findOrFail($id);
@@ -66,23 +67,24 @@ class SanksiController extends Controller
 
     public function edit(Sanksi $sanksi)
     {
-        // Data nama_sanksi dan keputusan_tindakan sudah menjadi array karena casts di model
         return view('data_pelanggaran.sanksi.edit', compact('sanksi'));
     }
 
     public function update(Request $request, Sanksi $sanksi)
     {
         $request->validate([
-            'bobot_min' => 'required|integer|min:0',
-            'bobot_max' => 'required|integer|min:0|gte:bobot_min',
+            'bobot_min' => 'nullable|integer|min:0', // Diubah dari required ke nullable
+            'bobot_max' => 'required|integer|min:0|gte:bobot_min', // Tetap required
             'nama_sanksi' => 'required|string',
             'pembina' => 'required|string|max:255',
             'keputusan_tindakan' => 'required|string'
         ]);
 
-        // Ubah string dari textarea menjadi array berdasarkan baris baru
+        // Jika bobot_min kosong, set ke 0
+        $bobotMin = $request->bobot_min ?? 0;
+
         $sanksi->update([
-            'bobot_min' => $request->bobot_min,
+            'bobot_min' => $bobotMin,
             'bobot_max' => $request->bobot_max,
             'nama_sanksi' => array_map('trim', explode("\n", $request->nama_sanksi)),
             'pembina' => $request->pembina,
@@ -92,7 +94,6 @@ class SanksiController extends Controller
         return redirect()->route('sanksi.index')
             ->with('success', 'Sanksi Berhasil Diupdate.');
     }
-
 
     public function destroy(Sanksi $sanksi)
     {

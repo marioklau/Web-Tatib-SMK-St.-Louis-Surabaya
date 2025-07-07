@@ -11,14 +11,28 @@
             <tr><td class="font-semibold w-1/3">Nama Siswa</td><td>{{ $pelanggaran->siswa->nama_siswa }}</td></tr>
             <tr><td class="font-semibold w-1/3">NIS</td><td>{{ $pelanggaran->siswa->nis }}</td></tr>
             <tr><td class="font-semibold">Kelas</td><td>{{ $pelanggaran->siswa->kelas->nama_kelas ?? '-' }}</td></tr>
-            <tr><td class="font-semibold">Kategori</td><td>{{ $pelanggaran->kategori->nama_kategori ?? '-' }}</td></tr>
             <tr><td class="font-semibold">Jenis Pelanggaran</td><td>{{ $pelanggaran->jenis->bentuk_pelanggaran }}</td></tr>
             <tr><td class="font-semibold">Sanksi</td><td>{{ $pelanggaran->sanksi->keputusan_tindakan }}</td></tr>
             <tr><td class="font-semibold">Status</td><td>{{ $pelanggaran->status }}</td></tr>
             <tr><td class="font-semibold">Waktu Input</td><td>{{ $pelanggaran->created_at->format('d M Y H:i') }}</td></tr>
         </table>
 
-        <div class="mt-4">
+        <!-- Detail tambahan untuk Kategori dan Alur Pembinaan -->
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold mb-3">Informasi Tambahan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="font-medium mb-2">Kategori Pelanggaran</h3>
+                    <p>{{ $pelanggaran->kategori->nama_kategori ?? 'Tidak ada kategori' }}</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="font-medium mb-2">Alur Pembinaan</h3>
+                    <p>{{ $pelanggaran->alur_pembinaan ?? 'Tidak ada alur pembinaan' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6">
             <a href="{{ route('input-pelanggaran.index') }}" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Kembali</a>
         </div>
     </div>

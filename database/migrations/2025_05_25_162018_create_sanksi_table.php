@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sanksi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kategori_id')->constrained('kategori')->onDelete('cascade');
-            $table->unsignedInteger('bobot_min');
+            $table->unsignedInteger('bobot_min')->nullable();
             $table->unsignedInteger('bobot_max');
             $table->json('nama_sanksi');
             $table->string('pembina');
