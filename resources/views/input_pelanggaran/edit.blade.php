@@ -1,146 +1,170 @@
 @extends('layouts.main')
 
-@section('title', 'Edit Pelanggaran')
+@section('title', 'Edit Pelanggaran Siswa')
 
 @section('content')
 
-<!-- CSS Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-<!-- jQuery dan JS Select2 (Pastikan jQuery dimuat sebelum Select2) -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-2xl font-semibold mb-6">Edit Pelanggaran Siswa</h1>
 
-<div class="container mx-auto px-4">
-    <h1 class="text-2xl font-semibold mb-6">Edit Pelanggaran</h1>
+    @if($errors->any())
+        <div class="bg-red-100 text-red-700 p-4 rounded mb-6">
+            <ul>
+                @foreach($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-    <form action="{{ route('input_pelanggaran.update', $pelanggaran->id) }}" method="POST" class="space-y-6">
+    <form method="POST" action="{{ route('input_pelanggaran.update', $input_pelanggaran->id) }}" class="bg-white rounded-lg shadow-md p-6">
         @csrf
         @method('PUT')
 
-        <!-- Siswa (Read-only, but its ID is submitted via hidden input) -->
-        <div>
-            <label class="block mb-1 text-sm font-medium">Nama Siswa</label>
-            <p class="font-medium text-gray-900">{{ $pelanggaran->siswa->nama_siswa }}</p>
-            <input type="hidden" name="siswa_id" value="{{ $pelanggaran->siswa_id }}">
-        </div>
-
-        <!-- Kategori Pelanggaran (Read-only, but its ID is submitted via hidden input) -->
-        <div>
-            <label class="block mb-1 text-sm font-medium">Kategori Pelanggaran</label>
-            <p class="font-medium text-gray-900">{{ $pelanggaran->kategori->nama_kategori }}</p>
-            <input type="hidden" name="kategori_id" value="{{ $pelanggaran->kategori_id }}">
-        </div>
-
-        <!-- Pilih Jenis -->
-        <div>
-            <label for="jenis_id" class="block text-sm font-medium">Jenis Pelanggaran</label>
-            <select name="jenis_id" id="jenis-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                <option value="">-- Pilih Jenis Pelanggaran --</option>
-                @foreach($jenis as $j)
-                    <option
-                        value="{{ $j->id }}"
-                        data-kategori="{{ $j->kategori_id }}"
-                        {{ $pelanggaran->jenis_id == $j->id ? 'selected' : '' }}>
-                        {{ $j->bentuk_pelanggaran }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <!-- Pilih Sanksi -->
-        <div>
-            <label for="sanksi_id" class="block text-sm font-medium">Sanksi</label>
-            <select name="sanksi_id" id="sanksi-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                <option value="">-- Pilih Sanksi --</option>
-                @foreach($sanksi as $s)
-                    <option
-                        value="{{ $s->id }}"
-                        data-kategori="{{ $s->kategori_id }}"
-                        {{ $pelanggaran->sanksi_id == $s->id ? 'selected' : '' }}>
-                        {{ $s->keputusan_tindakan }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="mt-4">
-            <label class="block mt-4 mb-1">Pilih Keputusan Tindakan</label>
-            <select name="keputusan_tindakan_id" id="keputusan-select" class="w-full border p-2 rounded" required>
-                <option value="">-- Pilih Keputusan --</option>
-                @foreach ($keputusan_tindakan_options as $keputusan)
-                    <option value="{{ $keputusan->id }}" {{ $pelanggaran->keputusan_tindakan_id == $keputusan->id ? 'selected' : '' }}>
-                        {{ $keputusan->nama_keputusan }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <!-- Status -->
-        <div>
-            <label class="block text-sm font-medium">Status</label>
-            <div class="mt-2">
-                <label class="inline-flex items-center">
-                    <input type="radio" name="status" value="Belum" {{ $pelanggaran->status == 'Belum' ? 'checked' : '' }} class="form-radio text-red-600">
-                    <span class="ml-2 text-red-600 font-semibold">Belum</span>
-                </label>
-                <label class="inline-flex items-center ml-6">
-                    <input type="radio" name="status" value="Sudah" {{ $pelanggaran->status == 'Sudah' ? 'checked' : '' }} class="form-radio text-green-600">
-                    <span class="ml-2 text-green-600 font-semibold">Sudah</span>
-                </label>
+        <!-- Nama Siswa (Tidak Bisa Diubah) -->
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Nama Siswa</label>
+            <div class="bg-gray-100 p-3 rounded border border-gray-300">
+                <p class="text-gray-800">
+                    {{ $input_pelanggaran->siswa->nama_siswa }} 
+                    <span class="text-gray-600">({{ $input_pelanggaran->siswa->kelas->kode_kelas ?? 'Tanpa Kelas' }})</span>
+                </p>
+                <input type="hidden" name="siswa_id" value="{{ $input_pelanggaran->siswa_id }}">
             </div>
         </div>
 
-        <!-- Tombol -->
-        <div class="flex justify-end gap-4">
-            <a href="{{ route('input_pelanggaran.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
-                Batal
-            </a>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+        <!-- Info Pelanggaran -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
+            <div class="flex flex-col items-center">
+                <label class="text-xs font-semibold text-gray-700 mb-1">Ringan</label>
+                <input type="text" value="{{ $input_pelanggaran->siswa->ringan_count ?? 0 }}" class="w-full p-2 text-xs border-2 rounded text-center bg-green-100 text-green-800" readonly>
+            </div>
+            <div class="flex flex-col items-center">
+                <label class="text-xs font-semibold text-gray-700 mb-1">Berat</label>
+                <input type="text" value="{{ $input_pelanggaran->siswa->berat_count ?? 0 }}" class="w-full p-2 text-xs border-2 rounded text-center bg-yellow-100 text-yellow-800" readonly>
+            </div>
+            <div class="flex flex-col items-center">
+                <label class="text-xs font-semibold text-gray-700 mb-1">Sangat Berat</label>
+                <input type="text" value="{{ $input_pelanggaran->siswa->sangat_berat_count ?? 0 }}" class="w-full p-2 text-xs border-2 rounded text-center bg-red-100 text-red-800" readonly>
+            </div>
+            <div class="flex flex-col items-center">
+                <label class="text-xs font-semibold text-gray-700 mb-1">Total Bobot</label>
+                <input type="text" value="{{ $input_pelanggaran->siswa->pelanggaran_sum_poin_pelanggaran ?? 0 }}" class="w-full p-2 text-xs border-2 rounded text-center bg-blue-100 text-blue-800" readonly>
+            </div>
+        </div>
+
+        <!-- Jenis dan Kategori Pelanggaran (Tidak Bisa Diubah) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">Jenis Pelanggaran</label>
+                <div class="bg-gray-100 p-3 rounded border border-gray-300">
+                    <p class="text-gray-800">
+                        {{ $input_pelanggaran->jenis->bentuk_pelanggaran ?? 'Tidak ada data' }}
+                    </p>
+                    <input type="hidden" name="jenis_id" value="{{ $input_pelanggaran->jenis_id }}">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">Kategori</label>
+                <div class="bg-gray-100 p-3 rounded border border-gray-300">
+                    <p class="text-gray-800">
+                        {{ $input_pelanggaran->kategori->nama_kategori ?? 'Tidak ada data' }}
+                    </p>
+                    <input type="hidden" name="kategori_id" value="{{ $input_pelanggaran->kategori_id }}">
+                </div>
+            </div>
+        </div>
+
+        <!-- Bobot dan Status -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">Bobot Pelanggaran</label>
+                <div class="bg-gray-100 p-3 rounded border border-gray-300">
+                    <p class="text-gray-800">
+                        {{ $input_pelanggaran->poin_pelanggaran }}
+                    </p>
+                    <input type="hidden" name="poin_pelanggaran" value="{{ $input_pelanggaran->poin_pelanggaran }}">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">Status</label>
+                <select name="status" class="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    <option value="Belum" {{ old('status', $input_pelanggaran->status) == 'Belum' ? 'selected' : '' }}>Belum Diproses</option>
+                    <option value="Sudah" {{ old('status', $input_pelanggaran->status) == 'Sudah' ? 'selected' : '' }}>Sudah Diproses</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Alur Pembinaan -->
+        <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <label class="block text-gray-700 font-medium mb-3">Alur Pembinaan:</label>
+            <div id="alur-pembinaan" class="text-sm text-gray-700">
+                @if($input_pelanggaran->sanksi)
+                    <div class="space-y-2">
+                        <h4 class="font-semibold">Tingkat (Bobot {{ $input_pelanggaran->sanksi->bobot_min ?? 0 }}-{{ $input_pelanggaran->sanksi->bobot_max ?? 0 }}):</h4>
+                        @if(is_array($input_pelanggaran->sanksi->nama_sanksi))
+                            <ol class="list-decimal pl-5 space-y-1">
+                                @foreach($input_pelanggaran->sanksi->nama_sanksi as $item)
+                                    <li>{{ $item }}</li>
+                                @endforeach
+                            </ol>
+                        @else
+                            <p class="text-gray-500">Tidak ada alur pembinaan tersedia.</p>
+                        @endif
+                    </div>
+                @else
+                    <p class="text-gray-500">Tidak ada data sanksi terkait</p>
+                @endif
+            </div>
+        </div>
+
+        <!-- Keputusan Tindakan -->
+        <div class="mb-8">
+            <label class="block text-gray-700 font-medium mb-2">Pilih Keputusan Tindakan</label>
+            <select name="keputusan_tindakan_terpilih" id="keputusan-select" class="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                <option value="">-- Pilih Keputusan --</option>
+                @if($input_pelanggaran->sanksi && is_array($input_pelanggaran->sanksi->keputusan_tindakan))
+                    @foreach($input_pelanggaran->sanksi->keputusan_tindakan as $keputusan)
+                        <option value="{{ $keputusan }}" {{ old('keputusan_tindakan_terpilih', $input_pelanggaran->keputusan_tindakan_terpilih) == $keputusan ? 'selected' : '' }}>
+                            {{ $keputusan }}
+                        </option>
+                    @endforeach
+                @endif
+            </select>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="flex flex-col sm:flex-row gap-4">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200">
                 Simpan Perubahan
             </button>
+            <a href="{{ route('input_pelanggaran.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-6 rounded-lg transition duration-200 text-center">
+                Kembali
+            </a>
         </div>
     </form>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const jenisSelect = document.getElementById('jenis-select');
-        const sanksiSelect = document.getElementById('sanksi-select');
-        const currentKategoriId = {{ $pelanggaran->kategori_id }}; // Get the current category ID of the violation
+    $(document).ready(function () {
+        // Inisialisasi Select2 hanya untuk keputusan tindakan
+        $('#keputusan-select').select2({
+            placeholder: "-- Pilih --",
+            allowClear: true,
+            width: '100%'
+        });
 
-        function filterOptionsByKategori(selectElement, kategoriId) {
-            Array.from(selectElement.options).forEach(opt => {
-                // Ensure the 'kategoriId' matches the current violation's category ID,
-                // or if it's the placeholder option with no data-kategori attribute.
-                if (opt.dataset.kategori && opt.dataset.kategori != kategoriId) {
-                    opt.style.display = 'none';
-                } else {
-                    opt.style.display = '';
-                }
-            });
-
-            // If the currently selected option is now hidden, re-select a visible one or the default
-            let selectedOption = selectElement.querySelector('option:checked');
-            if (selectedOption && selectedOption.style.display === 'none') {
-                 // Try to select the placeholder or the first visible option
-                let firstVisibleOption = selectElement.querySelector('option[style*="display:"]');
-                if (firstVisibleOption) {
-                    selectElement.value = firstVisibleOption.value;
-                } else {
-                    selectElement.value = ''; // Fallback to no selection
-                }
-            }
-        }
-
-        // Apply filtering on page load
-        filterOptionsByKategori(jenisSelect, currentKategoriId);
-        filterOptionsByKategori(sanksiSelect, currentKategoriId);
-
-        // Initialize Select2 on both dropdowns
-        $(jenisSelect).select2();
-        $(sanksiSelect).select2();
+        // Handle old input setelah validasi gagal
+        @if(old('keputusan_tindakan_terpilih'))
+            $('#keputusan-select').val("{{ old('keputusan_tindakan_terpilih') }}").trigger('change');
+        @endif
     });
 </script>
+
 @endsection
