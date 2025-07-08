@@ -18,11 +18,10 @@ class HomeController extends Controller
     }
 
     public function dashboard()
-    {
-        $tahunAktif = Tahun::where('status', 'aktif')->first();
+{
+    $tahunAktif = Tahun::where('status', 'aktif')->first();
 
     if (!$tahunAktif) {
-        // Kembalikan dashboard kosong atau berisi pesan bahwa belum ada tahun ajaran aktif
         return view('layouts.dashboard', [
             'totalSiswa' => 0,
             'totalKelas' => 0,
@@ -43,54 +42,51 @@ class HomeController extends Controller
         ]);
     }
 
-        // Total
-        $siswaIds = Pelanggaran::where('tahun_ajaran_id', $tahunAktif->id)
-            ->distinct()
-            ->pluck('siswa_id');
-        
-        $totalSiswa = Siswa::whereIn('id', $siswaIds)->count();
-        $totalKelas = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->count();
-        $totalPelanggaran = Pelanggaran::where('tahun_ajaran_id', $tahunAktif->id)->count();
+    // Count all students in active academic year
+    $totalSiswa = Siswa::where('tahun_ajaran_id', $tahunAktif->id)->count();
+    
+    $totalKelas = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->count();
+    $totalPelanggaran = Pelanggaran::where('tahun_ajaran_id', $tahunAktif->id)->count();
 
-        // Grafik Pelanggaran per Bulan
-        $pelanggaranPerBulan = Pelanggaran::selectRaw('MONTH(created_at) as bulan, COUNT(*) as total')
-            ->where('tahun_ajaran_id', $tahunAktif->id)
-            ->groupBy('bulan')
-            ->orderBy('bulan')
-            ->get();
+    // Grafik Pelanggaran per Bulan
+    $pelanggaranPerBulan = Pelanggaran::selectRaw('MONTH(created_at) as bulan, COUNT(*) as total')
+        ->where('tahun_ajaran_id', $tahunAktif->id)
+        ->groupBy('bulan')
+        ->orderBy('bulan')
+        ->get();
 
-        $labels = [];
-        $data = [];
+    $labels = [];
+    $data = [];
 
-        for ($i = 1; $i <= 12; $i++) {
-            $labels[] = Carbon::create()->month($i)->translatedFormat('F');
-            $found = $pelanggaranPerBulan->firstWhere('bulan', $i);
-            $data[] = $found ? $found->total : 0;
-        }
+    for ($i = 1; $i <= 12; $i++) {
+        $labels[] = Carbon::create()->month($i)->translatedFormat('F');
+        $found = $pelanggaranPerBulan->firstWhere('bulan', $i);
+        $data[] = $found ? $found->total : 0;
+    }
 
-        $pelanggaranPerBulanChart = [
-            'labels' => $labels,
-            'data' => $data,
-        ];
+    $pelanggaranPerBulanChart = [
+        'labels' => $labels,
+        'data' => $data,
+    ];
 
-        // Top 10 Siswa
-        $topSiswaData = Pelanggaran::select('siswa_id', DB::raw('COUNT(*) as total'))
-            ->where('tahun_ajaran_id', $tahunAktif->id)
-            ->groupBy('siswa_id')
-            ->orderByDesc('total')
-            ->take(10)
-            ->get();
+    // Top 10 Siswa
+    $topSiswaData = Pelanggaran::select('siswa_id', DB::raw('COUNT(*) as total'))
+        ->where('tahun_ajaran_id', $tahunAktif->id)
+        ->groupBy('siswa_id')
+        ->orderByDesc('total')
+        ->take(10)
+        ->get();
 
-        $topSiswa = [
-            'labels' => $topSiswaData->map(function ($item) {
-                $siswa = Siswa::find($item->siswa_id);
-                return $siswa ? $siswa->nama_siswa : 'Tidak diketahui';
-            }),
-            'data' => $topSiswaData->pluck('total'),
-        ];
+    $topSiswa = [
+        'labels' => $topSiswaData->map(function ($item) {
+            $siswa = Siswa::find($item->siswa_id);
+            return $siswa ? $siswa->nama_siswa : 'Tidak diketahui';
+        }),
+        'data' => $topSiswaData->pluck('total'),
+    ];
 
-        // Top 10 Kelas
-        $topKelasData = Pelanggaran::select('kelas.id', 'kelas.kode_kelas', DB::raw('COUNT(*) as total'))
+    // Top 10 Kelas
+    $topKelasData = Pelanggaran::select('kelas.id', 'kelas.kode_kelas', DB::raw('COUNT(*) as total'))
         ->join('siswa', 'pelanggaran.siswa_id', '=', 'siswa.id')
         ->join('kelas', 'siswa.kelas_id', '=', 'kelas.id')
         ->where('pelanggaran.tahun_ajaran_id', $tahunAktif->id)
@@ -104,15 +100,14 @@ class HomeController extends Controller
         'data' => $topKelasData->pluck('total'),
     ];
 
-
-        return view('layouts.dashboard', compact(
-            'totalSiswa',
-            'totalKelas',
-            'totalPelanggaran',
-            'pelanggaranPerBulanChart',
-            'topSiswa',
-            'topKelas'
-        ));
-    }
+    return view('layouts.dashboard', compact(
+        'totalSiswa',
+        'totalKelas',
+        'totalPelanggaran',
+        'pelanggaranPerBulanChart',
+        'topSiswa',
+        'topKelas'
+    ));
+}
 
 }

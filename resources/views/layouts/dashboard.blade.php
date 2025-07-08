@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="px-4 sm:px-8">
-    <h1 class="text-3xl font-semibold text-gray-800 mb-4">Selamat Datang Bapa/Ibu...</h1>
+    <h1 class="text-2xl font-semibold text-gray-800 mb-4">Selamat Datang Bapa/Ibu...</h1>
 
     <!-- Konten Card -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -53,20 +53,25 @@
 </div>
 
 <!-- Chart Section -->
-<div class="bg-white p-2 m-6 rounded-lg shadow">
-    <h2 class="text-lg font-semibold text-gray-700 mb-4">Grafik Pelanggaran per Bulan</h2>
+ <!-- Container untuk Top 10 Siswa & Top 10 Kelas (berdampingan) -->
+<div class="flex flex-col md:flex-row justify-center gap-4 mx-4">
+    <!-- Top 10 Siswa Pelanggaran Terbanyak -->
+    <div class="bg-white p-4 m-4 rounded-lg shadow flex-1 max-w-xl">
+        <h2 class="text-base font-semibold text-gray-700 mb-4">Top 10 Siswa Pelanggaran Terbanyak</h2>
+        <canvas id="topSiswaChart"></canvas>
+    </div>
+
+    <!-- Top 10 Kelas & Jurusan Pelanggaran Terbanyak -->
+    <div class="bg-white p-4 m-4 rounded-lg shadow flex-1 max-w-xl">
+        <h2 class="text-base font-semibold text-gray-700 mb-4">Top 10 Kelas & Jurusan Pelanggaran Terbanyak</h2>
+        <canvas id="kelasChart"></canvas>
+    </div>
+</div>
+<div class="bg-white p-4 m-4 rounded-lg shadow max-w-4xl mx-auto">
+    <h2 class="text-base font-semibold text-gray-700 mb-4">Grafik Pelanggaran per Bulan</h2>
     <canvas id="pelanggaranChart"></canvas>
 </div>
 
-<div class="bg-white p-2 m-6 rounded-lg shadow">
-    <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 10 Siswa Pelanggaran Terbanyak</h2>
-    <canvas id="topSiswaChart"></canvas>
-</div>
-
-<div class="bg-white p-2 m-6 rounded-lg shadow">
-    <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 10 Kelas & Jurusan Pelanggaran Terbanyak</h2>
-    <canvas id="kelasChart"></canvas>
-</div>
 @endsection
 
 @section('scripts')

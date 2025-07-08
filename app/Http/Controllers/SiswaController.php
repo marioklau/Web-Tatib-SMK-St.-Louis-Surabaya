@@ -104,10 +104,10 @@ class SiswaController extends Controller
             'nis' => [
                         'required',
                         function ($attribute, $value, $fail) use ($request) {
-                            $kelas = \App\Models\Kelas::find($request->kelas_id);
+                            $kelas = Kelas::find($request->kelas_id);
                             if (!$kelas) return;
                     
-                            $sudahAda = \App\Models\Siswa::where('nis', $value)
+                            $sudahAda = Siswa::where('nis', $value)
                                 ->where('tahun_ajaran_id', $kelas->tahun_ajaran_id)
                                 ->exists();
                     
