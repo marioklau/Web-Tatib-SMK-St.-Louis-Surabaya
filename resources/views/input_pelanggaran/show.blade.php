@@ -3,7 +3,7 @@
 @section('title', 'Detail Pelanggaran Siswa')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
+<div class="container mx-auto">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-semibold">Detail Pelanggaran Siswa</h1>
     </div>

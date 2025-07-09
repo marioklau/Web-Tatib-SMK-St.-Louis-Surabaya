@@ -25,14 +25,27 @@ class InputPelanggaranController extends Controller
             return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
         }
 
-        $pelanggaran = Pelanggaran::with(['siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi'])
-            ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-            ->where(function ($query) {
-                $query->where('status', 'Belum')
-                    ->orWhereDate('created_at', now()->toDateString());
-            })
-            ->latest()
-            ->paginate(10);
+        // Query dasar dengan relasi dan tahun ajaran aktif
+        $query = Pelanggaran::with(['siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi'])
+            ->where('tahun_ajaran_id', $tahunAjaranAktif->id);
+
+        // Filter berdasarkan status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        } else {
+            // Default: tampilkan yang 'Belum' atau dibuat hari ini
+            $query->where(function($q) {
+                $q->where('status', 'Belum')
+                  ->orWhereDate('created_at', now()->toDateString());
+            });
+        }
+
+        // Filter berdasarkan tanggal
+        if ($request->has('date') && $request->date != '') {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        $pelanggaran = $query->latest()->paginate(10);
 
         return view('input_pelanggaran.index', compact('pelanggaran'));
     }
@@ -267,9 +280,16 @@ class InputPelanggaranController extends Controller
             $pelanggaran->status = $request->status;
             $pelanggaran->save();
 
-            return response()->json(['success' => true, 'status' => $pelanggaran->status, 'message' => 'Status berhasil diperbarui!']);
+            return response()->json([
+                'success' => true, 
+                'status' => $pelanggaran->status, 
+                'message' => 'Status berhasil diperbarui!'
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Gagal memperbarui status: ' . $e->getMessage()], 500);
+            return response()->json([
+                'success' => false, 
+                'message' => 'Gagal memperbarui status: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

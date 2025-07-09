@@ -1,82 +1,115 @@
-    @extends('layouts.main')
+@extends('layouts.main')
 
-    @section('title', 'Input Pelanggaran')
+@section('title', 'Input Pelanggaran')
 
-    @section('content')
-    <div class="container mx-auto">
-        <h1 class="text-2xl font-semibold mb-8">Pelanggaran Siswa</h1>
+@section('content')
+<div class="container mx-auto">
+    <h1 class="text-2xl font-semibold mb-6">Pelanggaran Siswa</h1>
 
-        <div class="flex flex-col md:flex-row justify-between items-center mb-3">
-            <h2 class="text-xl font-semibold">Riwayat Pelanggaran</h2>
-            <a href="{{ route('input_pelanggaran.create') }}">
-                <button type="button" class="flex items-center bg-green-600 text-white px-2 py-1 hover:bg-green-700 transition duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="18" height="18" viewBox="0 0 22 22" fill="#ffffff">
-                        <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
-                    </svg>
-                    Tambah Pelanggaran
+    <!-- Filter Section -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+    <!-- Judul Riwayat Pelanggaran -->
+    <h2 class="text-lg font-normal whitespace-nowrap">Riwayat Pelanggaran</h2>
+
+    <!-- Container untuk Filter dan Tombol Tambah -->
+    <div class="flex flex-col md:flex-row items-start md:items-center gap-4 ml-auto">
+        <!-- Filter Form -->
+        <form action="{{ route('input_pelanggaran.index') }}" method="GET" class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <!-- Status Filter -->
+            <div class="flex items-center gap-2">
+                <label for="status" class="text-sm font-medium text-gray-700 whitespace-nowrap">Status</label>
+                <select id="status" name="status" class="border border-gray-300 rounded-md py-1 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Semua Status</option>
+                    <option value="Sudah" {{ request('status') == 'Sudah' ? 'selected' : '' }}>Sudah</option>
+                    <option value="Belum" {{ request('status') == 'Belum' ? 'selected' : '' }}>Belum</option>
+                </select>
+            </div>
+
+            <!-- Date Filter -->
+            <div class="flex items-center gap-2">
+                <label for="date" class="text-sm font-medium text-gray-700 whitespace-nowrap">Tanggal</label>
+                <input type="date" id="date" name="date" value="{{ request('date') }}" 
+                    class="border border-gray-300 rounded-md py-1 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition duration-300 whitespace-nowrap">
+                    Filter
                 </button>
-            </a>
-        </div>
+            </div>
+        </form>
 
-        <div class="overflow-hidden">
-            <table class="min-w-full rounded-xl">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th scope="col" class="p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
-                        <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Nama</th>
-                        <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Kelas</th>
-                        <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Jenis</th>
-                        <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Alur Pembinaan</th>
-                        <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Keputusan</th>
-                        <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Status</th>
-                        <th scope="col" class="p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
-                    @forelse($pelanggaran as $offense)
-                    <tr class="transition-all duration-500 hover:bg-gray-50" data-id="{{ $offense->id }}">
-                        <td class="p-1 whitespace-nowrap text-center text-xs mleading-6 font-medium text-gray-900">{{ $loop->iteration }}</td>
-                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{{ $offense->siswa->nama_siswa }}</td>
-                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{{ $offense->siswa->kelas->nama_kelas ?? '-' }}</td>
-                        @php
-                            $words = explode(' ', $offense->jenis->bentuk_pelanggaran);
-                            $firstLine = implode(' ', array_slice($words, 0, 5));
-                            $secondLine = implode(' ', array_slice($words, 5));
-                        @endphp
-                        <td class="p-1 whitespace-normal text-xs leading-6 font-medium text-gray-900 max-w-xs">
-                            {{ $firstLine }}@if($secondLine)<br>{{ $secondLine }}@endif
-                        </td>
+        <!-- Tombol Tambah Pelanggaran -->
+        <a href="{{ route('input_pelanggaran.create') }}">
+            <button type="button" class="flex items-center bg-green-600 text-white px-2 py-1 hover:bg-green-700 transition duration-300 rounded-md whitespace-nowrap">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="18" height="18" viewBox="0 0 22 22" fill="#ffffff">
+                    <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
+                </svg>
+                Tambah Pelanggaran
+            </button>
+        </a>
+    </div>
+</div>
 
-                        {{-- Menampilkan nama_sanksi dari array --}}
-                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
-                            @if ($offense->sanksi && is_array($offense->sanksi->nama_sanksi))
-                                {{ $offense->sanksi->nama_sanksi[0] ?? 'N/A' }} {{-- Menampilkan elemen pertama --}}
-                            @else
-                                {{ $offense->sanksi->nama_sanksi ?? '-' }}
-                            @endif
-                        </td>
+    <div class="overflow-hidden">
+        <table class="min-w-full rounded-xl">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th scope="col" class="p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">No</th>
+                    <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Nama</th>
+                    <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Kelas</th>
+                    <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Jenis</th>
+                    <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Alur Pembinaan</th>
+                    <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Keputusan</th>
+                    <th scope="col" class="p-1 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">Status</th>
+                    <th scope="col" class="p-1 text-center text-sm leading-6 font-semibold text-gray-900 capitalize">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+                @forelse($pelanggaran as $offense)
+                <tr class="transition-all duration-500 hover:bg-gray-50" data-id="{{ $offense->id }}">
+                    <td class="p-1 whitespace-nowrap text-center text-xs mleading-6 font-medium text-gray-900">{{ $loop->iteration }}</td>
+                    <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{{ $offense->siswa->nama_siswa }}</td>
+                    <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">{{ $offense->siswa->kelas->nama_kelas ?? '-' }}</td>
+                    @php
+                        $words = explode(' ', $offense->jenis->bentuk_pelanggaran);
+                        $firstLine = implode(' ', array_slice($words, 0, 5));
+                        $secondLine = implode(' ', array_slice($words, 5));
+                    @endphp
+                    <td class="p-1 whitespace-normal text-xs leading-6 font-medium text-gray-900 max-w-xs">
+                        {{ $firstLine }}@if($secondLine)<br>{{ $secondLine }}@endif
+                    </td>
 
-                        {{-- Menampilkan keputusan_tindakan_terpilih yang disimpan sebagai string di Pelanggaran --}}
-                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
-                            {{ $offense->keputusan_tindakan_terpilih ?? '-' }}
-                        </td>
+                    {{-- Menampilkan nama_sanksi dari array --}}
+                    <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
+                        @if ($offense->sanksi && is_array($offense->sanksi->nama_sanksi))
+                            {{ $offense->sanksi->nama_sanksi[0] ?? 'N/A' }} {{-- Menampilkan elemen pertama --}}
+                        @else
+                            {{ $offense->sanksi->nama_sanksi ?? '-' }}
+                        @endif
+                    </td>
 
-                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
-                            <span class="font-bold {{ $offense->status === 'Sudah' ? 'text-green-600' : 'text-red-600' }}">
-                                {{ $offense->status ?? 'Belum' }}
-                            </span>
-                        </td>
-                        <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-center text-gray-900">
-                            <div class="flex items-center justify-center space-x-2">
-                                <a href="{{ route('input_pelanggaran.show', $offense->id) }}" class="p-2 rounded-full group transition-all duration-500 flex items-center hover:bg-gray-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                        fill="green" viewBox="0 0 24 24" >
-                                        <path class="fill-green-600" d="M7 10h10v2H7zM7 14h7v2H7z"></path><path d="M19 3h-2c0-.55-.45-1-1-1H8c-.55 0-1 .45-1 1H5c-1.1 0-2 .9-2 2v15c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 17H5V5h2v2h10V5h2z"></path>
-                                    </svg>
-                                </a>
+                    {{-- Menampilkan keputusan_tindakan_terpilih yang disimpan sebagai string di Pelanggaran --}}
+                    <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
+                        {{ $offense->keputusan_tindakan_terpilih ?? '-' }}
+                    </td>
 
-                                {{-- Tombol Edit (untuk detail pelanggaran, bukan status) --}}
-                                <a href="{{ route('input_pelanggaran.edit', $offense->id) }}"
+                    <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
+                        <span class="font-bold {{ $offense->status === 'Sudah' ? 'text-green-600' : 'text-red-600' }}">
+                            {{ $offense->status ?? 'Belum' }}
+                        </span>
+                    </td>
+                    <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-center text-gray-900">
+                        <div class="flex items-center justify-center space-x-2">
+                            <a href="{{ route('input_pelanggaran.show', $offense->id) }}" class="p-2 rounded-full group transition-all duration-500 flex items-center hover:bg-gray-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                    fill="green" viewBox="0 0 24 24" >
+                                    <path class="fill-green-600" d="M7 10h10v2H7zM7 14h7v2H7z"></path><path d="M19 3h-2c0-.55-.45-1-1-1H8c-.55 0-1 .45-1 1H5c-1.1 0-2 .9-2 2v15c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 17H5V5h2v2h10V5h2z"></path>
+                                </svg>
+                            </a>
+                            {{-- Tombol Edit (untuk detail pelanggaran, bukan status) --}}
+                            <a href="{{ route('input_pelanggaran.edit', $offense->id) }}"
                                     type="button"
                                     class="p-2 rounded-full group transition-all duration-500 flex items-center hover:bg-gray-100"
                                     title="Edit Detail Pelanggaran"
@@ -95,105 +128,106 @@
                                             </svg>
                                         </button>
                                 </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="8" class="p-3 text-center">Belum ada data pelanggaran.</td></tr> {{-- Ubah colspan jadi 8 --}}
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="8" class="p-3 text-center">Belum ada data pelanggaran.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
+</div>
 
+<!-- Modal for status editing -->
+<div
+    x-data="{
+        openModal: false,
+        editingOffenseId: null,
+        currentStatus: '',
+        message: '',
+        messageType: '' // 'success' or 'error'
+    }"
+    x-show="openModal"
+    x-cloak
+    class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50"
+>
     <div
-        x-data="{
-            openModal: false,
-            editingOffenseId: null,
-            currentStatus: '',
-            message: '',
-            messageType: '' // 'success' or 'error'
-        }"
-        x-show="openModal"
-        x-cloak
-        class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50"
+        class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-sm w-full"
+        @click.away="openModal = false; message = '';"
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0 transform translate-y-4 sm:translate-y-0 sm:scale-95"
+        x-transition:enter-end="opacity-100 transform translate-y-0 sm:scale-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100 transform translate-y-0 sm:scale-100"
+        x-transition:leave-end="opacity-0 transform translate-y-4 sm:translate-y-0 sm:scale-95"
     >
-        <div
-            class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-sm w-full"
-            @click.away="openModal = false; message = '';"
-            x-transition:enter="ease-out duration-300"
-            x-transition:enter-start="opacity-0 transform translate-y-4 sm:translate-y-0 sm:scale-95"
-            x-transition:enter-end="opacity-100 transform translate-y-0 sm:scale-100"
-            x-transition:leave="ease-in duration-200"
-            x-transition:leave-start="opacity-100 transform translate-y-0 sm:scale-100"
-            x-transition:leave-end="opacity-0 transform translate-y-4 sm:translate-y-0 sm:scale-95"
-        >
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Status Pelanggaran</h3>
-            <p class="text-sm text-gray-500 mb-6">Ubah status pelanggaran ini menjadi:</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Status Pelanggaran</h3>
+        <p class="text-sm text-gray-500 mb-6">Ubah status pelanggaran ini menjadi:</p>
 
-            <div x-show="message" :class="{ 'bg-green-100 border-green-400 text-green-700': messageType === 'success', 'bg-red-100 border-red-400 text-red-700': messageType === 'error' }" class="border px-4 py-3 rounded relative mb-4" role="alert">
-                <span x-text="message"></span>
+        <div x-show="message" :class="{ 'bg-green-100 border-green-400 text-green-700': messageType === 'success', 'bg-red-100 border-red-400 text-red-700': messageType === 'error' }" class="border px-4 py-3 rounded relative mb-4" role="alert">
+            <span x-text="message"></span>
+        </div>
+
+        <form @submit.prevent="
+            // Reset message before new submission
+            message = '';
+            messageType = '';
+            // Call updateStatus function
+            fetch(`/input_pelanggaran/${editingOffenseId}/update-status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ status: currentStatus })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message || 'Something went wrong'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update the status in the UI
+                const statusCell = document.querySelector(`tr[data-id='${editingOffenseId}'] .text-left span`);
+                if (statusCell) {
+                    statusCell.textContent = data.status;
+                    statusCell.classList.remove('text-green-600', 'text-red-600');
+                    statusCell.classList.add(data.status === 'Sudah' ? 'text-green-600' : 'text-red-600');
+                }
+                message = 'Status updated successfully!';
+                messageType = 'success';
+                // Optionally close modal after a delay, or let user close it
+                setTimeout(() => { openModal = false; message = ''; }, 1500);
+            })
+            .catch(error => {
+                console.error('Error updating status:', error);
+                message = 'Failed to update status: ' + error.message;
+                messageType = 'error';
+            });
+        ">
+            <div class="mb-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" x-model="currentStatus" name="status" value="Belum" class="form-radio text-red-600">
+                    <span class="ml-2 font-semibold text-red-600">Belum</span>
+                </label>
+                <label class="inline-flex items-center ml-6">
+                    <input type="radio" x-model="currentStatus" name="status" value="Sudah" class="form-radio text-green-600">
+                    <span class="ml-2 font-semibold text-green-600">Sudah</span>
+                </label>
             </div>
 
-            <form @submit.prevent="
-                // Reset message before new submission
-                message = '';
-                messageType = '';
-                // Call updateStatus function
-                fetch(`/input_pelanggaran/${editingOffenseId}/update-status`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ status: currentStatus })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { throw new Error(err.message || 'Something went wrong'); });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Update the status in the UI
-                    const statusCell = document.querySelector(`tr[data-id='${editingOffenseId}'] .text-left span`);
-                    if (statusCell) {
-                        statusCell.textContent = data.status;
-                        statusCell.classList.remove('text-green-600', 'text-red-600');
-                        statusCell.classList.add(data.status === 'Sudah' ? 'text-green-600' : 'text-red-600');
-                    }
-                    message = 'Status updated successfully!';
-                    messageType = 'success';
-                    // Optionally close modal after a delay, or let user close it
-                    setTimeout(() => { openModal = false; message = ''; }, 1500);
-                })
-                .catch(error => {
-                    console.error('Error updating status:', error);
-                    message = 'Failed to update status: ' + error.message;
-                    messageType = 'error';
-                });
-            ">
-                <div class="mb-4">
-                    <label class="inline-flex items-center">
-                        <input type="radio" x-model="currentStatus" name="status" value="Belum" class="form-radio text-red-600">
-                        <span class="ml-2 font-semibold text-red-600">Belum</span>
-                    </label>
-                    <label class="inline-flex items-center ml-6">
-                        <input type="radio" x-model="currentStatus" name="status" value="Sudah" class="form-radio text-green-600">
-                        <span class="ml-2 font-semibold text-green-600">Sudah</span>
-                    </label>
-                </div>
-
-                <div class="flex justify-end gap-2">
-                    <button type="button" @click="openModal = false; message = '';" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                        Batal
-                    </button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        Simpan
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="flex justify-end gap-2">
+                <button type="button" @click="openModal = false; message = '';" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                    Batal
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Simpan
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
-    @endsection
+@endsection

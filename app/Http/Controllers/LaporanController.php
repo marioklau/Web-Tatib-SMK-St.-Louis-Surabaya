@@ -14,51 +14,110 @@ class LaporanController extends Controller
     {
         $tahunAktif = Tahun::where('status', 'aktif')->first();
         $selectedKelas = $request->get('kelas_id');
+        $selectedPeriode = $request->get('periode', 'all');
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
 
         // Definisikan filter pelanggaran di sini agar bisa dipakai ulang
-        $pelanggaranFilter = function ($query) use ($tahunAktif) {
-            $query->where('tahun_ajaran_id', $tahunAktif->id)
-                  ->where(function ($subQuery) {
-                      $subQuery->where('status', 'Belum')
-                               ->orWhereDate('created_at', now()->toDateString());
-                  });
+        $pelanggaranFilter = function ($query) use ($tahunAktif, $selectedPeriode, $startDate, $endDate) {
+            $query->where('tahun_ajaran_id', $tahunAktif->id);
+            
+            // Tambahkan filter berdasarkan periode
+            switch ($selectedPeriode) {
+                case 'hari':
+                    $query->whereDate('created_at', today());
+                    break;
+                case 'minggu':
+                    $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                    break;
+                case 'bulan':
+                    $query->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+                    break;
+                case 'tahun':
+                    $query->whereBetween('created_at', [now()->startOfYear(), now()->endOfYear()]);
+                    break;
+                case 'custom':
+                    if ($startDate && $endDate) {
+                        $query->whereBetween('created_at', [$startDate, $endDate]);
+                    }
+                    break;
+                default:
+                    // Untuk 'all' tidak perlu filter tambahan
+                    break;
+            }
+            
+            $query->where(function ($subQuery) {
+                $subQuery->where('status', 'Belum')
+                        ->orWhereDate('created_at', now()->toDateString());
+            });
         };
 
         // Ambil hanya kelas yang memiliki siswa dengan pelanggaran (yang sudah difilter)
         $kelasList = Kelas::where('tahun_ajaran_id', $tahunAktif->id)
-            ->whereHas('siswa.pelanggaran', $pelanggaranFilter) // Gunakan filter
+            ->whereHas('siswa.pelanggaran', $pelanggaranFilter)
             ->get();
 
         // Ambil siswa dengan pelanggaran (yang sudah difilter)
-        $siswa = Siswa::with(['kelas', 'pelanggaran' => $pelanggaranFilter, 'pelanggaran.kategori']) // Gunakan filter pada relasi
-            ->withCount(['pelanggaran' => $pelanggaranFilter]) // Gunakan filter pada count
-            ->whereHas('pelanggaran', $pelanggaranFilter) // Gunakan filter pada pengecekan
+        $siswa = Siswa::with(['kelas', 'pelanggaran' => $pelanggaranFilter, 'pelanggaran.kategori'])
+            ->withCount(['pelanggaran' => $pelanggaranFilter])
+            ->whereHas('pelanggaran', $pelanggaranFilter)
             ->when($selectedKelas, function ($query, $kelas_id) {
                 return $query->where('kelas_id', $kelas_id);
             })
             ->get();
 
-        return view('laporan.index', compact('siswa', 'kelasList', 'selectedKelas'));
+        return view('laporan.index', compact(
+            'siswa', 
+            'kelasList', 
+            'selectedKelas',
+            'selectedPeriode',
+            'startDate',
+            'endDate'
+        ));
     }
 
     public function exportPdf(Request $request)
     {
         $tahunAktif = Tahun::where('status', 'aktif')->first();
         $kelasId = $request->get('kelas_id');
+        $selectedPeriode = $request->get('periode', 'all'); // Pastikan nama parameter sesuai
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
 
-        // Definisikan filter pelanggaran yang sama untuk konsistensi data di PDF
-        $pelanggaranFilter = function ($query) use ($tahunAktif) {
-            $query->where('tahun_ajaran_id', $tahunAktif->id)
-                  ->where(function ($subQuery) {
-                      $subQuery->where('status', 'Belum')
-                               ->orWhereDate('created_at', now()->toDateString());
-                  });
+        // Definisikan filter pelanggaran
+        $pelanggaranFilter = function ($query) use ($tahunAktif, $selectedPeriode, $startDate, $endDate) {
+            $query->where('tahun_ajaran_id', $tahunAktif->id);
+            
+            // Filter berdasarkan periode
+            switch ($selectedPeriode) {
+                case 'hari':
+                    $query->whereDate('created_at', today());
+                    break;
+                case 'minggu':
+                    $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                    break;
+                case 'bulan':
+                    $query->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+                    break;
+                case 'tahun':
+                    $query->whereBetween('created_at', [now()->startOfYear(), now()->endOfYear()]);
+                    break;
+                case 'custom':
+                    if ($startDate && $endDate) {
+                        $query->whereBetween('created_at', [$startDate, $endDate]);
+                    }
+                    break;
+            }
+            
+            $query->where(function ($subQuery) {
+                $subQuery->where('status', 'Belum')
+                        ->orWhereDate('created_at', now()->toDateString());
+            });
         };
 
-        // Ambil siswa dengan pelanggaran (yang sudah difilter)
-        $query = Siswa::with(['kelas', 'pelanggaran' => $pelanggaranFilter, 'pelanggaran.kategori']) // Gunakan filter
-            ->withCount(['pelanggaran' => $pelanggaranFilter]) // Gunakan filter
-            ->whereHas('pelanggaran', $pelanggaranFilter); // Gunakan filter
+        // Query data
+        $query = Siswa::with(['kelas', 'pelanggaran' => $pelanggaranFilter, 'pelanggaran.kategori'])
+                ->whereHas('pelanggaran', $pelanggaranFilter);
 
         if ($kelasId) {
             $query->where('kelas_id', $kelasId);
@@ -69,7 +128,14 @@ class LaporanController extends Controller
 
         $siswa = $query->get();
 
-        $pdf = Pdf::loadView('laporan.pdf', compact('siswa', 'kelas'));
-        return $pdf->download('laporan-siswa.pdf');
+        $pdf = Pdf::loadView('laporan.pdf', [
+            'siswa' => $siswa,
+            'kelas' => $kelas,
+            'selectedPeriode' => $selectedPeriode,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ]);
+
+        return $pdf->download('laporan-pelanggaran.pdf');
     }
 }

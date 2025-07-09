@@ -25,6 +25,7 @@ class SiswaController extends Controller
         }              
 
         $kelasId = $request->input('kelas_id');
+        $search = $request->input('search');
         $kelasList = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
 
         $query = Siswa::with('kelas')
@@ -47,6 +48,18 @@ class SiswaController extends Controller
                 },
             ]);
 
+        // Search functionality
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_siswa', 'like', '%'.$search.'%')
+                ->orWhere('nis', 'like', '%'.$search.'%')
+                ->orWhereHas('kelas', function($q) use ($search) {
+                    $q->where('nama_kelas', 'like', '%'.$search.'%');
+                });
+            });
+        }
+
+        // Filter by class
         if ($kelasId) {
             $query->where('kelas_id', $kelasId);
         }
