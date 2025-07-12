@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kategori;
 use App\Models\Jenis;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class JenisController extends Controller
@@ -74,8 +75,16 @@ class JenisController extends Controller
    }
     public function destroy(Jenis $jenis)
     {
-        $jenis->delete();
-        return redirect()->route('jenis.index')
-            ->with('success', 'Bentuk Pelanggaran Berhasil Dihapus');
+        try {
+            $jenis->delete();
+            return redirect()->route('jenis.index')
+                ->with('success', 'Jenis Pelanggaran Berhasil Dihapus');
+        } catch (QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode == 1451) {
+                return redirect()->back()
+                    ->with('error', 'Jenis pelanggaran tidak dapat dihapus karena sudah terdapat pelanggaran yang terkait.');
+            }
+        }
     }
 }

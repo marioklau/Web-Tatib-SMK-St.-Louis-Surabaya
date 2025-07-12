@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 use App\Models\Tahun;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
@@ -106,8 +107,16 @@ class KelasController extends Controller
 
     public function destroy(Kelas $kelas)
     {
-        $kelas->delete();
-        return redirect()->route('kelas.index')
-            ->with('success', 'Kelas Berhasil Dihapus');
+        try {
+            $kelas->delete();
+            return redirect()->route('kelas.index')
+                ->with('success', 'Kelas Berhasil Dihapus');
+        } catch (QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode == 1451) {
+                return redirect()->back()
+                    ->with('error', 'Kelas tidak dapat dihapus karena sudah terdapat pelanggaran yang terkait.');
+            }
+        }
     }
 }

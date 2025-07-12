@@ -32,7 +32,7 @@
 
         <!-- Tombol Tambah -->
         <a href="{{ route('jenis.create') }}">
-            <button type="button" class="flex items-center bg-green-600 text-white px-2 py-1 hover:bg-green-700 transition duration-300">
+            <button type="button" class="flex items-center bg-green-600 text-white px-2 py-1 hover:bg-green-700 transition rounded-md duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="18" height="18" viewBox="0 0 22 22" fill="#ffffff">
                     <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
                 </svg>

@@ -9,7 +9,7 @@
         <div class="flex flex-wrap items-center gap-4">
             <!-- Filter Kelas -->
             <div class="rounded-md">
-                <label for="kelas_id" class="mr-2">Kelas</label>
+                <label for="kelas_id" class="text-sm font-medium text-gray-700 whitespace-nowrap">Kelas</label>
                 <select name="kelas_id" id="kelas_id" class="border rounded px-2 py-1">
                     <option value="">Semua Kelas</option>
                     @foreach ($kelasList as $kelas)
@@ -21,8 +21,8 @@
             </div>
 
             <!-- Filter Periode -->
-            <div>
-                <label for="periode" class="mr-2">Periode</label>
+            <div class="rounded-md">
+                <label for="periode" class="text-sm font-medium text-gray-700 whitespace-nowrap">Periode</label>
                 <select name="periode" id="periode" class="border rounded px-2 py-1">
                     <option value="all" {{ $selectedPeriode == 'all' ? 'selected' : '' }}>Semua</option>
                     <option value="hari" {{ $selectedPeriode == 'hari' ? 'selected' : '' }}>Hari Ini</option>

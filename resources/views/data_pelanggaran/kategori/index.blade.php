@@ -3,13 +3,13 @@
 @section('title', 'Kategori Pelanggaran')
 
 @section('content')
-<div class="container mx-auto" x-data="{ openDeleteModal: false, deleteUrl: '' }">
+<div class="container mx-auto" x-data="{ openDeleteModal: false, deleteUrl: '', errorMessage: '' }">
     <h1 class="text-2xl font-semibold text-start mb-2">Kategori Pelanggaran</h1>
 
     <!-- Tombol Tambah Kategori -->
     <div class="flex flex-col md:flex-row justify-end items-center mb-3">
         <a href="{{ route('kategori.create') }}">
-            <button type="button" class="flex items-center bg-green-600 text-white px-2 py-1 hover:bg-green-700 transition duration-300">
+            <button type="button" class="flex items-center bg-green-600 text-white px-2 py-1 hover:bg-green-700 transition rounded-md duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="18" height="18" viewBox="0 0 22 22" fill="#ffffff">
                     <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
                 </svg>
@@ -35,7 +35,7 @@
                         <td class="p-1 whitespace-nowrap text-center text-sm leading-6 font-medium text-gray-900">{{ $loop->iteration }}</td>
                         <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{{ $category->nama_kategori }}</td>
                         <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-center text-gray-900">
-                            {{ $category-> jenis_count }}
+                            {{ $category->jenis_count }}
                         </td>
                         <td class="p-1 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                             <div class="flex items-center justify-center space-x-2">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kategori;
 use App\Models\Sanksi;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -97,8 +98,16 @@ class SanksiController extends Controller
 
     public function destroy(Sanksi $sanksi)
     {
-        $sanksi->delete();
-        return redirect()->route('sanksi.index')
-            ->with('success', 'Sanksi Pelanggaran Berhasil Dihapus');
+        try {
+            $sanksi->delete();
+            return redirect()->route('sanksi.index')
+                ->with('success', 'Sanksi Pelanggaran Berhasil Dihapus');
+        } catch (QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode == 1451) {
+                return redirect()->back()
+                    ->with('error', 'Sanksi pelanggaran tidak dapat dihapus karena sudah terdapat pelanggaran yang terkait.');
+            }
+        }
     }
 }

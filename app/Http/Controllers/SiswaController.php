@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Jenis;
 use App\Models\Sanksi;
+use Illuminate\Database\QueryException;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
 use App\Models\Siswa;
@@ -173,24 +174,16 @@ class SiswaController extends Controller
 
     public function destroy(Siswa $siswa)
     {
-        // 1. Cek apakah siswa memiliki relasi dengan data pelanggaran.
-        // Method exists() lebih efisien karena tidak me-load semua data.
-        if ($siswa->pelanggaran()->exists()) {
-            // 2. Jika ADA, batalkan proses hapus dan kembalikan dengan pesan error.
-            return redirect()->back()
-                ->with('error', 'Gagal! Siswa ini tidak dapat dihapus karena masih memiliki data pelanggaran.');
-        }
-
-        // 3. Jika TIDAK ADA, lanjutkan proses hapus.
         try {
             $siswa->delete();
-            // Kembalikan dengan pesan sukses.
             return redirect()->route('siswa.index')
-                ->with('success', 'Siswa berhasil dihapus.');
-        } catch (\Exception $e) {
-            // Tangani jika ada error tak terduga saat proses hapus.
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat menghapus data siswa: ' . $e->getMessage());
+                ->with('success', 'Siswa Berhasil Dihapus');
+        } catch (QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode == 1451) {
+                return redirect()->back()
+                    ->with('error', 'Siswa tidak dapat dihapus karena sudah terdapat pelanggaran yang terkait.');
+            }
         }
     }
 }
