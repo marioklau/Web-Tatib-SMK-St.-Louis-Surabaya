@@ -28,7 +28,7 @@ class InputPelanggaranController extends Controller
         // Query dasar dengan relasi dan tahun ajaran aktif
         $query = Pelanggaran::with(['siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi'])
             ->where('tahun_ajaran_id', $tahunAjaranAktif->id);
-
+        
         // Filter berdasarkan status
         if ($request->has('status') && $request->status != '') {
             $query->where('status', $request->status);
@@ -300,28 +300,28 @@ class InputPelanggaranController extends Controller
 
     public function pelanggaranSiswa(Request $request)
     {
-        // Ambil tahun ajaran aktif (sama seperti di admin)
         $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
 
         if (!$tahunAjaranAktif) {
-            return redirect()->back()->with('error', 'Tidak ada tahun ajaran yang aktif. Silakan hubungi admin.');
+            return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
         }
 
-        // Query dasar dengan relasi
+        // Query dasar dengan relasi dan tahun ajaran aktif
         $query = Pelanggaran::with(['siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi'])
-                    ->where('tahun_ajaran_id', $tahunAjaranAktif->id);
-
-        // Filter untuk user spesifik
-        $query->whereHas('siswa', function($q) {
-            $q->where('user_id', auth()->id());
-        });
-
-        // Filter status
+            ->where('tahun_ajaran_id', $tahunAjaranAktif->id);
+        
+        // Filter berdasarkan status
         if ($request->has('status') && $request->status != '') {
             $query->where('status', $request->status);
+        } else {
+            // Default: tampilkan yang 'Belum' atau dibuat hari ini
+            $query->where(function($q) {
+                $q->where('status', 'Belum')
+                  ->orWhereDate('created_at', now()->toDateString());
+            });
         }
 
-        // Filter tanggal
+        // Filter berdasarkan tanggal
         if ($request->has('date') && $request->date != '') {
             $query->whereDate('created_at', $request->date);
         }
