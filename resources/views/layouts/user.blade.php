@@ -8,6 +8,8 @@
             <h1 class="text-xl font-bold">Menu User</h1>
             <ul class="mt-4 space-y-2">
                 <li><a href="{{ route('dashboard') }}" class="block px-4 py-2 hover:bg-blue-700">Dashboard</a></li>
+                <li><a href="{{ route('user.data_siswa') }}" class="block px-4 py-2 hover:bg-blue-700">Data Kelas</a></li>
+                <li><a href="{{ route('user.data_kelas') }}" class="block px-4 py-2 hover:bg-blue-700">Data Siswa</a></li>
                 <li><a href="{{ route('user.pelanggaran_siswa') }}" class="block px-4 py-2 hover:bg-blue-700">Pelanggaran Siswa</a></li>
                 <li><a href="{{ route('laporan.index') }}" class="block px-4 py-2 hover:bg-blue-700">Laporan</a></li>
             </ul>

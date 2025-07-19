@@ -53,10 +53,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');
 
+    // Routes untuk User
     Route::prefix('user')->group(function () {
         Route::get('/pelanggaran-siswa', [InputPelanggaranController::class, 'pelanggaranSiswa'])
             ->name('user.pelanggaran_siswa');
-    });
+        Route::get('/data-kelas', [KelasController::class, 'index'])
+            ->name('user.data_kelas');
+        Route::get('/data-siswa', [SiswaController::class, 'index'])
+            ->name('user.data_siswa');
+        });
 });
 
 // Admin-only Routes
