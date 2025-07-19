@@ -47,7 +47,12 @@ class InputPelanggaranController extends Controller
 
         $pelanggaran = $query->latest()->paginate(10);
 
-        return view('admin.input_pelanggaran.index', compact('pelanggaran'));
+        // return view('admin.input_pelanggaran.index', compact('pelanggaran'));
+        if (auth()->user()->role === 'admin') {
+            return view('admin.input_pelanggaran.index', compact('pelanggaran'));
+        } else {
+            return view('user.pelanggaran_siswa', compact('pelanggaran'));
+        }
     }
     /**
      * Show the form for creating a new resource.
@@ -296,38 +301,5 @@ class InputPelanggaranController extends Controller
                 'message' => 'Gagal memperbarui status: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-    public function pelanggaranSiswa(Request $request)
-    {
-        $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
-
-        if (!$tahunAjaranAktif) {
-            return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
-        }
-
-        // Query dasar dengan relasi dan tahun ajaran aktif
-        $query = Pelanggaran::with(['siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi'])
-            ->where('tahun_ajaran_id', $tahunAjaranAktif->id);
-        
-        // Filter berdasarkan status
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        } else {
-            // Default: tampilkan yang 'Belum' atau dibuat hari ini
-            $query->where(function($q) {
-                $q->where('status', 'Belum')
-                  ->orWhereDate('created_at', now()->toDateString());
-            });
-        }
-
-        // Filter berdasarkan tanggal
-        if ($request->has('date') && $request->date != '') {
-            $query->whereDate('created_at', $request->date);
-        }
-
-        $pelanggaran = $query->latest()->paginate(10);
-
-        return view('user.pelanggaran_siswa', compact('pelanggaran'));
     }
 }

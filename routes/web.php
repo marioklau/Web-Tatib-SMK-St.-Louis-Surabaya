@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
 
     // Routes untuk User
     Route::prefix('user')->group(function () {
-        Route::get('/pelanggaran-siswa', [InputPelanggaranController::class, 'pelanggaranSiswa'])
+        Route::get('/pelanggaran-siswa', [InputPelanggaranController::class, 'index'])
             ->name('user.pelanggaran_siswa');
         Route::get('/data-kelas', [KelasController::class, 'index'])
             ->name('user.data_kelas');

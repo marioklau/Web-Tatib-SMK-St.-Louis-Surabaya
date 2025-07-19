@@ -67,7 +67,12 @@ class SiswaController extends Controller
 
         $siswa = $query->paginate(10);
 
-        return view('admin.siswa.index', compact('siswa', 'kelasList'));
+        // return view('admin.siswa.index', compact('siswa', 'kelasList'));
+        if (auth()->user()->role === 'admin') {
+            return view('admin.siswa.index', compact('siswa', 'kelasList'));
+        } else {
+            return view('user.data_siswa', compact('siswa', 'kelasList'));
+        }
     }
 
     public function import(Request $request)

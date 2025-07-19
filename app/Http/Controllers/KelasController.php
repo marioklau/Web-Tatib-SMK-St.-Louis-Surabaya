@@ -23,7 +23,12 @@ class KelasController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('admin.kelas.index', compact('kelas'));
+        // return view('admin.kelas.index', compact('kelas'));
+        if (auth()->user()->role === 'admin') {
+            return view('admin.kelas.index', compact('kelas'));
+        } else {
+            return view('user.data_kelas', compact('kelas'));
+        }
     }
 
 
