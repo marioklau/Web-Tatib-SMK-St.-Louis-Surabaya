@@ -24,13 +24,13 @@ class SanksiController extends Controller
 
         $sanksi = $query->get();
 
-        return view('data_pelanggaran.sanksi.index', compact('sanksi', 'kategori', 'filterKategori'));
+        return view('admin.data_pelanggaran.sanksi.index', compact('sanksi', 'kategori', 'filterKategori'));
     }
 
     public function create()
     {
         $kategori = Kategori::all();
-        return view('data_pelanggaran.sanksi.create', compact('kategori'));
+        return view('admin.data_pelanggaran.sanksi.create', compact('kategori'));
     }
 
     public function store(Request $request)
@@ -63,12 +63,12 @@ class SanksiController extends Controller
     public function show($id)
     {
         $sanksi = Sanksi::findOrFail($id);
-        return view('data_pelanggaran.sanksi.show', compact('sanksi'));
+        return view('admin.data_pelanggaran.sanksi.show', compact('sanksi'));
     }
 
     public function edit(Sanksi $sanksi)
     {
-        return view('data_pelanggaran.sanksi.edit', compact('sanksi'));
+        return view('admin.data_pelanggaran.sanksi.edit', compact('sanksi'));
     }
 
     public function update(Request $request, Sanksi $sanksi)

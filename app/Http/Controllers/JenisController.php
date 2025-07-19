@@ -24,13 +24,13 @@ class JenisController extends Controller
 
         $jenis = $query->paginate(10);
 
-        return view('data_pelanggaran.jenis.index', compact('jenis', 'kategori', 'filterKategori'));
+        return view('admin.data_pelanggaran.jenis.index', compact('jenis', 'kategori', 'filterKategori'));
     }
 
     public function create()
     {
         $kategori = Kategori::all();
-        return view('data_pelanggaran.jenis.create', compact('kategori'));
+        return view('admin.data_pelanggaran.jenis.create', compact('kategori'));
     }
     
     public function store(Request $request)
@@ -52,12 +52,12 @@ class JenisController extends Controller
     public function show($id)
     {
         $kategori = Jenis::findOrFail($id);
-        return view('data_pelanggaran.jenis.show', compact('jenis'));
+        return view('admin.data_pelanggaran.jenis.show', compact('jenis'));
     }
 
    public function edit(Jenis $jenis) 
    {
-       return view('data_pelanggaran.jenis.edit', compact('jenis'));
+       return view('admin.data_pelanggaran.jenis.edit', compact('jenis'));
    }
    
    public function update(Request $request, Jenis $jenis) 

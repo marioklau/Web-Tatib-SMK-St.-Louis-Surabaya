@@ -28,4 +28,9 @@ class Siswa extends Model
     {
         return $this->hasMany(Pelanggaran::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

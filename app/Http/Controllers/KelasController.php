@@ -23,13 +23,13 @@ class KelasController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('kelas.index', compact('kelas'));
+        return view('admin.kelas.index', compact('kelas'));
     }
 
 
     public function create()
     {
-        return view('kelas.create');
+        return view('admin.kelas.create');
     }
 
     public function store(Request $request)
@@ -68,12 +68,12 @@ class KelasController extends Controller
     public function show($id)
     {
         $kelas = Kelas::findOrFail($id);
-        return view('kelas.show', compact('kelas'));
+        return view('admin.kelas.show', compact('kelas'));
     }
 
     public function edit(Kelas $kelas)
     {
-        return view('kelas.edit', compact('kelas'));
+        return view('admin.kelas.edit', compact('kelas'));
     }
 
     public function update(Request $request, Kelas $kelas)

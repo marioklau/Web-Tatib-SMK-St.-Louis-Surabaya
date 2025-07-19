@@ -35,7 +35,7 @@
                             data-r="{{ $student->ringan_count ?? 0 }}"
                             data-b="{{ $student->berat_count ?? 0 }}"
                             data-sb="{{ $student->sangat_berat_count ?? 0 }}"
-                            data-total-bobot="{{ $student->total_bobot ?? 0 }}"
+                            data-total-bobot="{{ $student->pelanggaran_sum_poin_pelanggaran ?? 0 }}"
                             {{ old('siswa_id') == $student->id ? 'selected' : '' }}
                         >
                             {{ $student->nama_siswa }} - ({{ $student->kelas->kode_kelas ?? 'Tanpa Kelas' }})
@@ -174,97 +174,55 @@
         });
 
         // Fungsi untuk menampilkan alur pembinaan
-        function showAlurPembinaan(kategoriId, bobot) {
+        function showAlurPembinaan(kategoriId, bobotBaru) {
             const alurContainer = $('#alur-pembinaan');
+
+            const totalSebelumnya = parseInt($('#siswa-select option:selected').data('total-bobot')) || 0;
+            const totalBobot = totalSebelumnya + parseInt(bobotBaru);
+
             const sanksiKategori = allSanksiData
                 .filter(s => s.kategori_id == kategoriId)
-                // Urutkan dari bobot_min terkecil ke terbesar
                 .sort((a, b) => (a.bobot_min || 0) - (b.bobot_min || 0));
-            
-            if (sanksiKategori.length > 0) {
-                // Cari sanksi dengan range spesifik terlebih dahulu
-                let sanksi = sanksiKategori.find(s => 
-                    s.bobot_min && s.bobot_min > 0 && 
-                    bobot >= s.bobot_min && bobot <= s.bobot_max
-                );
-                
-                // Jika tidak ditemukan range spesifik, cari yang general (hanya bobot_max)
-                if (!sanksi) {
-                    sanksi = sanksiKategori.find(s => 
-                        (!s.bobot_min || s.bobot_min === 0) && 
-                        bobot <= s.bobot_max
-                    );
-                }
 
-                // Default ke sanksi pertama jika tidak ditemukan
-                sanksi = sanksi || sanksiKategori[0];
+            let sanksi = sanksiKategori.find(s => totalBobot >= s.bobot_min && totalBobot <= s.bobot_max);
+            sanksi = sanksi || sanksiKategori[0];
 
-                let html = '<div class="space-y-2">';
-                
-                if (sanksi) {
-                    // Tampilkan range bobot yang sesuai
-                    if (!sanksi.bobot_min || sanksi.bobot_min === 0) {
-                        html += `<h4 class="font-semibold">Tingkat (Bobot ${sanksi.bobot_max}):</h4>`;
-                    } else {
-                        html += `<h4 class="font-semibold">Tingkat (Bobot ${sanksi.bobot_min}-${sanksi.bobot_max}):</h4>`;
-                    }
-                    
-                    if (Array.isArray(sanksi.nama_sanksi)) {
-                        html += '<ol class="list-decimal pl-5">';
-                        sanksi.nama_sanksi.forEach(item => {
-                            html += `<li class="mb-1">${item}</li>`;
-                        });
-                        html += '</ol>';
-                    } else {
-                        html += '<p class="text-gray-500">Tidak ada alur pembinaan tersedia.</p>';
-                    }
-                }
-                
-                html += '</div>';
-                alurContainer.html(html);
+            let html = '<div class="space-y-2">';
+            if (sanksi.nama_sanksi && Array.isArray(sanksi.nama_sanksi)) {
+                html += `<h4 class="font-semibold">Tingkat (Total Bobot ${totalBobot} masuk dalam range ${sanksi.bobot_min}-${sanksi.bobot_max}):</h4>`;
+                html += '<ol class="list-decimal pl-5">';
+                sanksi.nama_sanksi.forEach(item => html += `<li class="mb-1">${item}</li>`);
+                html += '</ol>';
             } else {
-                alurContainer.html('<p class="text-gray-500">Tidak ada alur pembinaan untuk kategori ini.</p>');
+                html += '<p class="text-gray-500">Tidak ada alur pembinaan tersedia.</p>';
             }
+            html += '</div>';
+            alurContainer.html(html);
         }
 
+
         // Fungsi untuk update opsi keputusan tindakan
-        function updateKeputusanOptions(kategoriId, bobot) {
+        function updateKeputusanOptions(kategoriId, bobotBaru) {
             const keputusanSelect = $('#keputusan-select');
             keputusanSelect.empty().append('<option value="">-- Pilih Keputusan --</option>');
 
+            const totalSebelumnya = parseInt($('#siswa-select option:selected').data('total-bobot')) || 0;
+            const totalBobot = totalSebelumnya + parseInt(bobotBaru);
+
             const sanksiKategori = allSanksiData
                 .filter(s => s.kategori_id == kategoriId)
                 .sort((a, b) => (a.bobot_min || 0) - (b.bobot_min || 0));
-            
-            if (sanksiKategori.length > 0) {
-                // 1. Cari yang range spesifik dulu
-                let sanksi = sanksiKategori.find(s => 
-                    s.bobot_min && s.bobot_min > 0 && 
-                    bobot >= s.bobot_min && bobot <= s.bobot_max
-                );
-                
-                // 2. Jika tidak ketemu, cari yang general (hanya bobot_max)
-                if (!sanksi) {
-                    sanksi = sanksiKategori.find(s => 
-                        (!s.bobot_min || s.bobot_min === 0) && 
-                        bobot <= s.bobot_max
-                    );
-                }
 
-                // 3. Jika masih tidak ketemu, gunakan yang pertama
-                sanksi = sanksi || sanksiKategori[0];
+            let sanksi = sanksiKategori.find(s => totalBobot >= s.bobot_min && totalBobot <= s.bobot_max);
+            sanksi = sanksi || sanksiKategori[0];
 
-                if (sanksi && sanksi.keputusan_tindakan && Array.isArray(sanksi.keputusan_tindakan)) {
-                    sanksi.keputusan_tindakan.forEach(k => {
-                        if (k) { 
-                            keputusanSelect.append(`<option value="${k}">${k}</option>`);
-                        }
-                    });
-                } else {
-                    console.warn('Keputusan tindakan tidak ditemukan atau format tidak valid', sanksi);
-                }
+            if (sanksi.keputusan_tindakan && Array.isArray(sanksi.keputusan_tindakan)) {
+                sanksi.keputusan_tindakan.forEach(k => {
+                    if (k) keputusanSelect.append(`<option value="${k}">${k}</option>`);
+                });
             }
         }
+
 
         // Handle old input setelah validasi gagal
         @if(old('siswa_id'))

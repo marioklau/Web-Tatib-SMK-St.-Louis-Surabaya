@@ -11,12 +11,12 @@ class KategoriController extends Controller
     public function index()
     {
         $kategori = Kategori::withCount('jenis')->latest()->paginate(10);
-        return view('data_pelanggaran.kategori.index', compact('kategori'));
+        return view('admin.data_pelanggaran.kategori.index', compact('kategori'));
     }
 
     public function create()
     {
-        return view('data_pelanggaran.kategori.create');
+        return view('admin.data_pelanggaran.kategori.create');
     }
 
     public function store(Request $request)
@@ -36,12 +36,12 @@ class KategoriController extends Controller
     public function show($id)
     {
         $kategori = Kategori::findOrFail($id);
-        return view('data_pelanggaran.kategori.show', compact('kategori'));
+        return view('admin.data_pelanggaran.kategori.show', compact('kategori'));
     }
 
     public function edit(Kategori $kategori) 
     {
-        return view('data_pelanggaran.kategori.edit', compact('kategori'));
+        return view('admin.data_pelanggaran.kategori.edit', compact('kategori'));
     }
     
     public function update(Request $request, Kategori $kategori) 

@@ -66,7 +66,7 @@ class LaporanController extends Controller
             })
             ->get();
 
-        return view('laporan.index', compact(
+        return view('admin.laporan.index', compact(
             'siswa', 
             'kelasList', 
             'selectedKelas',
@@ -128,7 +128,7 @@ class LaporanController extends Controller
 
         $siswa = $query->get();
 
-        $pdf = Pdf::loadView('laporan.pdf', [
+        $pdf = Pdf::loadView('admin.laporan.pdf', [
             'siswa' => $siswa,
             'kelas' => $kelas,
             'selectedPeriode' => $selectedPeriode,
@@ -136,6 +136,6 @@ class LaporanController extends Controller
             'endDate' => $endDate
         ]);
 
-        return $pdf->download('laporan-pelanggaran.pdf');
+        return $pdf->download('admin.laporan-pelanggaran.pdf');
     }
 }

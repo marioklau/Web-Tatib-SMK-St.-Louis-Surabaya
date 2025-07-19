@@ -47,7 +47,7 @@ class InputPelanggaranController extends Controller
 
         $pelanggaran = $query->latest()->paginate(10);
 
-        return view('input_pelanggaran.index', compact('pelanggaran'));
+        return view('admin.input_pelanggaran.index', compact('pelanggaran'));
     }
     /**
      * Show the form for creating a new resource.
@@ -84,7 +84,7 @@ class InputPelanggaranController extends Controller
         $jenis = Jenis::with('kategori')->get();
         $sanksi = Sanksi::all();
 
-        return view('input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
+        return view('admin.input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
     }
 
     /**
@@ -112,7 +112,10 @@ class InputPelanggaranController extends Controller
 
             // Get the student's total bobot
             $siswa = Siswa::findOrFail($validatedData['siswa_id']);
-            $totalBobot = $siswa->pelanggaran()->sum('poin_pelanggaran') + $bobotPelanggaran;
+            $totalBobot = $siswa->pelanggaran()
+            ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+            ->sum('poin_pelanggaran') + $bobotPelanggaran;
+
 
             // Find the appropriate sanksi based on kategori and total bobot
             $sanksi = Sanksi::where('kategori_id', $validatedData['kategori_id'])
@@ -161,7 +164,7 @@ class InputPelanggaranController extends Controller
         // $input_pelanggaran sudah berisi data Pelanggaran yang dicari berdasarkan ID
         // Pastikan relasi sudah di-load jika ingin menampilkan data terkait
         $input_pelanggaran->load('siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi');
-        return view('input_pelanggaran.show', ['pelanggaran' => $input_pelanggaran]);
+        return view('admin.input_pelanggaran.show', ['pelanggaran' => $input_pelanggaran]);
     }
 
     /**
@@ -186,7 +189,7 @@ class InputPelanggaranController extends Controller
         $jenis = Jenis::with('kategori')->get();
         $sanksi = Sanksi::all();
 
-        return view('input_pelanggaran.edit', compact('input_pelanggaran', 'siswa', 'jenis', 'sanksi'));
+        return view('admin.input_pelanggaran.edit', compact('input_pelanggaran', 'siswa', 'jenis', 'sanksi'));
     }
 
     /**
@@ -215,7 +218,9 @@ class InputPelanggaranController extends Controller
             // Get the student's total bobot (excluding current pelanggaran)
             $totalBobot = Pelanggaran::where('siswa_id', $validatedData['siswa_id'])
                 ->where('id', '!=', $input_pelanggaran->id)
+                ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
                 ->sum('poin_pelanggaran') + $bobotPelanggaran;
+
 
             // Find appropriate sanksi
             $sanksi = Sanksi::where('kategori_id', $validatedData['kategori_id'])
@@ -291,5 +296,38 @@ class InputPelanggaranController extends Controller
                 'message' => 'Gagal memperbarui status: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function pelanggaranSiswa(Request $request)
+    {
+        // Ambil tahun ajaran aktif (sama seperti di admin)
+        $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
+
+        if (!$tahunAjaranAktif) {
+            return redirect()->back()->with('error', 'Tidak ada tahun ajaran yang aktif. Silakan hubungi admin.');
+        }
+
+        // Query dasar dengan relasi
+        $query = Pelanggaran::with(['siswa.kelas', 'kategori', 'jenis.kategori', 'sanksi'])
+                    ->where('tahun_ajaran_id', $tahunAjaranAktif->id);
+
+        // Filter untuk user spesifik
+        $query->whereHas('siswa', function($q) {
+            $q->where('user_id', auth()->id());
+        });
+
+        // Filter status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter tanggal
+        if ($request->has('date') && $request->date != '') {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        $pelanggaran = $query->latest()->paginate(10);
+
+        return view('user.pelanggaran_siswa', compact('pelanggaran'));
     }
 }

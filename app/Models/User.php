@@ -21,6 +21,7 @@ class User extends Authenticatable
         'nama',
         'username',
         'password',
+        'role',
     ];
 
     /**
@@ -43,5 +44,20 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
         ];
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isUser()
+    {
+        return $this->role === 'user';
+    }
+
+    public function siswa()
+    {
+        return $this->hasOne(Siswa::class);
     }
 }

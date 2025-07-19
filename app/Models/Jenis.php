@@ -19,4 +19,9 @@ class Jenis extends Model
     {
         return $this->belongsTo(Kategori::class, 'kategori_id');
     }
+
+    public function pelanggaran()
+    {
+        return $this->hasMany(Pelanggaran::class);
+    }
 }

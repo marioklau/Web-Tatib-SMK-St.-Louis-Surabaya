@@ -67,7 +67,7 @@ class SiswaController extends Controller
 
         $siswa = $query->paginate(10);
 
-        return view('siswa.index', compact('siswa', 'kelasList'));
+        return view('admin.siswa.index', compact('siswa', 'kelasList'));
     }
 
     public function import(Request $request)
@@ -97,7 +97,7 @@ class SiswaController extends Controller
         $jenis = Jenis::with('kategori')->get();
         $sanksi = Sanksi::all();
 
-        return view('siswa.create', compact('siswa', 'jenis', 'sanksi'));
+        return view('admin.siswa.create', compact('siswa', 'jenis', 'sanksi'));
     }
 
 
@@ -134,14 +134,14 @@ class SiswaController extends Controller
             'tahun_ajaran_id'  => $kelas->tahun_ajaran_id, // PASTIKAN DISET
         ]);
 
-        return redirect()->route('siswa.index')
+        return redirect()->route('admin.siswa.index')
             ->with('success', 'Siswa Berhasil Ditambahkan.');
     }
 
     public function show($id)
     {
         $siswa = Siswa::findOrFail($id);
-        return view('siswa.show', compact('siswa'));
+        return view('admin.siswa.show', compact('siswa'));
     }
 
     public function edit(Siswa $siswa)
@@ -149,7 +149,7 @@ class SiswaController extends Controller
         $tahunAktif = Tahun::where('status', 'aktif')->first();
         $daftar_kelas = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
 
-        return view('siswa.edit', compact('siswa', 'daftar_kelas'));
+        return view('admin.siswa.edit', compact('siswa', 'daftar_kelas'));
     }
 
     public function update(Request $request, $id)
