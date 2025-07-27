@@ -37,26 +37,6 @@
             </div>
         </div>
 
-        <!-- Info Pelanggaran -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
-            <div class="flex flex-col items-center">
-                <label class="text-xs font-semibold text-gray-700 mb-1">Ringan</label>
-                <input type="text" value="{{ $input_pelanggaran->siswa->ringan_count ?? 0 }}" class="w-full p-2 text-xs border-2 rounded text-center bg-green-100 text-green-800" readonly>
-            </div>
-            <div class="flex flex-col items-center">
-                <label class="text-xs font-semibold text-gray-700 mb-1">Berat</label>
-                <input type="text" value="{{ $input_pelanggaran->siswa->berat_count ?? 0 }}" class="w-full p-2 text-xs border-2 rounded text-center bg-yellow-100 text-yellow-800" readonly>
-            </div>
-            <div class="flex flex-col items-center">
-                <label class="text-xs font-semibold text-gray-700 mb-1">Sangat Berat</label>
-                <input type="text" value="{{ $input_pelanggaran->siswa->sangat_berat_count ?? 0 }}" class="w-full p-2 text-xs border-2 rounded text-center bg-red-100 text-red-800" readonly>
-            </div>
-            <div class="flex flex-col items-center">
-                <label class="text-xs font-semibold text-gray-700 mb-1">Total Bobot</label>
-                <input type="text" value="{{ $input_pelanggaran->siswa->pelanggaran_sum_poin_pelanggaran ?? 0 }}" class="w-full p-2 text-xs border-2 rounded text-center bg-blue-100 text-blue-800" readonly>
-            </div>
-        </div>
-
         <!-- Jenis dan Kategori Pelanggaran (Tidak Bisa Diubah) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
@@ -82,16 +62,7 @@
 
         <!-- Bobot dan Status -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-                <label class="block text-gray-700 font-medium mb-2">Bobot Pelanggaran</label>
-                <div class="bg-gray-100 p-3 rounded border border-gray-300">
-                    <p class="text-gray-800">
-                        {{ $input_pelanggaran->poin_pelanggaran }}
-                    </p>
-                    <input type="hidden" name="poin_pelanggaran" value="{{ $input_pelanggaran->poin_pelanggaran }}">
-                </div>
-            </div>
-
+        
             <div>
                 <label class="block text-gray-700 font-medium mb-2">Status</label>
                 <select name="status" class="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>

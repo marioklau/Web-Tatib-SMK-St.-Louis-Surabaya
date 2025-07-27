@@ -7,7 +7,7 @@
     <h1 class="text-2xl font-semibold mb-6">Pelanggaran Siswa</h1>
 
     <!-- Filter Section -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:its-center gap-4 mb-4">
     <!-- Judul Riwayat Pelanggaran -->
     <h2 class="text-lg font-normal whitespace-nowrap">Riwayat Pelanggaran</h2>
 

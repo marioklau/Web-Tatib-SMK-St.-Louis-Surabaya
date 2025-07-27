@@ -6,6 +6,7 @@ use App\Models\Kelas;
 use App\Models\Tahun;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class KelasController extends Controller
 {
@@ -14,8 +15,16 @@ class KelasController extends Controller
         $tahunAktif = Tahun::where('status', 'aktif')->first();
         if (!$tahunAktif) {
             $kelas = collect(); // supaya tidak error di view saat foreach
-            return view('kelas.index', compact('kelas'))
-                ->with('error', 'Tidak ada tahun ajaran aktif.');
+            // Jika user biasa (bukan admin), tidak boleh lanjut
+        if (auth()->user()->role === 'user') {
+            return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
+        }
+
+        // Jika admin, tetap bisa masuk tapi tanpa data
+        $kelas = collect(); // Supaya tidak error di view saat foreach
+
+        return view('admin.kelas.index', compact('kelas'));
+            
         }
 
         $kelas = Kelas::withCount('siswa')
