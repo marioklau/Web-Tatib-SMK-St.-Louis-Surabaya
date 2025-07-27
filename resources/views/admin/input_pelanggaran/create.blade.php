@@ -35,7 +35,7 @@
                             data-r="{{ $student->ringan_count ?? 0 }}"
                             data-b="{{ $student->berat_count ?? 0 }}"
                             data-sb="{{ $student->sangat_berat_count ?? 0 }}"
-                            data-total-bobot="{{ $student->pelanggaran_sum_poin_pelanggaran ?? 0 }}"
+                            data-total-bobot="{{ $student->pelanggaran_sum_total_bobot?? 0 }}"
                             {{ old('siswa_id') == $student->id ? 'selected' : '' }}
                         >
                             {{ $student->nama_siswa }} - ({{ $student->kelas->kode_kelas ?? 'Tanpa Kelas' }})
@@ -92,11 +92,7 @@
             </div>
         </div>
 
-        <div class="mt-4">
-            <label class="block mb-1">Pelanggaran Ke-</label>
-            <input type="number" name="bobot" id="bobot-input" class="border-2 w-full p-2" 
-                   min="1" max="200" required value="{{ old('bobot') }}">
-        </div>
+        <input type="hidden" name="bobot" id="bobot-input" value="{{ old('bobot') }}">
 
         <div class="mt-4 bg-gray-50 p-4 rounded">
             <label class="block mb-2 font-semibold">Alur Pembinaan:</label>
@@ -162,17 +158,6 @@
             updateKeputusanOptions(kategoriId, bobotPelanggaran);
         });
 
-        // Event saat bobot diubah manual
-        $('#bobot-input').on('change', function() {
-            const kategoriId = $('#kategori-id').val();
-            const bobotPelanggaran = $(this).val();
-            
-            if (kategoriId && bobotPelanggaran) {
-                showAlurPembinaan(kategoriId, bobotPelanggaran);
-                updateKeputusanOptions(kategoriId, bobotPelanggaran);
-            }
-        });
-
         // Fungsi untuk menampilkan alur pembinaan
         function showAlurPembinaan(kategoriId, bobotBaru) {
             const alurContainer = $('#alur-pembinaan');
@@ -200,7 +185,6 @@
             alurContainer.html(html);
         }
 
-
         // Fungsi untuk update opsi keputusan tindakan
         function updateKeputusanOptions(kategoriId, bobotBaru) {
             const keputusanSelect = $('#keputusan-select');
@@ -222,7 +206,6 @@
                 });
             }
         }
-
 
         // Handle old input setelah validasi gagal
         @if(old('siswa_id'))
