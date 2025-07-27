@@ -54,7 +54,7 @@ class AuthController extends Controller
     // {
     //     $password = 'admin'; // Ganti sesuai password yang ingin di-hash
     //     $hash = Hash::make($password);
-    //     dd($hash); // tampilkan hash di browser
+    //     dd($hash); // tampilkan hash di browserss
     // }
-    
+
 }
