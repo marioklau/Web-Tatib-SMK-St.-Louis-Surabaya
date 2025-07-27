@@ -18,13 +18,22 @@ class SiswaController extends Controller
     public function index(Request $request)
     {
         $tahunAktif = Tahun::where('status', 'aktif')->first();
+
+        // Jika tidak ada tahun aktif
         if (!$tahunAktif) {
             $kelasList = collect();
-            $siswa = new LengthAwarePaginator([], 0, 10); 
-            return view('siswa.index', compact('kelasList', 'siswa'))
-                ->with('error', 'Tidak ada tahun ajaran aktif.');
-        }              
+            $siswa = new LengthAwarePaginator([], 0, 10);
 
+            // Jika user biasa, arahkan balik
+            if (auth()->user()->role === 'user') {
+                return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
+            }
+
+            // Jika admin, tetap tampilkan view dengan data kosong
+            return view('admin.siswa.index', compact('siswa', 'kelasList'));
+        }
+
+        // Kalau tahun aktif ada, ambil data seperti biasa
         $kelasId = $request->input('kelas_id');
         $search = $request->input('search');
         $kelasList = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->get();
@@ -49,7 +58,6 @@ class SiswaController extends Controller
                 },
             ]);
 
-        // Search functionality
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('nama_siswa', 'like', '%'.$search.'%')
@@ -60,14 +68,12 @@ class SiswaController extends Controller
             });
         }
 
-        // Filter by class
         if ($kelasId) {
             $query->where('kelas_id', $kelasId);
         }
 
         $siswa = $query->paginate(10);
 
-        // return view('admin.siswa.index', compact('siswa', 'kelasList'));
         if (auth()->user()->role === 'admin') {
             return view('admin.siswa.index', compact('siswa', 'kelasList'));
         } else {

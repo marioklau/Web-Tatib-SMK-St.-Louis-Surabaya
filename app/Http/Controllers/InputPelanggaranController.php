@@ -83,7 +83,7 @@ class InputPelanggaranController extends Controller
             ])
             ->withSum(['pelanggaran' => function($query) use ($tahunAjaranAktif) {
                 $query->where('tahun_ajaran_id', $tahunAjaranAktif->id);
-            }], 'poin_pelanggaran')
+            }], 'total_bobot')
             ->get();
 
         $jenis = Jenis::with('kategori')->get();
@@ -96,70 +96,72 @@ class InputPelanggaranController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
+{
+    $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
 
-        if (!$tahunAjaranAktif) {
-            return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
-        }
+    if (!$tahunAjaranAktif) {
+        return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
+    }
 
-        $validatedData = $request->validate([
-            'siswa_id' => 'required|exists:siswa,id',
-            'jenis_id' => 'required|exists:jenis,id',
-            'kategori_id' => 'required|exists:kategori,id',
-            'keputusan_tindakan_terpilih' => 'required|string',
-            // Remove sanksi_id from validation since we'll determine it automatically
-        ]);
+    $validatedData = $request->validate([
+        'siswa_id' => 'required|exists:siswa,id',
+        'jenis_id' => 'required|exists:jenis,id',
+        'kategori_id' => 'required|exists:kategori,id',
+        'keputusan_tindakan_terpilih' => 'required|string',
+        // sanksi_id tidak perlu divalidasi karena akan dihitung otomatis
+    ]);
 
-        try {
-            $jenisPelanggaran = Jenis::findOrFail($validatedData['jenis_id']);
-            $bobotPelanggaran = $jenisPelanggaran->bobot_poin;
+    try {
+        // Ambil bobot dari jenis pelanggaran
+        $jenisPelanggaran = Jenis::findOrFail($validatedData['jenis_id']);
+        $bobotPelanggaran = $jenisPelanggaran->bobot_poin;
 
-            // Get the student's total bobot
-            $siswa = Siswa::findOrFail($validatedData['siswa_id']);
-            $totalBobot = $siswa->pelanggaran()
+        // Hitung total bobot untuk kategori yang sama dan tahun ajaran aktif
+        $siswa = Siswa::findOrFail($validatedData['siswa_id']);
+        $totalBobot = $siswa->pelanggaran()
             ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-            ->sum('poin_pelanggaran') + $bobotPelanggaran;
+            ->where('kategori_id', $validatedData['kategori_id'])
+            ->sum('total_bobot') + $bobotPelanggaran;
 
+        // Cari sanksi berdasarkan kategori dan bobot total
+        $sanksi = Sanksi::where('kategori_id', $validatedData['kategori_id'])
+            ->where(function($query) use ($totalBobot) {
+                $query->where('bobot_min', '<=', $totalBobot)
+                      ->where('bobot_max', '>=', $totalBobot);
+            })->first();
 
-            // Find the appropriate sanksi based on kategori and total bobot
+        // Jika tidak ditemukan, fallback ke sanksi pertama dari kategori
+        if (!$sanksi) {
             $sanksi = Sanksi::where('kategori_id', $validatedData['kategori_id'])
-                ->where(function($query) use ($totalBobot) {
-                    $query->where('bobot_min', '<=', $totalBobot)
-                        ->where('bobot_max', '>=', $totalBobot);
-                })
+                ->orderBy('bobot_min')
                 ->first();
 
             if (!$sanksi) {
-                // Fallback to the first sanksi for this kategori if none matches
-                $sanksi = Sanksi::where('kategori_id', $validatedData['kategori_id'])
-                    ->orderBy('bobot_min')
-                    ->first();
-                
-                if (!$sanksi) {
-                    throw new \Exception('Tidak ada sanksi yang tersedia untuk kategori ini.');
-                }
+                throw new \Exception('Tidak ada sanksi yang tersedia untuk kategori ini.');
             }
-
-            Pelanggaran::create([
-                'siswa_id' => $validatedData['siswa_id'],
-                'jenis_id' => $validatedData['jenis_id'],
-                'kategori_id' => $validatedData['kategori_id'],
-                'sanksi_id' => $sanksi->id,
-                'keputusan_tindakan_terpilih' => $validatedData['keputusan_tindakan_terpilih'],
-                'tahun_ajaran_id' => $tahunAjaranAktif->id,
-                'poin_pelanggaran' => $bobotPelanggaran,
-                'tanggal' => now()->toDateString(),
-                'status' => 'Belum',
-            ]);
-
-            return redirect()->route('input_pelanggaran.index')->with('success', 'Pelanggaran berhasil diinput!');
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan pelanggaran: ' . $e->getMessage())->withInput();
         }
+
+        // Simpan pelanggaran baru
+        Pelanggaran::create([
+            'siswa_id' => $validatedData['siswa_id'],
+            'jenis_id' => $validatedData['jenis_id'],
+            'kategori_id' => $validatedData['kategori_id'],
+            'sanksi_id' => $sanksi->id,
+            'keputusan_tindakan_terpilih' => $validatedData['keputusan_tindakan_terpilih'],
+            'tahun_ajaran_id' => $tahunAjaranAktif->id,
+            'total_bobot' => $bobotPelanggaran,
+            'tanggal' => now()->toDateString(),
+            'status' => 'Belum',
+        ]);
+
+        return redirect()->route('input_pelanggaran.index')->with('success', 'Pelanggaran berhasil diinput!');
+    } catch (ValidationException $e) {
+        return redirect()->back()->withErrors($e->errors())->withInput();
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan pelanggaran: ' . $e->getMessage())->withInput();
     }
+}
+
 
     /**
      * Display the specified resource.
@@ -224,7 +226,7 @@ class InputPelanggaranController extends Controller
             $totalBobot = Pelanggaran::where('siswa_id', $validatedData['siswa_id'])
                 ->where('id', '!=', $input_pelanggaran->id)
                 ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                ->sum('poin_pelanggaran') + $bobotPelanggaran;
+                ->sum('total_bobot') + $bobotPelanggaran;
 
 
             // Find appropriate sanksi
@@ -251,7 +253,7 @@ class InputPelanggaranController extends Controller
                 'kategori_id' => $validatedData['kategori_id'],
                 'sanksi_id' => $sanksi->id,
                 'keputusan_tindakan_terpilih' => $validatedData['keputusan_tindakan_terpilih'],
-                'poin_pelanggaran' => $bobotPelanggaran,
+                'total_bobot' => $bobotPelanggaran,
                 'status' => $validatedData['status'],
             ]);
 
