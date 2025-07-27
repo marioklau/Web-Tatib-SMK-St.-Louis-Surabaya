@@ -56,4 +56,5 @@ class AuthController extends Controller
     //     $hash = Hash::make($password);
     //     dd($hash); // tampilkan hash di browser
     // }
+    
 }
