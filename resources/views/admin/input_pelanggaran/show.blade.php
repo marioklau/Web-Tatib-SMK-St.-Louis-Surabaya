@@ -1,91 +1,106 @@
 @extends('layouts.main')
 
-@section('title', 'Detail Siswa')
+@section('title', 'Detail Pelanggaran Siswa')
 
 @section('content')
 <div class="container mx-auto">
-    <h1 class="text-2xl font-semibold mb-4">Detail Siswa</h1>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold">Detail Pelanggaran Siswa</h1>
+    </div>
 
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Informasi Siswa -->
-            <div>
-                <h2 class="text-xl font-semibold mb-4">Informasi Siswa</h2>
-                <div class="space-y-3">
-                    <div>
-                        <label class="font-medium text-gray-700">Nama:</label>
-                        <p class="mt-1">{{ $siswa->nama_siswa }}</p>
-                    </div>
-                    <div>
-                        <label class="font-medium text-gray-700">NIS:</label>
-                        <p class="mt-1">{{ $siswa->nis }}</p>
-                    </div>
-                    <div>
-                        <label class="font-medium text-gray-700">Kelas:</label>
-                        <p class="mt-1">{{ $siswa->kelas->nama_kelas ?? 'Tanpa Kelas' }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Statistik Pelanggaran -->
-            <div>
-                <h2 class="text-xl font-semibold mb-4">Statistik Pelanggaran</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-green-100 p-4 rounded-lg text-center">
-                        <p class="text-sm font-medium text-green-800">Ringan (R)</p>
-                        <p class="text-2xl font-bold text-green-600">{{ $siswa->ringan_count ?? 0 }}</p>
-                    </div>
-                    <div class="bg-yellow-100 p-4 rounded-lg text-center">
-                        <p class="text-sm font-medium text-yellow-800">Berat (B)</p>
-                        <p class="text-2xl font-bold text-yellow-600">{{ $siswa->berat_count ?? 0 }}</p>
-                    </div>
-                    <div class="bg-red-100 p-4 rounded-lg text-center">
-                        <p class="text-sm font-medium text-red-800">Sangat Berat (SB)</p>
-                        <p class="text-2xl font-bold text-red-600">{{ $siswa->sangat_berat_count ?? 0 }}</p>
-                    </div>
-                    <div class="bg-blue-100 p-4 rounded-lg text-center">
-                        <p class="text-sm font-medium text-blue-800">Total Bobot</p>
-                        <p class="text-2xl font-bold text-blue-600">{{ $siswa->pelanggaran_sum_total_bobot ?? 0 }}</p>
-                    </div>
-                </div>
-            </div>
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- Header Card -->
+        <div class="bg-blue-600 px-6 py-4">
+            <h2 class="text-white text-xl font-semibold">Informasi Pelanggaran</h2>
         </div>
 
-        <!-- Daftar Pelanggaran -->
-        <div class="mt-8">
-            <h2 class="text-xl font-semibold mb-4">Riwayat Pelanggaran</h2>
-            @if($siswa->pelanggaran->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full bg-white rounded-lg overflow-hidden">
-                        <thead class="bg-gray-200">
+        <!-- Body Card -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Data Siswa -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-gray-200">Data Siswa</h3>
+                    <table class="w-full">
+                        <tbody class="divide-y divide-gray-100">
                             <tr>
-                                <th class="py-2 px-4 text-left">Tanggal</th>
-                                <th class="py-2 px-4 text-left">Jenis Pelanggaran</th>
-                                <th class="py-2 px-4 text-left">Kategori</th>
-                                <th class="py-2 px-4 text-center">Bobot</th>
-                                <th class="py-2 px-4 text-left">Tindakan</th>
+                                <td class="font-semibold py-3 w-1/3">Nama Siswa</td>
+                                <td class="py-3">{{ $pelanggaran->siswa->nama_siswa }}</td>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @foreach($siswa->pelanggaran as $pelanggaran)
-                                <tr>
-                                    <td class="py-2 px-4">{{ $pelanggaran->created_at->format('d/m/Y') }}</td>
-                                    <td class="py-2 px-4">{{ $pelanggaran->jenis->bentuk_pelanggaran }}</td>
-                                    <td class="py-2 px-4">{{ $pelanggaran->jenis->kategori->nama_kategori }}</td>
-                                    <td class="py-2 px-4 text-center">{{ $pelanggaran->total_bobot }}</td>
-                                    <td class="py-2 px-4">{{ $pelanggaran->keputusan_tindakan_terpilih }}</td>
-                                </tr>
-                            @endforeach
+                            <tr>
+                                <td class="font-semibold py-3">NIS</td>
+                                <td class="py-3">{{ $pelanggaran->siswa->nis ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold py-3">Kelas</td>
+                                <td class="py-3">{{ $pelanggaran->siswa->kelas->nama_kelas ?? '-' }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-            @else
-                <p class="text-gray-500">Siswa ini belum memiliki riwayat pelanggaran.</p>
-            @endif
+
+                <!-- Detail Pelanggaran -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-gray-200">Detail Pelanggaran</h3>
+                    <table class="w-full">
+                        <tbody class="divide-y divide-gray-100">
+                            <tr>
+                                <td class="font-semibold py-3 w-1/3">Jenis Pelanggaran</td>
+                                <td class="py-3">{{ $pelanggaran->jenis->bentuk_pelanggaran }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold py-3">Kategori</td>
+                                <td class="py-3">{{ $pelanggaran->kategori->nama_kategori }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold py-3">Status</td>
+                                <td class="py-3">
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium 
+                                        {{ $pelanggaran->status == 'Sudah' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                        {{ $pelanggaran->status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold py-3">Waktu Input</td>
+                                <td class="py-3">{{ $pelanggaran->created_at->format('d M Y H:i') }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Alur Pembinaan -->
+            <div class="mt-8">
+                <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-gray-200">Alur Pembinaan</h3>
+                @if($pelanggaran->sanksi && is_array($pelanggaran->sanksi->nama_sanksi))
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="mb-3">
+                            <h4 class="font-medium text-gray-700">Keputusan Tindakan:</h4>
+                            <p class="text-gray-800 mt-1">{{ $pelanggaran->keputusan_tindakan_terpilih }}</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-gray-700">Tahapan Pembinaan:</h4>
+                            <ol class="list-decimal pl-5 space-y-1 mt-2">
+                                @foreach($pelanggaran->sanksi->nama_sanksi as $item)
+                                    <li class="text-gray-800">{{ $item }}</li>
+                                @endforeach
+                            </ol>
+                        </div>
+                    </div>
+                @else
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p class="text-gray-500">Tidak ada data alur pembinaan</p>
+                    </div>
+                @endif
+            </div>
         </div>
 
-        <div class="mt-6 flex justify-end">
-            <a href="{{ route('siswa.index') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">Kembali</a>
+        <!-- Footer Card -->
+        <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-t border-gray-200">
+            <a href="{{ route('input_pelanggaran.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition duration-200">
+                Kembali
+            </a>
         </div>
     </div>
 </div>
