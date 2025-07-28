@@ -151,8 +151,15 @@ class SiswaController extends Controller
 
     public function show($id)
     {
-        $siswa = Siswa::findOrFail($id);
-        return view('admin.siswa.show', compact('siswa'));
+        // Cegah akses jika bukan admin
+    if (auth()->user()->role !== 'admin') {
+        return redirect()->route('user.data_siswa')
+            ->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+    }
+
+    $siswa = Siswa::with('kelas')->findOrFail($id);
+
+    return view('admin.siswa.show', compact('siswa'));
     }
 
     public function edit(Siswa $siswa)
