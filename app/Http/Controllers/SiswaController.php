@@ -12,6 +12,7 @@ use App\Models\Kelas;
 use App\Models\Tahun;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class SiswaController extends Controller
 {
@@ -71,6 +72,25 @@ class SiswaController extends Controller
         if ($kelasId) {
             $query->where('kelas_id', $kelasId);
         }
+
+        // Hitung total pelanggaran sebagai jumlah dari semua kategori
+        $query->addSelect(DB::raw('
+        (
+            COALESCE((
+                SELECT COUNT(*) FROM pelanggaran 
+                WHERE pelanggaran.siswa_id = siswa.id
+            ), 0)
+        ) as total_pelanggaran
+        '));
+
+        // Sorting berdasarkan request
+        if ($request->sort === 'terbanyak') {
+        $query->orderByDesc('total_pelanggaran');
+        } elseif ($request->sort === 'tersedikit') {
+        $query->orderBy('total_pelanggaran');
+        }
+
+        
 
         $siswa = $query->paginate(10);
 

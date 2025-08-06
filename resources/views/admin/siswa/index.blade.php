@@ -51,6 +51,24 @@
             @endif
         </form>
 
+        <!-- Sort Pelanggaran -->
+        <form method="GET" action="{{ route('siswa.index') }}" class="flex items-center gap-2">
+            <label for="sort" class="font-medium whitespace-nowrap">Sort</label>
+            <select name="sort" id="sort" onchange="this.form.submit()" class="border rounded px-2 py-1">
+                <option value="">-- Default --</option>
+                <option value="terbanyak" {{ request('sort') == 'terbanyak' ? 'selected' : '' }}>Pelanggaran Terbanyak</option>
+                <option value="tersedikit" {{ request('sort') == 'tersedikit' ? 'selected' : '' }}>Pelanggaran Tersedikit</option>
+            </select>
+            @if(request('kelas_id'))
+                <input type="hidden" name="kelas_id" value="{{ request('kelas_id') }}">
+            @endif
+            @if(request('search'))
+                <input type="hidden" name="search" value="{{ request('search') }}">
+            @endif
+        </form>
+
+
+
         <!-- Import Button -->
         <a href="{{ route('siswa.create') }}" class="ml-auto">
             <button type="button" class="flex items-center bg-green-600 text-white px-2 py-1 hover:bg-green-700 transition duration-300 rounded-md whitespace-nowrap">

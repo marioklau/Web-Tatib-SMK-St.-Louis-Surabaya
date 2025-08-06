@@ -98,7 +98,10 @@ class HomeController extends Controller
                 'labels' => $topKelasData->pluck('kode_kelas'),
                 'data' => $topKelasData->pluck('total'),
             ],
-            'topJenisPelanggaran' => $topJenisPelanggaran,
+            'topJenisPelanggaran' => [
+                'labels' => $topJenisPelanggaran->pluck('bentuk_pelanggaran'),
+                'data' => $topJenisPelanggaran->pluck('pelanggaran_count'),
+            ],            
             'tahunAktif' => $tahunAktif,
         ]);
     }

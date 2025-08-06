@@ -67,9 +67,15 @@
         <canvas id="kelasChart"></canvas>
     </div>
 </div>
-<div class="bg-white p-4 m-4 rounded-lg shadow max-w-4xl mx-auto">
-    <h2 class="text-base font-semibold text-gray-700 mb-4">Grafik Pelanggaran per Bulan</h2>
-    <canvas id="pelanggaranChart"></canvas>
+<div class="flex flex-col md:flex-row justify-center gap-4 mx-4">
+    <div class="bg-white p-4 m-4 rounded-lg shadow flex-1 max-w-xl">
+            <h2 class="text-base font-semibold text-gray-700 mb-4">Top 10 Jenis Pelanggaran Terbanyak</h2>
+        <canvas id="jenisChart"></canvas>
+    </div>
+    <div class="bg-white p-4 m-4 rounded-lg shadow flex-1 max-w-xl">
+        <h2 class="text-base font-semibold text-gray-700 mb-4">Grafik Pelanggaran per Bulan</h2>
+        <canvas id="pelanggaranChart"></canvas>
+    </div>
 </div>
 
 @endsection
@@ -80,6 +86,18 @@
     const pelanggaranPerBulan = @json($pelanggaranPerBulanChart);
     const topSiswa = @json($topSiswa);
     const topKelas = @json($topKelas);
+    const topJenis = @json($topJenisPelanggaran);
+
+    function generateColorArray(length, primaryColor, secondaryColor, primaryBorder, secondaryBorder) {
+        return {
+            background: Array.from({ length }, (_, i) =>
+            i === 0 ? primaryColor : secondaryColor
+            ),
+            border: Array.from({ length }, (_, i) =>
+            i === 0 ? primaryBorder : secondaryBorder
+            )
+        };
+    }
 
     // Chart 1: Pelanggaran per Bulan
     new Chart(document.getElementById('pelanggaranChart'), {
@@ -97,51 +115,76 @@
         options: {
             responsive: true,
             scales: {
-                y: { beginAtZero: true, ticks: { precision: 0 } }
+                y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }
             }
         }
     });
 
     // Chart 2: Top Siswa
+    const siswaColors = generateColorArray(topSiswa.data.length, 'rgba(255,99,132,0.8)', 'rgba(54,162,235,0.6)', 'rgba(255,99,132,1)', 'rgba(54,162,235,1)');
     new Chart(document.getElementById('topSiswaChart'), {
-        type: 'bar',
-        data: {
-            labels: topSiswa.labels,
-            datasets: [{
-                label: 'Jumlah Pelanggaran',
-                data: topSiswa.data,
-                backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
+    type: 'bar',
+    data: {
+        labels: topSiswa.labels,
+        datasets: [{ label: 'Jumlah Pelanggaran', data: topSiswa.data, backgroundColor: siswaColors.background, borderColor: siswaColors.border, borderWidth:1 }]
+    },
         options: {
             responsive: true,
             indexAxis: 'y',
             scales: {
-                x: { beginAtZero: true }
+                x: { beginAtZero: true, 
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0
+                    }
+                }
             }
         }
     });
 
+    // Chart 4: Top Jenis Pelanggaran
+    const jenisColors = generateColorArray(topJenis.data.length, 'rgba(255,99,132,0.8)', 'rgba(100,149,237,0.6)', 'rgba(255,99,132,1)', 'rgba(100,149,237,1)');
+    new Chart(document.getElementById('jenisChart'), {
+    type: 'bar',
+    data: {
+        labels: topJenis.labels,
+        datasets: [{ label: 'Jumlah Pelanggaran', data: topJenis.data, backgroundColor: jenisColors.background, borderColor: jenisColors.border, borderWidth:1 }]
+    },
+
+    options: {
+        responsive: true,
+        indexAxis: 'y',
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1,
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+
+
     // Chart 3: Top Kelas
+    const kelasColors = generateColorArray(topKelas.data.length, 'rgba(255,99,132,0.8)', 'rgba(100,149,237,0.6)', 'rgba(255,99,132,1)', 'rgba(100,149,237,1)');
     new Chart(document.getElementById('kelasChart'), {
-        type: 'bar',
-        data: {
-            labels: topKelas.labels,
-            datasets: [{
-                label: 'Jumlah Pelanggaran',
-                data: topKelas.data,
-                backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                borderColor: 'rgba(153, 102, 255, 1)',
-                borderWidth: 1
-            }]
-        },
+    type: 'bar',
+    data: {
+        labels: topKelas.labels,
+        datasets: [{ label: 'Jumlah Pelanggaran', data: topKelas.data, backgroundColor: jenisColors.background, borderColor: jenisColors.border, borderWidth:1 }]
+    },
         options: {
             responsive: true,
             indexAxis: 'y',
             scales: {
-                x: { beginAtZero: true }
+                x: { beginAtZero: true, 
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0
+                    }
+                } 
             }
         }
     });
