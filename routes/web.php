@@ -85,6 +85,9 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
 
 });
 
+Route::get('/dashboard/chart-data', [HomeController::class, 'getChartData'])->name('dashboard.chart-data');
+Route::get('/dashboard/perbandingan-data', [HomeController::class, 'getPerbandinganData'])->name('dashboard.perbandingan-data');
+
 // Fallback Route
 Route::fallback(function () {
     return view('errors.404');
