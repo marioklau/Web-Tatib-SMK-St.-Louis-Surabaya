@@ -24,6 +24,19 @@
     <form method="POST" action="{{ route('input_pelanggaran.store') }}" class="bg-white rounded shadow p-6">
         @csrf
 
+        {{-- Kelas --}}
+        <div class="mb-4">
+            <label for="kelas">Kelas</label>
+            <select name="kelas_id" id="kelas-select" class="w-full p-2 border rounded">
+                <option value="">-- Pilih Kelas --</option>
+                <option value="all">-- Semua Kelas --</option> {{-- TAMBAHKAN OPSI INI --}}
+                @foreach ($kelas as $k)
+                    <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Nama siswa + counter --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
             <div>
                 <label class="block mb-1">Nama Siswa</label>
@@ -32,10 +45,11 @@
                     @foreach ($siswa as $student)
                         <option
                             value="{{ $student->id }}"
+                            data-kelas="{{ $student->kelas_id }}"
                             data-r="{{ $student->ringan_count ?? 0 }}"
                             data-b="{{ $student->berat_count ?? 0 }}"
                             data-sb="{{ $student->sangat_berat_count ?? 0 }}"
-                            data-total-bobot="{{ $student->pelanggaran_sum_total_bobot?? 0 }}"
+                            data-total-bobot="{{ $student->pelanggaran_sum_total_bobot ?? 0 }}"
                             {{ old('siswa_id') == $student->id ? 'selected' : '' }}
                         >
                             {{ $student->nama_siswa }} - ({{ $student->kelas->kode_kelas ?? 'Tanpa Kelas' }})
@@ -64,6 +78,7 @@
             </div>
         </div>
 
+        {{-- Jenis pelanggaran & kategori --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
                 <label class="block mb-1">Jenis Pelanggaran</label>
@@ -78,7 +93,7 @@
                                 data-bobot="{{ $j->bobot_poin }}"
                                 {{ old('jenis_id') == $j->id ? 'selected' : '' }}
                             >
-                                {{ $j->bentuk_pelanggaran }} <!-- Menghapus tampilan bobot ({{ $j->bobot_poin }}) -->
+                                {{ $j->bentuk_pelanggaran }}
                             </option>
                         @endif
                     @endforeach
@@ -94,6 +109,7 @@
 
         <input type="hidden" name="bobot" id="bobot-input" value="{{ old('bobot') }}">
 
+        {{-- Alur pembinaan --}}
         <div class="mt-4 bg-gray-50 p-4 rounded">
             <label class="block mb-2 font-semibold">Alur Pembinaan:</label>
             <div id="alur-pembinaan" class="text-sm text-gray-700">
@@ -101,11 +117,11 @@
             </div>
         </div>
 
+        {{-- Keputusan tindakan --}}
         <div class="mt-4">
             <label class="block mb-1">Pilih Keputusan Tindakan</label>
             <select name="keputusan_tindakan_terpilih" id="keputusan-select" class="w-full border p-2" required>
                 <option value="">-- Pilih Keputusan --</option>
-                {{-- Opsi akan diisi via JavaScript --}}
             </select>
         </div>
 
@@ -117,111 +133,199 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        // Inisialisasi Select2
-        $('#siswa-select, #jenis-select, #keputusan-select').select2({
-            placeholder: "-- Pilih --",
-            allowClear: true,
-        });
+$(function () {
+  // Init Select2
+  $('#kelas-select, #jenis-select, #keputusan-select').select2({ placeholder: "-- Pilih --", allowClear: true });
+  $('#siswa-select').select2({ placeholder: "-- Pilih --", allowClear: true });
 
-        // Data sanksi dari controller
-        const allSanksiData = @json($sanksi);
+  const $kelas  = $('#kelas-select');
+  const $siswa  = $('#siswa-select');
 
-        // Fungsi untuk update counter pelanggaran
-        function updateCounts() {
-            const selected = $('#siswa-select option:selected');
-            $('#count-r').val(selected.data('r') ?? 0);
-            $('#count-b').val(selected.data('b') ?? 0);
-            $('#count-sb').val(selected.data('sb') ?? 0);
-            $('#total-bobot-display').val(selected.data('total-bobot') ?? 0);
-        }
+  // Simpan siswa yang dipilih sebelum refresh
+  let selectedSiswaId = null;
 
-        // Event saat siswa berubah
-        $('#siswa-select').on('change', updateCounts);
+  // Helper: rebuild opsi siswa dari data AJAX
+  function buildSiswaOptions(items, preserveSelection = false) {
+    // Simpan siswa yang sedang dipilih sebelum refresh
+    if (preserveSelection) {
+      selectedSiswaId = $siswa.val();
+    }
 
-        // Event saat jenis pelanggaran berubah
-        $('#jenis-select').on('change', function() {
-            const selectedJenis = $(this).find(':selected');
-            const kategoriId = selectedJenis.data('kategori-id');
-            const kategoriNama = selectedJenis.data('kategori-nama');
-            const bobotPelanggaran = selectedJenis.data('bobot');
+    // Hancurkan dulu select2 supaya aman manipulasi option
+    $siswa.select2('destroy');
+    $siswa.empty().append('<option value=""></option>'); // placeholder
 
-            // Update tampilan kategori dan bobot
-            $('#kategori-id').val(kategoriId);
-            $('#kategori-display').val(kategoriNama);
-            $('#bobot-input').val(bobotPelanggaran);
+    items.forEach(function (s) {
+      const opt = $('<option>', {
+        value: s.id,
+        text: `${s.nama_siswa} - (${s.kelas_kode ?? 'Tanpa Kelas'})`
+      })
+      .attr('data-kelas', s.kelas_id)
+      .attr('data-r', s.ringan_count ?? 0)
+      .attr('data-b', s.berat_count ?? 0)
+      .attr('data-sb', s.sangat_berat_count ?? 0)
+      .attr('data-total-bobot', s.total_bobot ?? 0);
 
-            // Tampilkan alur pembinaan berdasarkan kategori
-            showAlurPembinaan(kategoriId, bobotPelanggaran);
-
-            // Update opsi keputusan tindakan
-            updateKeputusanOptions(kategoriId, bobotPelanggaran);
-        });
-
-        // Fungsi untuk menampilkan alur pembinaan
-        function showAlurPembinaan(kategoriId, bobotBaru) {
-            const alurContainer = $('#alur-pembinaan');
-
-            const totalSebelumnya = parseInt($('#siswa-select option:selected').data('total-bobot')) || 0;
-            const totalBobot = totalSebelumnya + parseInt(bobotBaru);
-
-            const sanksiKategori = allSanksiData
-                .filter(s => s.kategori_id == kategoriId)
-                .sort((a, b) => (a.bobot_min || 0) - (b.bobot_min || 0));
-
-            let sanksi = sanksiKategori.find(s => totalBobot >= s.bobot_min && totalBobot <= s.bobot_max);
-            sanksi = sanksi || sanksiKategori[0];
-
-            let html = '<div class="space-y-2">';
-            if (sanksi.nama_sanksi && Array.isArray(sanksi.nama_sanksi)) {
-                html += `<h4 class="font-semibold">Tingkat (Total Bobot ${totalBobot} masuk dalam range ${sanksi.bobot_min}-${sanksi.bobot_max}):</h4>`;
-                html += '<ol class="list-decimal pl-5">';
-                sanksi.nama_sanksi.forEach(item => html += `<li class="mb-1">${item}</li>`);
-                html += '</ol>';
-            } else {
-                html += '<p class="text-gray-500">Tidak ada alur pembinaan tersedia.</p>';
-            }
-            html += '</div>';
-            alurContainer.html(html);
-        }
-
-        // Fungsi untuk update opsi keputusan tindakan
-        function updateKeputusanOptions(kategoriId, bobotBaru) {
-            const keputusanSelect = $('#keputusan-select');
-            keputusanSelect.empty().append('<option value="">-- Pilih Keputusan --</option>');
-
-            const totalSebelumnya = parseInt($('#siswa-select option:selected').data('total-bobot')) || 0;
-            const totalBobot = totalSebelumnya + parseInt(bobotBaru);
-
-            const sanksiKategori = allSanksiData
-                .filter(s => s.kategori_id == kategoriId)
-                .sort((a, b) => (a.bobot_min || 0) - (b.bobot_min || 0));
-
-            let sanksi = sanksiKategori.find(s => totalBobot >= s.bobot_min && totalBobot <= s.bobot_max);
-            sanksi = sanksi || sanksiKategori[0];
-
-            if (sanksi.keputusan_tindakan && Array.isArray(sanksi.keputusan_tindakan)) {
-                sanksi.keputusan_tindakan.forEach(k => {
-                    if (k) keputusanSelect.append(`<option value="${k}">${k}</option>`);
-                });
-            }
-        }
-
-        // Handle old input setelah validasi gagal
-        @if(old('siswa_id'))
-            $('#siswa-select').val("{{ old('siswa_id') }}").trigger('change');
-            setTimeout(() => {
-                @if(old('jenis_id'))
-                    $('#jenis-select').val("{{ old('jenis_id') }}").trigger('change');
-                    setTimeout(() => {
-                        @if(old('keputusan_tindakan_terpilih'))
-                            $('#keputusan-select').val("{{ old('keputusan_tindakan_terpilih') }}").trigger('change');
-                        @endif
-                    }, 50);
-                @endif
-            }, 50);
-        @endif
+      $siswa.append(opt);
     });
+
+    // Kembalikan pilihan siswa sebelumnya jika ada
+    if (preserveSelection && selectedSiswaId) {
+      $siswa.val(selectedSiswaId);
+    }
+
+    $siswa.prop('disabled', items.length === 0);
+    $siswa.select2({ placeholder: "-- Pilih --", allowClear: true });
+    
+    // Trigger change untuk update counter
+    $siswa.trigger('change');
+  }
+
+  // Saat kelas berubah: ambil siswa via AJAX, rebuild opsi
+  $kelas.on('change', function () {
+    const kelasId = $(this).val();
+
+    // Reset counter setiap ganti kelas
+    $('#count-r, #count-b, #count-sb, #total-bobot-display').val('');
+
+    if (!kelasId) {
+      buildSiswaOptions([], true); // kosongkan, tapi preserve selection
+      return;
+    }
+
+    const url = "{{ route('ajax.siswa.byKelas', ':id') }}".replace(':id', kelasId);
+    $.getJSON(url)
+      .done(function (data) {
+        buildSiswaOptions(data || [], true); // preserve selection
+      })
+      .fail(function () {
+        buildSiswaOptions([], true); // preserve selection
+      });
+  });
+
+  // Saat siswa dipilih: otomatis set kelas sesuai siswa yang dipilih
+  $siswa.on('change', function() {
+    const selectedOption = $(this).find('option:selected');
+    const kelasId = selectedOption.data('kelas');
+    
+    // Jika siswa dipilih dan memiliki kelas, set otomatis field kelas
+    // TAPI hanya jika kelas belum dipilih atau berbeda dengan kelas siswa
+    if (selectedOption.val() && kelasId && (!$kelas.val() || $kelas.val() !== kelasId.toString())) {
+      $kelas.val(kelasId).trigger('change');
+    }
+    
+    updateCounts(); // Update counter
+  });
+
+  // Update counter ketika siswa dipilih
+  function updateCounts() {
+    const selected = $siswa.find('option:selected');
+    $('#count-r').val(selected.data('r') ?? 0);
+    $('#count-b').val(selected.data('b') ?? 0);
+    $('#count-sb').val(selected.data('sb') ?? 0);
+    $('#total-bobot-display').val(selected.data('total-bobot') ?? 0);
+  }
+
+  // Kategori, alur pembinaan, keputusan
+  const allSanksiData = @json($sanksi);
+
+  $('#jenis-select').on('change', function () {
+    const selectedJenis = $(this).find(':selected');
+    const kategoriId = selectedJenis.data('kategori-id');
+    const kategoriNama = selectedJenis.data('kategori-nama');
+    const bobotPelanggaran = selectedJenis.data('bobot');
+
+    $('#kategori-id').val(kategoriId);
+    $('#kategori-display').val(kategoriNama);
+    $('#bobot-input').val(bobotPelanggaran);
+
+    showAlurPembinaan(kategoriId, bobotPelanggaran);
+    updateKeputusanOptions(kategoriId, bobotPelanggaran);
+  });
+
+  function showAlurPembinaan(kategoriId, bobotBaru) {
+    const alurContainer = $('#alur-pembinaan');
+    const selected = $siswa.find('option:selected');
+    const totalSebelumnya = parseInt(selected.data('total-bobot')) || 0;
+    const totalBobot = totalSebelumnya + parseInt(bobotBaru || 0);
+
+    const sanksiKategori = allSanksiData
+      .filter(s => s.kategori_id == kategoriId)
+      .sort((a, b) => (a.bobot_min || 0) - (b.bobot_min || 0));
+
+    let sanksi = sanksiKategori.find(s => totalBobot >= s.bobot_min && totalBobot <= s.bobot_max) || sanksiKategori[0];
+
+    let html = '<div class="space-y-2">';
+    if (sanksi && Array.isArray(sanksi.nama_sanksi)) {
+      html += `<h4 class="font-semibold">Tingkat (Total Bobot ${totalBobot} dalam range ${sanksi.bobot_min}-${sanksi.bobot_max}):</h4>`;
+      html += '<ol class="list-decimal pl-5">';
+      sanksi.nama_sanksi.forEach(item => html += `<li class="mb-1">${item}</li>`);
+      html += '</ol>';
+    } else {
+      html += '<p class="text-gray-500">Tidak ada alur pembinaan tersedia.</p>';
+    }
+    html += '</div>';
+    alurContainer.html(html);
+  }
+
+  function updateKeputusanOptions(kategoriId, bobotBaru) {
+    const $keputusan = $('#keputusan-select');
+    $keputusan.empty().append('<option value="">-- Pilih Keputusan --</option>');
+
+    const selected = $siswa.find('option:selected');
+    const totalSebelumnya = parseInt(selected.data('total-bobot')) || 0;
+    const totalBobot = totalSebelumnya + parseInt(bobotBaru || 0);
+
+    const sanksiKategori = allSanksiData
+      .filter(s => s.kategori_id == kategoriId)
+      .sort((a, b) => (a.bobot_min || 0) - (b.bobot_min || 0));
+
+    let sanksi = sanksiKategori.find(s => totalBobot >= s.bobot_min && totalBobot <= s.bobot_max) || sanksiKategori[0];
+
+    if (sanksi && Array.isArray(sanksi.keputusan_tindakan)) {
+      sanksi.keputusan_tindakan.forEach(k => { if (k) $keputusan.append(`<option value="${k}">${k}</option>`); });
+    }
+    $keputusan.trigger('change');
+  }
+
+  // Restore old input (jika validasi gagal)
+  @if(old('siswa_id'))
+    // Cari kelas untuk siswa lama lewat AJAX terlebih dulu
+    const oldSiswaId = '{{ old('siswa_id') }}';
+    const oldKelasId = '{{ old('kelas_id') }}';
+    if (oldKelasId) {
+      $kelas.val(String(oldKelasId)).trigger('change');
+      setTimeout(() => {
+        const urlOld = "{{ route('ajax.siswa.byKelas', ':id') }}".replace(':id', oldKelasId);
+        $.getJSON(urlOld).done(function (data) {
+          buildSiswaOptions(data || [], false);
+          $siswa.val(String(oldSiswaId)).trigger('change');
+          @if(old('jenis_id'))
+            $('#jenis-select').val('{{ old('jenis_id') }}').trigger('change');
+            setTimeout(() => {
+              @if(old('keputusan_tindakan_terpilih'))
+                $('#keputusan-select').val(`{{ old('keputusan_tindakan_terpilih') }}`).trigger('change');
+              @endif
+            }, 50);
+          @endif
+        });
+      }, 50);
+    } else {
+      // Jika tidak ada old kelas_id, cari dari siswa yang dipilih
+      const oldSiswaOption = $siswa.find(`option[value="${oldSiswaId}"]`);
+      if (oldSiswaOption.length) {
+        const kelasIdFromSiswa = oldSiswaOption.data('kelas');
+        if (kelasIdFromSiswa) {
+          $kelas.val(kelasIdFromSiswa).trigger('change');
+          setTimeout(() => {
+            $siswa.val(String(oldSiswaId)).trigger('change');
+          }, 50);
+        }
+      }
+    }
+  @endif
+});
 </script>
+
 
 @endsection

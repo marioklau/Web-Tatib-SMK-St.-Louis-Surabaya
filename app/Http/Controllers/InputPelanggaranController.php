@@ -54,43 +54,121 @@ class InputPelanggaranController extends Controller
             return view('user.pelanggaran_siswa', compact('pelanggaran'));
         }
     }
-    /**
-     * Show the form for creating a new resource.
-     */
+   
     public function create()
-    {
-        $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
+{
+    $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
 
-        if (!$tahunAjaranAktif) {
-            return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
-        }
+    if (!$tahunAjaranAktif) {
+        return redirect()->back()->with('error', 'Tahun ajaran aktif belum diatur.');
+    }
+    
+    $kelas = Kelas::where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                ->select('id', 'nama_kelas')
+                ->get();
 
+    $siswa = Siswa::with('kelas')
+        ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+        ->withCount([
+            'pelanggaran as ringan_count' => function ($query) use ($tahunAjaranAktif) {
+                $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                    ->whereHas('jenis.kategori', fn($q) => $q->whereRaw('LOWER(nama_kategori) = ?', ['ringan']));
+            },
+            'pelanggaran as berat_count' => function ($query) use ($tahunAjaranAktif) {
+                $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                    ->whereHas('jenis.kategori', fn($q) => $q->whereRaw('LOWER(nama_kategori) = ?', ['berat']));
+            },
+            'pelanggaran as sangat_berat_count' => function ($query) use ($tahunAjaranAktif) {
+                $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                    ->whereHas('jenis.kategori', fn($q) => $q->whereRaw('LOWER(nama_kategori) = ?', ['sangat berat']));
+            }
+        ])
+        ->withSum(['pelanggaran' => function($query) use ($tahunAjaranAktif) {
+            $query->where('tahun_ajaran_id', $tahunAjaranAktif->id);
+        }], 'total_bobot')
+        ->get();
+
+    $jenis = Jenis::with('kategori')->get();
+    $sanksi = Sanksi::all();
+
+    return view('admin.input_pelanggaran.create', compact('kelas', 'siswa', 'jenis', 'sanksi', 'tahunAjaranAktif'));
+}
+
+public function getSiswa($kelas_id)
+{
+    $tahunAjaranAktif = Tahun::where('status', 'aktif')->first();
+    if (!$tahunAjaranAktif) {
+        return response()->json([], 200);
+    }
+
+    // Jika kelas_id adalah "all", ambil semua siswa dari tahun ajaran aktif
+    if ($kelas_id === 'all') {
         $siswa = Siswa::with('kelas')
             ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
             ->withCount([
-                'pelanggaran as ringan_count' => function ($query) use ($tahunAjaranAktif) {
-                    $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                        ->whereHas('jenis.kategori', fn($q) => $q->whereRaw('LOWER(nama_kategori) = ?', ['ringan']));
+                'pelanggaran as ringan_count' => function ($q) use ($tahunAjaranAktif) {
+                    $q->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                      ->whereHas('jenis.kategori', fn($qq) => $qq->whereRaw('LOWER(nama_kategori) = ?', ['ringan']));
                 },
-                'pelanggaran as berat_count' => function ($query) use ($tahunAjaranAktif) {
-                    $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                        ->whereHas('jenis.kategori', fn($q) => $q->whereRaw('LOWER(nama_kategori) = ?', ['berat']));
+                'pelanggaran as berat_count' => function ($q) use ($tahunAjaranAktif) {
+                    $q->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                      ->whereHas('jenis.kategori', fn($qq) => $qq->whereRaw('LOWER(nama_kategori) = ?', ['berat']));
                 },
-                'pelanggaran as sangat_berat_count' => function ($query) use ($tahunAjaranAktif) {
-                    $query->where('tahun_ajaran_id', $tahunAjaranAktif->id)
-                        ->whereHas('jenis.kategori', fn($q) => $q->whereRaw('LOWER(nama_kategori) = ?', ['sangat berat']));
-                }
+                'pelanggaran as sangat_berat_count' => function ($q) use ($tahunAjaranAktif) {
+                    $q->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                      ->whereHas('jenis.kategori', fn($qq) => $qq->whereRaw('LOWER(nama_kategori) = ?', ['sangat berat']));
+                },
             ])
-            ->withSum(['pelanggaran' => function($query) use ($tahunAjaranAktif) {
-                $query->where('tahun_ajaran_id', $tahunAjaranAktif->id);
+            ->withSum(['pelanggaran' => function ($q) use ($tahunAjaranAktif) {
+                $q->where('tahun_ajaran_id', $tahunAjaranAktif->id);
             }], 'total_bobot')
             ->get();
+    } else {
+        // Ambil siswa berdasarkan kelas tertentu
+        $kelas = Kelas::where('id', $kelas_id)
+                    ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                    ->first();
 
-        $jenis = Jenis::with('kategori')->get();
-        $sanksi = Sanksi::all();
+        if (!$kelas) {
+            return response()->json([], 200);
+        }
 
-        return view('admin.input_pelanggaran.create', compact('siswa', 'jenis', 'sanksi'));
+        $siswa = Siswa::with('kelas')
+            ->where('kelas_id', $kelas_id)
+            ->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+            ->withCount([
+                'pelanggaran as ringan_count' => function ($q) use ($tahunAjaranAktif) {
+                    $q->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                      ->whereHas('jenis.kategori', fn($qq) => $qq->whereRaw('LOWER(nama_kategori) = ?', ['ringan']));
+                },
+                'pelanggaran as berat_count' => function ($q) use ($tahunAjaranAktif) {
+                    $q->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                      ->whereHas('jenis.kategori', fn($qq) => $qq->whereRaw('LOWER(nama_kategori) = ?', ['berat']));
+                },
+                'pelanggaran as sangat_berat_count' => function ($q) use ($tahunAjaranAktif) {
+                    $q->where('tahun_ajaran_id', $tahunAjaranAktif->id)
+                      ->whereHas('jenis.kategori', fn($qq) => $qq->whereRaw('LOWER(nama_kategori) = ?', ['sangat berat']));
+                },
+            ])
+            ->withSum(['pelanggaran' => function ($q) use ($tahunAjaranAktif) {
+                $q->where('tahun_ajaran_id', $tahunAjaranAktif->id);
+            }], 'total_bobot')
+            ->get();
     }
+
+    return response()->json(
+        $siswa->map(fn ($s) => [
+            'id' => $s->id,
+            'nama_siswa' => $s->nama_siswa,
+            'kelas_id' => $s->kelas_id,
+            'kelas_kode' => optional($s->kelas)->kode_kelas,
+            'ringan_count' => $s->ringan_count ?? 0,
+            'berat_count' => $s->berat_count ?? 0,
+            'sangat_berat_count' => $s->sangat_berat_count ?? 0,
+            'total_bobot' => $s->pelanggaran_sum_total_bobot ?? 0,
+        ])
+    );
+}
 
     /**
      * Store a newly created resource in storage.
