@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     // Laporan Routes
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');
+    Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.exportExcel');
 
     // Routes untuk User
     Route::prefix('user')->group(function () {

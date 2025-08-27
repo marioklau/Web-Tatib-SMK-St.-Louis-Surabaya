@@ -7,6 +7,7 @@ use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\Tahun;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
@@ -137,5 +138,30 @@ class LaporanController extends Controller
         ]);
 
         return $pdf->download('admin.laporan-pelanggaran.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $kelasId = $request->kelas_id;
+        $periode = $request->periode;
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+
+        // Ambil data siswa + relasi pelanggaran
+        $siswa = Siswa::with(['kelas', 'pelanggaran.jenis', 'pelanggaran.sanksi'])
+            ->when($kelasId, fn($q) => $q->where('kelas_id', $kelasId))
+            ->get();
+
+        // Export menggunakan FromView tanpa class
+        return Excel::download(new class($siswa) implements \Maatwebsite\Excel\Concerns\FromView {
+            private $siswa;
+            public function __construct($siswa) { $this->siswa = $siswa; }
+
+            public function view(): \Illuminate\Contracts\View\View {
+                return view('admin.laporan.excel', [
+                    'siswa' => $this->siswa
+                ]);
+            }
+        }, 'laporan_siswa.xlsx');
     }
 }
