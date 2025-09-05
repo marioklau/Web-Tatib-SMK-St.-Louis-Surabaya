@@ -97,18 +97,33 @@
 
         <!-- Keputusan Tindakan -->
         <div class="mb-8">
-            <label class="block text-gray-700 font-medium mb-2">Pilih Keputusan Tindakan</label>
-            <select name="keputusan_tindakan_terpilih" id="keputusan-select" class="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                <option value="">-- Pilih Keputusan --</option>
-                @if($input_pelanggaran->sanksi && is_array($input_pelanggaran->sanksi->keputusan_tindakan))
-                    @foreach($input_pelanggaran->sanksi->keputusan_tindakan as $keputusan)
-                        <option value="{{ $keputusan }}" {{ old('keputusan_tindakan_terpilih', $input_pelanggaran->keputusan_tindakan_terpilih) == $keputusan ? 'selected' : '' }}>
-                            {{ $keputusan }}
-                        </option>
-                    @endforeach
-                @endif
-            </select>
+            <label class="block text-gray-700 font-medium mb-2">Pilih Keputusan Tindakan (Minimal 2)</label>
+            <div id="keputusan-container" class="border p-3 rounded bg-gray-50 max-h-60 overflow-y-auto">
+                <div class="space-y-2">
+                    @php
+                        $keputusanTerpilih = json_decode($input_pelanggaran->keputusan_tindakan_terpilih, true) ?? [];
+                    @endphp
+
+                    @if($input_pelanggaran->sanksi && is_array($input_pelanggaran->sanksi->keputusan_tindakan))
+                        @foreach($input_pelanggaran->sanksi->keputusan_tindakan as $index => $k)
+                            <div class="flex items-center">
+                                <input type="checkbox" id="keputusan-{{ $index }}" 
+                                    name="keputusan_checkbox[]" 
+                                    value="{{ $k }}" 
+                                    class="keputusan-checkbox mr-2"
+                                    {{ in_array($k, old('keputusan_checkbox', $keputusanTerpilih)) ? 'checked' : '' }}>
+                                <label for="keputusan-{{ $index }}" class="text-sm">{{ $k }}</label>
+                            </div>
+                        @endforeach
+                    @else
+                        <p class="text-gray-500">Tidak ada pilihan keputusan tersedia.</p>
+                    @endif
+                </div>
+                <div id="keputusan-error" class="text-red-500 text-sm mt-2 hidden">Pilih minimal 2 keputusan tindakan</div>
+            </div>
+            <input type="hidden" name="keputusan_tindakan_terpilih" id="keputusan-input" value="{{ old('keputusan_tindakan_terpilih', $input_pelanggaran->keputusan_tindakan_terpilih) }}">
         </div>
+
 
         <!-- Tombol Aksi -->
         <div class="flex flex-col sm:flex-row gap-4">
@@ -123,19 +138,41 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        // Inisialisasi Select2 hanya untuk keputusan tindakan
-        $('#keputusan-select').select2({
-            placeholder: "-- Pilih --",
-            allowClear: true,
-            width: '100%'
-        });
+$(function () {
+    const $keputusanInput = $('#keputusan-input');
+    const $keputusanError = $('#keputusan-error');
 
-        // Handle old input setelah validasi gagal
-        @if(old('keputusan_tindakan_terpilih'))
-            $('#keputusan-select').val("{{ old('keputusan_tindakan_terpilih') }}").trigger('change');
-        @endif
+    function updateKeputusanInput() {
+        const selectedValues = $('.keputusan-checkbox:checked').map(function () {
+            return this.value;
+        }).get();
+
+        if (selectedValues.length < 2) {
+            $keputusanError.removeClass('hidden');
+            $keputusanInput.val('');
+        } else {
+            $keputusanError.addClass('hidden');
+            $keputusanInput.val(JSON.stringify(selectedValues));
+        }
+    }
+
+    // Bind event
+    $('.keputusan-checkbox').on('change', updateKeputusanInput);
+
+    // Jalankan sekali saat halaman dimuat
+    updateKeputusanInput();
+
+    // Validasi sebelum submit
+    $('form').on('submit', function (e) {
+        const checked = $('.keputusan-checkbox:checked').length;
+        if (checked < 2) {
+            e.preventDefault();
+            $keputusanError.removeClass('hidden');
+            $('html, body').animate({ scrollTop: $('#keputusan-container').offset().top - 100 }, 500);
+        }
     });
+});
 </script>
+
 
 @endsection

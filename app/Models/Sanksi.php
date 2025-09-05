@@ -8,22 +8,22 @@ class Sanksi extends Model
 {
     protected $table = 'sanksi';
 
+    protected $casts = [
+        'nama_sanksi' => 'array',
+        'keputusan_tindakan' => 'array',
+    ];
+
     protected $fillable = [
+        'kategori_id',
         'bobot_min',
         'bobot_max',
         'nama_sanksi',
         'pembina',
-        'keputusan_tindakan',
-        'kategori_id'
-    ];
-
-    protected $casts = [
-        'nama_sanksi' => 'array',
-        'keputusan_tindakan' => 'array', // Pastikan ini di-cast sebagai array
+        'keputusan_tindakan'
     ];
 
     public function kategori()
     {
-        return $this->belongsTo(Kategori::class, 'kategori_id');
+        return $this->belongsTo(Kategori::class);
     }
 }

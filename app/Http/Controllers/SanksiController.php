@@ -6,7 +6,7 @@ use App\Models\Kategori;
 use App\Models\Sanksi;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class SanksiController extends Controller
 {
@@ -37,27 +37,34 @@ class SanksiController extends Controller
     {
         $request->validate([
             'kategori_id' => 'required|exists:kategori,id',
-            'bobot_min' => 'nullable|integer|min:0', // Diubah dari required ke nullable
-            'bobot_max' => 'required|integer|min:0|gte:bobot_min', // Tetap required
+            'bobot_min' => 'nullable|integer|min:0',
+            'bobot_max' => 'required|integer|min:0|gte:bobot_min',
             'nama_sanksi' => 'required|string',
             'pembina' => 'required|string|max:255',
             'keputusan_tindakan' => 'required|string'
         ]);
 
-        // Jika bobot_min kosong, set ke 0
-        $bobotMin = $request->bobot_min ?? 0;
+        try {
+            // Jika bobot_min kosong, set ke 0
+            $bobotMin = $request->bobot_min ?? 0;
 
-        Sanksi::create([
-            'kategori_id' => $request->kategori_id,
-            'bobot_min' => $bobotMin,
-            'bobot_max' => $request->bobot_max,
-            'nama_sanksi' => array_map('trim', explode("\n", $request->nama_sanksi)),
-            'pembina' => $request->pembina,
-            'keputusan_tindakan' => array_map('trim', explode("\n", $request->keputusan_tindakan)),
-        ]);
+            Sanksi::create([
+                'kategori_id' => $request->kategori_id,
+                'bobot_min' => $bobotMin,
+                'bobot_max' => $request->bobot_max,
+                'nama_sanksi' => array_map('trim', explode("\n", $request->nama_sanksi)),
+                'pembina' => $request->pembina,
+                'keputusan_tindakan' => array_map('trim', explode("\n", $request->keputusan_tindakan)),
+            ]);
 
-        return redirect()->route('sanksi.index')
-            ->with('success', 'Sanksi Berhasil Ditambahkan.');
+            return redirect()->route('sanksi.index')
+                ->with('success', 'Sanksi Berhasil Ditambahkan.');
+                
+        } catch (QueryException $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menyimpan sanksi: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     public function show($id)
@@ -68,32 +75,42 @@ class SanksiController extends Controller
 
     public function edit(Sanksi $sanksi)
     {
-        return view('admin.data_pelanggaran.sanksi.edit', compact('sanksi'));
+        $kategori = Kategori::all();
+        return view('admin.data_pelanggaran.sanksi.edit', compact('sanksi', 'kategori'));
     }
 
     public function update(Request $request, Sanksi $sanksi)
     {
         $request->validate([
-            'bobot_min' => 'nullable|integer|min:0', // Diubah dari required ke nullable
-            'bobot_max' => 'required|integer|min:0|gte:bobot_min', // Tetap required
+            'kategori_id' => 'required|exists:kategori,id',
+            'bobot_min' => 'nullable|integer|min:0',
+            'bobot_max' => 'required|integer|min:0|gte:bobot_min',
             'nama_sanksi' => 'required|string',
             'pembina' => 'required|string|max:255',
             'keputusan_tindakan' => 'required|string'
         ]);
 
-        // Jika bobot_min kosong, set ke 0
-        $bobotMin = $request->bobot_min ?? 0;
+        try {
+            // Jika bobot_min kosong, set ke 0
+            $bobotMin = $request->bobot_min ?? 0;
 
-        $sanksi->update([
-            'bobot_min' => $bobotMin,
-            'bobot_max' => $request->bobot_max,
-            'nama_sanksi' => array_map('trim', explode("\n", $request->nama_sanksi)),
-            'pembina' => $request->pembina,
-            'keputusan_tindakan' => array_map('trim', explode("\n", $request->keputusan_tindakan)),
-        ]);
+            $sanksi->update([
+                'kategori_id' => $request->kategori_id,
+                'bobot_min' => $bobotMin,
+                'bobot_max' => $request->bobot_max,
+                'nama_sanksi' => array_map('trim', explode("\n", $request->nama_sanksi)),
+                'pembina' => $request->pembina,
+                'keputusan_tindakan' => array_map('trim', explode("\n", $request->keputusan_tindakan)),
+            ]);
 
-        return redirect()->route('sanksi.index')
-            ->with('success', 'Sanksi Berhasil Diupdate.');
+            return redirect()->route('sanksi.index')
+                ->with('success', 'Sanksi Berhasil Diperbarui.');
+                
+        } catch (QueryException $e) {
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat memperbarui sanksi: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     public function destroy(Sanksi $sanksi)
@@ -108,6 +125,9 @@ class SanksiController extends Controller
                 return redirect()->back()
                     ->with('error', 'Sanksi pelanggaran tidak dapat dihapus karena sudah terdapat pelanggaran yang terkait.');
             }
+            
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menghapus sanksi: ' . $e->getMessage());
         }
     }
 }

@@ -119,27 +119,34 @@
 
         {{-- Keputusan tindakan --}}
         <div class="mt-4">
-            <label class="block mb-1">Pilih Keputusan Tindakan</label>
-            <select name="keputusan_tindakan_terpilih" id="keputusan-select" class="w-full border p-2" required>
-                <option value="">-- Pilih Keputusan --</option>
-            </select>
-        </div>
+            <label class="block mb-1">Pilih Keputusan Tindakan (Minimal 2)</label>
+            <div id="keputusan-container" class="border p-3 rounded bg-gray-50 max-h-60 overflow-y-auto hidden">
+                <div class="space-y-2">
+                    <!-- Checklist options akan diisi oleh JavaScript -->
+                </div>
+                <div id="keputusan-error" class="text-red-500 text-sm mt-2 hidden">Pilih minimal 2 keputusan tindakan</div>
+            </div>
+            <input type="hidden" name="keputusan_tindakan_terpilih" id="keputusan-input" required>
+        </div>  
 
         <div class="mt-6 flex gap-2">
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
             <button type="button" onclick="history.back()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">Kembali</button>
-        </div>
+        </div>        
     </form>
 </div>
 
 <script>
 $(function () {
   // Init Select2
-  $('#kelas-select, #jenis-select, #keputusan-select').select2({ placeholder: "-- Pilih --", allowClear: true });
+  $('#kelas-select, #jenis-select').select2({ placeholder: "-- Pilih --", allowClear: true });
   $('#siswa-select').select2({ placeholder: "-- Pilih --", allowClear: true });
 
   const $kelas  = $('#kelas-select');
   const $siswa  = $('#siswa-select');
+  const $keputusanContainer = $('#keputusan-container');
+  const $keputusanInput = $('#keputusan-input');
+  const $keputusanError = $('#keputusan-error');
 
   // Simpan siswa yang dipilih sebelum refresh
   let selectedSiswaId = null;
@@ -269,9 +276,6 @@ $(function () {
   }
 
   function updateKeputusanOptions(kategoriId, bobotBaru) {
-    const $keputusan = $('#keputusan-select');
-    $keputusan.empty().append('<option value="">-- Pilih Keputusan --</option>');
-
     const selected = $siswa.find('option:selected');
     const totalSebelumnya = parseInt(selected.data('total-bobot')) || 0;
     const totalBobot = totalSebelumnya + parseInt(bobotBaru || 0);
@@ -282,17 +286,79 @@ $(function () {
 
     let sanksi = sanksiKategori.find(s => totalBobot >= s.bobot_min && totalBobot <= s.bobot_max) || sanksiKategori[0];
 
+    // Kosongkan container keputusan
+    $keputusanContainer.find('.space-y-2').empty();
+    $keputusanInput.val('');
+    $keputusanError.addClass('hidden');
+
     if (sanksi && Array.isArray(sanksi.keputusan_tindakan)) {
-      sanksi.keputusan_tindakan.forEach(k => { if (k) $keputusan.append(`<option value="${k}">${k}</option>`); });
+      // Tampilkan container
+      $keputusanContainer.removeClass('hidden');
+      
+      // Buat checklist options
+      sanksi.keputusan_tindakan.forEach((k, index) => {
+        if (k) {
+          const checkboxId = `keputusan-${index}`;
+          const checkbox = `
+            <div class="flex items-center">
+              <input type="checkbox" id="${checkboxId}" name="keputusan_checkbox" value="${k}" class="keputusan-checkbox mr-2">
+              <label for="${checkboxId}" class="text-sm">${k}</label>
+            </div>
+          `;
+          $keputusanContainer.find('.space-y-2').append(checkbox);
+        }
+      });
+
+      // Event handler untuk checkbox
+      $('.keputusan-checkbox').off('change').on('change', function() {
+        updateKeputusanInput();
+      });
+    } else {
+      $keputusanContainer.addClass('hidden');
     }
-    $keputusan.trigger('change');
   }
+
+  function updateKeputusanInput() {
+    const selectedCheckboxes = $('.keputusan-checkbox:checked');
+    const selectedValues = selectedCheckboxes.map(function() {
+      return this.value;
+    }).get();
+
+    // Validasi: minimal 2 opsi dipilih
+    if (selectedValues.length < 2) {
+      $keputusanError.removeClass('hidden');
+      $keputusanInput.val('');
+    } else {
+      $keputusanError.addClass('hidden');
+      $keputusanInput.val(JSON.stringify(selectedValues));
+    }
+  }
+
+  // Validasi form sebelum submit
+  $('form').on('submit', function(e) {
+    const selectedCheckboxes = $('.keputusan-checkbox:checked');
+    if (selectedCheckboxes.length < 2) {
+      e.preventDefault();
+      $keputusanError.removeClass('hidden');
+      $keputusanContainer.addClass('border-red-500');
+      // Scroll ke error
+      $('html, body').animate({
+        scrollTop: $keputusanContainer.offset().top - 100
+      }, 500);
+    }
+  });
 
   // Restore old input (jika validasi gagal)
   @if(old('siswa_id'))
     // Cari kelas untuk siswa lama lewat AJAX terlebih dulu
     const oldSiswaId = '{{ old('siswa_id') }}';
     const oldKelasId = '{{ old('kelas_id') }}';
+    
+    // Restore keputusan tindakan jika ada
+    @if(old('keputusan_tindakan_terpilih'))
+    const oldKeputusan = {!! json_encode(old('keputusan_tindakan_terpilih')) !!};
+    @endif
+
     if (oldKelasId) {
       $kelas.val(String(oldKelasId)).trigger('change');
       setTimeout(() => {
@@ -303,10 +369,21 @@ $(function () {
           @if(old('jenis_id'))
             $('#jenis-select').val('{{ old('jenis_id') }}').trigger('change');
             setTimeout(() => {
+              // Restore checklist keputusan
               @if(old('keputusan_tindakan_terpilih'))
-                $('#keputusan-select').val(`{{ old('keputusan_tindakan_terpilih') }}`).trigger('change');
+                try {
+                  const keputusanArray = Array.isArray(oldKeputusan) ? oldKeputusan : JSON.parse(oldKeputusan);
+                  if (Array.isArray(keputusanArray)) {
+                    keputusanArray.forEach(value => {
+                      $(`.keputusan-checkbox[value="${value}"]`).prop('checked', true);
+                    });
+                    updateKeputusanInput();
+                  }
+                } catch (e) {
+                  console.error('Error parsing keputusan:', e);
+                }
               @endif
-            }, 50);
+            }, 100);
           @endif
         });
       }, 50);
@@ -319,6 +396,22 @@ $(function () {
           $kelas.val(kelasIdFromSiswa).trigger('change');
           setTimeout(() => {
             $siswa.val(String(oldSiswaId)).trigger('change');
+            // Restore checklist keputusan
+            @if(old('keputusan_tindakan_terpilih'))
+              setTimeout(() => {
+                try {
+                  const keputusanArray = Array.isArray(oldKeputusan) ? oldKeputusan : JSON.parse(oldKeputusan);
+                  if (Array.isArray(keputusanArray)) {
+                    keputusanArray.forEach(value => {
+                      $(`.keputusan-checkbox[value="${value}"]`).prop('checked', true);
+                    });
+                    updateKeputusanInput();
+                  }
+                } catch (e) {
+                  console.error('Error parsing keputusan:', e);
+                }
+              }, 100);
+            @endif
           }, 50);
         }
       }

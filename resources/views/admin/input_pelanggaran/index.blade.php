@@ -94,10 +94,27 @@
                         @endif
                     </td>
 
-                    {{-- Menampilkan keputusan_tindakan_terpilih yang disimpan sebagai string di Pelanggaran --}}
-                    <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
-                        {{ $offense->keputusan_tindakan_terpilih ?? '-' }}
+                    {{-- Menampilkan keputusan_tindakan_terpilih --}}
+                    <td class="p-1 whitespace-normal text-xs leading-6 font-medium text-left text-gray-900 max-w-xs">
+                        @if(isset($offense->keputusan_tindakan_terpilih))
+                            @php
+                                $keputusan = json_decode($offense->keputusan_tindakan_terpilih, true);
+                            @endphp
+
+                            @if(is_array($keputusan))
+                                <ul class="list-disc pl-5 space-y-1">
+                                    @foreach($keputusan as $item)
+                                        <li>{{ $item }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <span class="text-gray-700">{{ $offense->keputusan_tindakan_terpilih }}</span>
+                            @endif
+                        @else
+                            <span class="text-gray-400">-</span>
+                        @endif
                     </td>
+
 
                     <td class="p-1 whitespace-nowrap text-xs leading-6 font-medium text-left text-gray-900">
                         <span class="font-bold {{ $offense->status === 'Sudah' ? 'text-green-600' : 'text-red-600' }}">

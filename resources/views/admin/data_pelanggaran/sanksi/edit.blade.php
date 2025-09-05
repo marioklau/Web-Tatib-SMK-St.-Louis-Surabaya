@@ -7,105 +7,61 @@
     <h1 class="text-2xl font-semibold">Edit Sanksi Pelanggaran</h1>
 
     <div class="bg-white p-6 shadow">
-        <form action="{{ route('sanksi.update', ['sanksi' => $sanksi->id]) }}" method="POST">
-            @csrf
-            @method('PUT')
+    <form method="POST" action="{{ route('sanksi.update', $sanksi->id) }}">
+        @csrf
+        @method('PUT')
+        
+        <div class="mb-4">
+            <label for="kategori_id" class="block mb-2">Kategori</label>
+            <select name="kategori_id" id="kategori_id" class="w-full p-2 border rounded" required>
+                <option value="">-- Pilih Kategori --</option>
+                @foreach($kategori as $kat)
+                    <option value="{{ $kat->id }}" {{ $sanksi->kategori_id == $kat->id ? 'selected' : '' }}>
+                        {{ $kat->nama_kategori }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-            <div class="mb-5">
-                <label for="bobot_min" class="block mb-2 font-semibold text-gray-700">
-                    Jumlah Pelanggaran Minimum
-                </label>
-                <input
-                    type="number" {{-- Ubah type="text" ke type="number" lebih baik untuk bobot --}}
-                    id="bobot_min"
-                    name="bobot_min"
-                    value="{{ old('bobot_min', $sanksi->bobot_min) }}"
-                    required
-                    class="block w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                @error('bobot_min')
-                    <p class="text-red-600 mt-2">{{ $message }}</p>
-                @enderror
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label for="bobot_min" class="block mb-2">Bobot Minimal</label>
+                <input type="number" name="bobot_min" id="bobot_min" 
+                    value="{{ old('bobot_min', $sanksi->bobot_min) }}" 
+                    class="w-full p-2 border rounded" min="0">
             </div>
+            <div>
+                <label for="bobot_max" class="block mb-2">Bobot Maksimal</label>
+                <input type="number" name="bobot_max" id="bobot_max" 
+                    value="{{ old('bobot_max', $sanksi->bobot_max) }}" 
+                    class="w-full p-2 border rounded" min="0" required>
+            </div>
+        </div>
 
-            <div class="mb-5">
-                <label for="bobot_max" class="block mb-2 font-semibold text-gray-700">
-                    Jumlah Pelanggaran Maksimum
-                </label>
-                <input
-                    type="number" {{-- Ubah type="text" ke type="number" lebih baik untuk bobot --}}
-                    id="bobot_max"
-                    name="bobot_max"
-                    value="{{ old('bobot_max', $sanksi->bobot_max) }}"
-                    required
-                    class="block w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                @error('bobot_max')
-                    <p class="text-red-600 mt-2">{{ $message }}</p>
-                @enderror
-            </div>
+        <div class="mb-4">
+            <label for="nama_sanksi" class="block mb-2">Nama Sanksi (pisahkan dengan enter)</label>
+            <textarea name="nama_sanksi" id="nama_sanksi" rows="4" 
+                    class="w-full p-2 border rounded" required>@if(is_array($sanksi->nama_sanksi)){{ implode("\n", $sanksi->nama_sanksi) }}@else{{ $sanksi->nama_sanksi }}@endif</textarea>
+        </div>
 
-            <div class="mb-5">
-                <label for="nama_sanksi" class="block mb-2 font-semibold text-gray-700">
-                    Pembinaan (Pisahkan dengan baris baru)
-                </label>
-                <textarea
-                    id="nama_sanksi"
-                    name="nama_sanksi"
-                    rows="5" {{-- Tambahkan rows untuk ukuran textarea --}}
-                    required
-                    class="block w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >{{ old('nama_sanksi', is_array($sanksi->nama_sanksi) ? implode("\n", $sanksi->nama_sanksi) : $sanksi->nama_sanksi) }}</textarea>
-                @error('nama_sanksi')
-                    <p class="text-red-600 mt-2">{{ $message }}</p>
-                @enderror
-            </div>
+        <div class="mb-4">
+            <label for="pembina" class="block mb-2">Pembina</label>
+            <input type="text" name="pembina" id="pembina" 
+                value="{{ old('pembina', $sanksi->pembina) }}" 
+                class="w-full p-2 border rounded" required>
+        </div>
 
-            <div class="mb-5">
-                <label for="pembina" class="block mb-2 font-semibold text-gray-700">
-                    Pembina
-                </label>
-                <input
-                    type="text"
-                    id="pembina"
-                    name="pembina"
-                    value="{{ old('pembina', $sanksi->pembina) }}"
-                    required
-                    class="block w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                @error('pembina')
-                    <p class="text-red-600 mt-2">{{ $message }}</p>
-                @enderror
-            </div>
+        <div class="mb-4">
+            <label for="keputusan_tindakan" class="block mb-2">Keputusan Tindakan (pisahkan dengan enter)</label>
+            <textarea name="keputusan_tindakan" id="keputusan_tindakan" rows="4" 
+                    class="w-full p-2 border rounded" required>@if(is_array($sanksi->keputusan_tindakan)){{ implode("\n", $sanksi->keputusan_tindakan) }}@else{{ $sanksi->keputusan_tindakan }}@endif</textarea>
+        </div>
 
-            <div class="mb-5">
-                <label for="keputusan_tindakan" class="block mb-2 font-semibold text-gray-700">
-                    Keputusan Tindakan (Pisahkan dengan baris baru)
-                </label>
-                <textarea
-                    id="keputusan_tindakan"
-                    name="keputusan_tindakan"
-                    rows="5" {{-- Tambahkan rows untuk ukuran textarea --}}
-                    required
-                    class="block w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >{{ old('keputusan_tindakan', is_array($sanksi->keputusan_tindakan) ? implode("\n", $sanksi->keputusan_tindakan) : $sanksi->keputusan_tindakan) }}</textarea>
-                @error('keputusan_tindakan')
-                    <p class="text-red-600 mt-2">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="flex space-x-4 mt-6">
-                <button
-                    type="submit"
-                    class="px-3 py-1.5 bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300"
-                >
-                    Simpan Perubahan
-                </button>
-                <a
-                    href="{{ route('sanksi.index') }}"
-                    class="px-3 py-1.5 bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition duration-300"
-                >
-                    Kembali
-                </a>
-            </div>
-        </form>
+        <div class="flex gap-2">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update</button>
+            <a href="{{ route('sanksi.index') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">Batal</a>
+        </div>
+    </form>
     </div>
 </div>
 @endsection
