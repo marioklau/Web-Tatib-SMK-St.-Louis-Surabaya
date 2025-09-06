@@ -126,14 +126,14 @@ protected function userDashboard($tahunAktif)
             'pelanggaranPerBulanChart' => ['labels' => [], 'data' => []],
             'topSiswa' => ['labels' => [], 'data' => []],
             'topKelas' => ['labels' => [], 'data' => []],
-            'topJenisPelanggaran' => [],
+            'topJenisPelanggaran' => ['labels' => [], 'data' => []], // PERBAIKAN: ubah ke array
             'pesan' => 'Belum ada tahun ajaran yang aktif.',
             'tahunAktif' => null,
-            'allJenisPelanggaran' => $allJenisPelanggaran, // Tetap kirim data
+            'allJenisPelanggaran' => $allJenisPelanggaran,
         ]);
     }
 
-    // Data dan logika identik dengan admin, bisa dioptimalkan, tapi tetap dibiarkan terpisah jika ingin dikustomisasi lebih lanjut.
+    // Data dan logika identik dengan admin
     $totalSiswa = Siswa::where('tahun_ajaran_id', $tahunAktif->id)->count();
     $totalKelas = Kelas::where('tahun_ajaran_id', $tahunAktif->id)->count();
     $totalPelanggaran = Pelanggaran::where('tahun_ajaran_id', $tahunAktif->id)->count();
@@ -186,9 +186,12 @@ protected function userDashboard($tahunAktif)
             'labels' => $topKelasData->pluck('kode_kelas'),
             'data' => $topKelasData->pluck('total'),
         ],
-        'topJenisPelanggaran' => $topJenisPelanggaran,
+        'topJenisPelanggaran' => [ // PERBAIKAN: ubah struktur menjadi sama dengan admin
+            'labels' => $topJenisPelanggaran->pluck('bentuk_pelanggaran'),
+            'data' => $topJenisPelanggaran->pluck('pelanggaran_count'),
+        ],
         'tahunAktif' => $tahunAktif,
-        'allJenisPelanggaran' => $allJenisPelanggaran, // TAMBAHKAN INI
+        'allJenisPelanggaran' => $allJenisPelanggaran,
     ]);
 }
 
