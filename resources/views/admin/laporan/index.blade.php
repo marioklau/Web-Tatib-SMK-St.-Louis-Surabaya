@@ -54,6 +54,18 @@
                     Export PDF
                 </a>
             </div>
+
+             <div>
+                <a href="{{ route('laporan.exportExcel', [
+                    'kelas_id' => $selectedKelas, 
+                    'periode' => $selectedPeriode, 
+                    'start_date' => $startDate ?? '', 
+                    'end_date' => $endDate ?? ''
+                ]) }}"
+                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow text-sm">
+                    Export Excel
+                </a>
+            </div>
         </div>
     </form>
 
