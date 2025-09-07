@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\Tahun;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\FromView;
 
 class LaporanController extends Controller
 {
@@ -149,18 +151,60 @@ class LaporanController extends Controller
         $endDate = $request->end_date;
 
         // Ambil data siswa + relasi pelanggaran
-        $siswa = Siswa::with(['kelas', 'pelanggaran.jenis', 'pelanggaran.sanksi'])
+        $siswa = Siswa::with(['kelas', 'pelanggaran.jenis', 'pelanggaran.kategori'])
             ->when($kelasId, fn($q) => $q->where('kelas_id', $kelasId))
             ->get();
 
-        // Export menggunakan FromView tanpa class
-        return Excel::download(new class($siswa) implements \Maatwebsite\Excel\Concerns\FromView, ShouldAutoSize {
-            private $siswa;
-            public function __construct($siswa) { $this->siswa = $siswa; }
+        $kelasName = null;
+        if ($kelasId) {
+            $kelas = Kelas::find($kelasId);
+            $kelasName = $kelas ? $kelas->nama_kelas : null;
+        }
+
+        // Logika olah data (menghitung jumlah tiap jenis)
+        $rows = $siswa->map(function ($s, $i) {
+            $pel = $s->pelanggaran;
+
+            $rambut = $pel->filter(fn($p) => Str::contains(strtolower($p->jenis->bentuk_pelanggaran), 'rambut'))->count();
+            $seragam = $pel->filter(fn($p) => Str::contains(strtolower($p->jenis->bentuk_pelanggaran), 'sabuk'))->count();
+            $sepatu  = $pel->filter(fn($p) => Str::contains(strtolower($p->jenis->bentuk_pelanggaran), 'sepatu'))->count();
+            $petisi  = $pel->filter(fn($p) => Str::contains(strtolower($p->jenis->bentuk_pelanggaran), 'bicara kotor'))->count();
+
+            $terlambat = $pel->filter(fn($p) => Str::contains(strtolower($p->jenis->bentuk_pelanggaran), 'terlambat'))->count();
+            $berat     = $pel->where('kategori.nama_kategori', 'BERAT')->count();
+            $sangat    = $pel->where('kategori.nama_kategori', 'SANGAT BERAT')->count();
+
+            return [
+                'no'       => $i + 1,
+                'nama'     => $s->nama_siswa,
+                'rambut'   => $rambut,
+                'seragam'  => $seragam,
+                'sepatu'   => $sepatu,
+                'petisi'   => $petisi,
+                'terlambat'=> $terlambat,
+                'berat'    => $berat,
+                'sangat'   => $sangat,
+                'totalR'   => $rambut + $seragam + $sepatu + $petisi,
+                'totalT'   => $terlambat,
+                'totalB'   => $berat,
+                'totalSB'  => $sangat,
+            ];
+        });
+        
+        // Export
+        return Excel::download(new class($rows, $kelasName) implements FromView, ShouldAutoSize {
+            private $rows;
+            private $kelasName;
+
+            public function __construct($rows, $kelasName) { 
+                $this->rows = $rows;
+                $this->kelasName = $kelasName;
+            }
 
             public function view(): \Illuminate\Contracts\View\View {
                 return view('admin.laporan.excel', [
-                    'siswa' => $this->siswa
+                    'rows' => $this->rows,
+                    'kelasName' => $this->kelasName
                 ]);
             }
         }, 'laporan_siswa.xlsx');
